@@ -1,5 +1,5 @@
 var betterlink_user_interface;
-betterlink_user_interface = window['betterlink_public_interface'] || (function() {
+betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 	var modules = [];
 	var initListeners = [];
 
