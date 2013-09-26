@@ -49,7 +49,7 @@ You'll need to execute this initialization option on any new page load for selec
 
 **Defining a user interface**
 
-The betterlink-interface code interacts with the core `betterlink-no-interface.js` script through a simple Observer eventing system. The full contract is detailed in our [wiki](https://github.com/betterlink/betterlink-interface/wiki/_pages).
+The betterlink-interface code interacts with the core `betterlink-no-interface.js` script through a simple Observer eventing system. The full contract is detailed in our wiki: [Event Details](https://github.com/betterlink/betterlink-interface/wiki/_pages)
 
 Platform Support
 ------
@@ -75,3 +75,8 @@ Contributing
 ---------
 
 Pull Requests welcome.
+
+License
+---------
+
+This library is distributed under the Apache 2.0 License found in the [LICENSE](https://github.com/betterlink/betterlink-interface/blob/master/LICENSE.md) file.
