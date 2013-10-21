@@ -18,7 +18,7 @@ betterlink_user_interface.createModule("Highlighting.Styles", function(api, apiI
 		'highlightCustomCssClass' : '',
 		'highlightElementId' : DEFAULT_HIGHLIGHT_ELEMENT_ID
 	};
-	api['config'] = apiInternal.util.extend(api['config'], highlightConfig);
+	apiInternal.util.extend(api['config'], highlightConfig);
 
 	apiInternal.events.registerObserverForHighlighterInitialized(initializeHighlighterStyles);
 
