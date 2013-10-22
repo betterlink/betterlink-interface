@@ -2,7 +2,7 @@
  * JS for building an interface to to create and share new links
  *
  */
-betterlink_user_interface.createModule("User Interface", function(api, apiInternal, module) {
+betterlink_user_interface.createModule("Submissions.Interface", function(api, apiInternal, module) {
 	api.requireModules( ["Util.DOM", "Range Manager", "Event Messaging"] );
 
 	var SELECTION_DIV_ID = "betterlink_selection";
