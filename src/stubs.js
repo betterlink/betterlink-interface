@@ -198,6 +198,18 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 			return style;
 		}
 	};
+
+	apiInternal.util.ranges = {
+		currentSelectionIsEmpty: function () {
+			// simple version for modern browsers + IE9
+			if(window.getSelection) {
+				return window.getSelection().isCollapsed;
+			}
+			else {
+				return false;
+			}
+		}
+	};
 	
 	apiInternal.events = {
 		registerObserverForSubmissionDisplay: function (fn) {
@@ -218,18 +230,6 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 
 		fireHighlighterStylesInitialized: function (highlightOptions) {
 			betterlink.fireHighlighterStylesInitialized(highlightOptions);
-		}
-	};
-	
-	apiInternal.ranges = {
-		currentSelectionIsEmpty: function () {
-			// simple version for modern browsers + IE9
-			if(window.getSelection) {
-				return window.getSelection().isCollapsed;
-			}
-			else {
-				return false;
-			}
 		}
 	};
 
