@@ -61,6 +61,10 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 		}
 	}
 
+	function getErrorDesc(ex) {
+		return ex.message || ex.description || String(ex);
+	}
+
 	//******************** DOM Ready ********************//
 
 	var docReady = false;
