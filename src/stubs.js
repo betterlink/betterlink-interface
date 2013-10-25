@@ -95,11 +95,15 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 		addInitListener: function (fn) {
 			initListeners.push(fn);
 		},
-		
+
 		addListener: addListener,
-		
+
 		consoleLog: function (message) {
 			console.log(message);
+		},
+
+		warn: function(reason) {
+			console.log("Betterlink warning: " + reason);
 		}
 	};
 
@@ -224,22 +228,26 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 			betterlink.fireNewSubmission();
 		},
 		
-		registerObserverForSelectionHighlighted: function (fn) {
-			betterlink.registerObserverForSelectionHighlighted(fn);
+		registerObserverForReadyToDecorate: function (fn) {
+			betterlink.registerObserverForReadyToDecorate(fn);
 		},
 
-		registerObserverForHighlighterInitialized: function (fn) {
-			betterlink.registerObserverForHighlighterInitialized(fn);
-		},
-
-		fireHighlighterStylesInitialized: function (highlightOptions) {
-			betterlink.fireHighlighterStylesInitialized(highlightOptions);
+		fireHighlighterStylesInitialized: function (highlighterIdentifier) {
+			betterlink.fireHighlighterStylesInitialized(highlighterIdentifier);
 		}
 	};
 
-	apiInternal.highlights = {
-		styles: {
-			initialized: false
+	apiInternal.highlighters = {
+		add: function(highlighterIdentifier, highlightOptions) {
+			betterlink.addNewHighlighter(highlighterIdentifier, highlightOptions);
+		},
+
+		highlightSelection: function(highlightIdentifier, selection) {
+			betterlink.decorateSelection(highlightIdentifier, selection);
+		},
+
+		removeAllHighlights: function(highlightIdentifier) {
+			betterlink.removeAllDecoration(highlighterIdentifier);
 		}
 	};
 

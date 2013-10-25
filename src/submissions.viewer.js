@@ -3,12 +3,15 @@
  *
  */
 betterlink_user_interface.createModule("Submissions.Viewer", function(api, apiInternal, module) {
-	api.requireModules( ["Util", "Util.DOM", "Event Messaging"] );
+	api.requireModules( ["Util", "Util.DOM", "Event Messaging", "Selection Highlighter"] );
 
 	var DEFAULT_HIGHLIGHT_CUSTOM_ELEMENT = "mark";				//the element type that will wrap the selections
 	var DEFAULT_HIGHLIGHT_CSS_CLASS = "highlight";				//the CSS class that will be applied to all highlight elements
 	var DEFAULT_HIGHLIGHT_ELEMENT_ID = "highlighted_element";	//an ID that will be applied to all highlight wrapper elements
 	var HIGHLIGHT_CSS = "{ background: lightskyblue; }";
+
+	var highlighterIdentifier = 'submissionViewer';
+	var highlighterInitialized = false;
 
 	// always refer to config via index-notation so the symbol isn't obfuscated
 	api['config'] = api['config'] || {};
@@ -20,13 +23,14 @@ betterlink_user_interface.createModule("Submissions.Viewer", function(api, apiIn
 	};
 	apiInternal.util.extend(api['config'], highlightConfig);
 
-	apiInternal.events.registerObserverForHighlighterInitialized(initializeHighlighterStyles);
+	apiInternal.addInitListener(initializeHighlighterStyles);
 
 	function initializeHighlighterStyles() {
-		if(apiInternal.highlights && apiInternal.highlights.styles && apiInternal.highlights.styles.initialized) {
+		if(highlighterInitialized) {
 			return;
 		}
 
+		highlighterInitialized = true;
 		var highlightOptions = {
 
 			// any element that's highlighted should have the following properties
@@ -53,10 +57,32 @@ betterlink_user_interface.createModule("Submissions.Viewer", function(api, apiIn
 			'cssClass': getHighlightCSSClass()
 		};
 
-		apiInternal.events.registerObserverForSelectionHighlighted(jumpToHighlightedContent);
-
 		insertHighlightStyle();
-		apiInternal.events.fireHighlighterStylesInitialized(highlightOptions);
+		apiInternal.events.registerObserverForReadyToDecorate(highlightContent);
+
+		apiInternal.highlighters.add(highlighterIdentifier, highlightOptions);
+		apiInternal.events.fireHighlighterStylesInitialized();
+	}
+
+	function removeDecorationFromLoadedSubmission() {
+		if(!highlighterInitialized) {
+			displayNotInitialized();
+			return;
+		}
+
+		apiInternal.highlighters.removeAllHighlights(highlighterIdentifier);
+	}
+
+	function highlightContent(contentType, selection) {
+		if(!highlighterInitialized) {
+			displayNotInitialized();
+			return;
+		}
+
+		if(contentType === 'loadedSubmission') {
+			apiInternal.highlighters.highlightSelection(highlighterIdentifier, selection);
+			jumpToHighlightedContent();
+		}
 	}
 
 	function jumpToHighlightedContent() {
@@ -78,5 +104,9 @@ betterlink_user_interface.createModule("Submissions.Viewer", function(api, apiIn
 			return api['config']['highlightCustomCssClass'];
 		else
 			return api['config']['highlightCssClass'];
+	}
+
+	function displayNotInitialized() {
+		apiInternal.warn("Highlighting not yet initialized");
 	}
 });
