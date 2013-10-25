@@ -196,7 +196,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 	function displaySubmissionResult(result) {
 		if(result['success']) {
 			var newUrl = result['message'];
-			apiInternal.consoleLog(newUrl);
+			console.log(newUrl);
 			
 			if(urlDiv) {
 				var span = document.createElement("span");
@@ -212,7 +212,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 		else {
 			var message = result['message'];
 			
-			apiInternal.consoleLog(message);
+			console.log(message);
 			if(urlDiv) {
 				var span = document.createElement("span");
 				span.appendChild(document.createTextNode(message));

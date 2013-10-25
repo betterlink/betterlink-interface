@@ -98,10 +98,6 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 
 		addListener: addListener,
 
-		consoleLog: function (message) {
-			console.log(message);
-		},
-
 		warn: function(reason) {
 			console.log("Betterlink warning: " + reason);
 		}
