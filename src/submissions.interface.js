@@ -63,6 +63,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 							].join(' ');
 
 	var selectionDiv;
+	var selectionDivSubmissionButton;
 	var urlDiv;
 	var previousMousePosition; // set on each mousedown event
 	/****************************************************************************************************/
@@ -102,6 +103,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 		apiInternal.addListener(submitButton, "click", sendSubmission);
 
 		selectionDiv.appendChild(submitButton);
+		selectionDivSubmissionButton = submitButton;
 		document.body.appendChild(selectionDiv);
 		return selectionDiv;
 	}
@@ -231,6 +233,8 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 				var highlighterIdentifier = 'newSubmission';
 				createHighlighter(highlighterIdentifier, newUrl);
 				apiInternal.highlighters.highlightSelection(highlighterIdentifier, result['selection']);
+
+				apiInternal.util.dom.addOrReplaceChild(selectionDiv, selectionDivSubmissionButton);
 			}
 		}
 		else {
@@ -254,6 +258,11 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 			apiInternal.util.dom.addOrReplaceChild(urlDiv, span);
 
 			urlDiv.style.display = "";
+		}
+		else {
+			var span = document.createElement("span");
+			span.appendChild(document.createTextNode(LOADING_MESSAGE));
+			apiInternal.util.dom.addOrReplaceChild(selectionDiv, span);
 		}
 	}
 
