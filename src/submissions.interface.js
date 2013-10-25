@@ -16,6 +16,20 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 							"border-radius: 1em;",
 							"background-color: lightskyblue; }"].join(' ');
 
+	var SELECTED_TEXT_CSS_CLASS = "betterlink-selected";
+	var SELECTED_TEXT_CSS = "." + SELECTED_TEXT_CSS_CLASS + 
+							 [" { background: #F0E68C;",			// background: khaki
+								"color: #000080;",					// color: navy
+								"text-decoration: underline; }"].join(' ') + 
+							"a." + SELECTED_TEXT_CSS_CLASS + ":hover " +
+							 ["{ background: #F0E68C;",
+							 	"color: #000080;",
+							 	"text-decoration: underline; }"].join(' ') +
+							"a." + SELECTED_TEXT_CSS_CLASS + ":link " +
+							 ["{ background: #F0E68C;",
+							 	"color: #000080;",
+							 	"text-decoration: underline; }"].join(' ');
+
 	// via http://css-tricks.com/snippets/css/fixed-footer/
 	// Creates a 'sticky' footer at the bottom of the visible window.
 	//
@@ -62,7 +76,8 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 		apiInternal.interfaceInitialized = true;
 
 		selectionDiv = buildSelectionDiv();
-		urlDiv = buildUrlDiv();
+		//urlDiv = buildUrlDiv();
+		insertHighlightStyle();
 		attachMousedownEvent(function(e) { previousMousePosition = captureMousePosition(e); });
 		attachMouseupEvent(togglePositionAndDisplayOfSelectionDiv);
 		// TODO: Support keydown / keyup events for accessibility (when starting a selection)
@@ -183,6 +198,10 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 		apiInternal.util.dom.addCssByClass(SELECTION_DIV_CLASS, SELECTION_CSS, "div");
 	}
 
+	function insertHighlightStyle() {
+		apiInternal.util.dom.createAndAppendStyleElement(SELECTED_TEXT_CSS);
+	}
+
 	function insertFooterStyle() {
 		apiInternal.util.dom.createAndAppendStyleElement(URL_CSS_TEXT);
 	}
@@ -208,6 +227,11 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 
 				urlDiv.style.display = "";
 			}
+			else {
+				var highlighterIdentifier = 'newSubmission';
+				createHighlighter(highlighterIdentifier, newUrl);
+				apiInternal.highlighters.highlightSelection(highlighterIdentifier, result['selection']);
+			}
 		}
 		else {
 			var message = result['message'];
@@ -231,5 +255,36 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 
 			urlDiv.style.display = "";
 		}
+	}
+
+	function createHighlighter(identifier, url) {
+		var highlightOptions = {
+
+			// any element that's highlighted should have the following properties
+			'elementProperties': {
+				'href': url,
+				'title': 'Your custom link'
+			},
+
+			// elements that we will apply our CSS class to, instead of creating
+			// a new container element. ex:
+			// <span class="myclass">this is my text</span> v.
+			// <span><mark class="myclass">this is my text</mark></span>
+			//
+			// Note: if the existing element doesn't have all of the properties
+			// specified above, we'll create a new container element anyways.
+			'tagsToPreserve': ['a'],
+
+			// element type that we will wrap around the selected content when
+			// splitting text nodes or when we can't apply our class name to
+			// an existing element
+			'elementTagName': 'a',
+
+			// CSS class name that will be applied to each element that is
+			// highlighted
+			'cssClass': SELECTED_TEXT_CSS_CLASS
+		};
+
+		apiInternal.highlighters.add(identifier, highlightOptions);
 	}
 });
