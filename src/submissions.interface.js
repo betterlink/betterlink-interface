@@ -213,7 +213,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 		apiInternal.events.fireNewSubmission();
 	}
 
-	// Expects an object { success: true, message: "my message here" }
+	// Expects an object { success: true, message: "my message here", selection: custom_obj }
 	function displaySubmissionResult(result) {
 		if(result['success']) {
 			var newUrl = result['message'];
