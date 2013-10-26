@@ -212,6 +212,10 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 			else {
 				return false;
 			}
+		},
+
+		removeCurrentSelection: function() {
+			betterlink.exports.removeCurrentSelection();
 		}
 	};
 	

@@ -233,6 +233,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 				var highlighterIdentifier = 'newSubmission';
 				createHighlighter(highlighterIdentifier, newUrl);
 				apiInternal.highlighters.highlightSelection(highlighterIdentifier, result['selection']);
+				apiInternal.util.ranges.removeCurrentSelection();
 
 				apiInternal.util.dom.addOrReplaceChild(selectionDiv, selectionDivSubmissionButton);
 			}
