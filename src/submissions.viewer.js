@@ -3,7 +3,7 @@
  *
  */
 betterlink_user_interface.createModule("Submissions.Viewer", function(api, apiInternal, module) {
-	api.requireModules( ["Util", "Util.DOM", "Event Messaging", "Selection Highlighter"] );
+	api.requireModules( ["Util", "Util.DOM", "Event Messaging", "Selection Highlighter", "Smooth Scrolling"] );
 
 	var DEFAULT_HIGHLIGHT_CUSTOM_ELEMENT = "mark";				//the element type that will wrap the selections
 	var DEFAULT_HIGHLIGHT_CSS_CLASS = "highlight";				//the CSS class that will be applied to all highlight elements
@@ -86,8 +86,12 @@ betterlink_user_interface.createModule("Submissions.Viewer", function(api, apiIn
 	}
 
 	function jumpToHighlightedContent() {
-		if(!window.location.hash || !api['config']['preserveHash']) {
-			window.location.hash = api['config']['highlightElementId'];
+		var destination = api['config']['highlightElementId'];
+		var success = apiInternal.smoothScroll(destination, {pixelBuffer: 50});
+		if(!success) {
+			if(!window.location.hash || !api['config']['preserveHash']) {
+				window.location.hash = destination;
+			}
 		}
 	}
 
