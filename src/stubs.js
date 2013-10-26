@@ -217,33 +217,33 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 	
 	apiInternal.events = {
 		registerObserverForSubmissionDisplay: function (fn) {
-			betterlink.registerObserverForSubmissionDisplay(fn);
+			betterlink.exports.registerObserverForSubmissionDisplay(fn);
 		},
 		
 		fireNewSubmission: function () {
-			betterlink.fireNewSubmission();
+			betterlink.exports.fireNewSubmission();
 		},
 		
 		registerObserverForReadyToDecorate: function (fn) {
-			betterlink.registerObserverForReadyToDecorate(fn);
+			betterlink.exports.registerObserverForReadyToDecorate(fn);
 		},
 
 		fireHighlighterStylesInitialized: function (highlighterIdentifier) {
-			betterlink.fireHighlighterStylesInitialized(highlighterIdentifier);
+			betterlink.exports.fireHighlighterStylesInitialized(highlighterIdentifier);
 		}
 	};
 
 	apiInternal.highlighters = {
 		add: function(highlighterIdentifier, highlightOptions) {
-			betterlink.addNewHighlighter(highlighterIdentifier, highlightOptions);
+			betterlink.exports.addNewHighlighter(highlighterIdentifier, highlightOptions);
 		},
 
 		highlightSelection: function(highlightIdentifier, selection) {
-			betterlink.decorateSelection(highlightIdentifier, selection);
+			betterlink.exports.decorateSelection(highlightIdentifier, selection);
 		},
 
 		removeAllHighlights: function(highlightIdentifier) {
-			betterlink.removeAllDecoration(highlighterIdentifier);
+			betterlink.exports.removeAllDecoration(highlighterIdentifier);
 		}
 	};
 
