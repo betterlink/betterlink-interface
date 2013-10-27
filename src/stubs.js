@@ -232,8 +232,8 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 			betterlink.exports.registerObserverForReadyToDecorate(fn);
 		},
 
-		fireHighlighterStylesInitialized: function (highlighterIdentifier) {
-			betterlink.exports.fireHighlighterStylesInitialized(highlighterIdentifier);
+		fireHighlighterStylesInitialized: function () {
+			betterlink.exports.fireHighlighterStylesInitialized();
 		}
 	};
 
