@@ -242,11 +242,11 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 			betterlink.exports.addNewHighlighter(highlighterIdentifier, highlightOptions);
 		},
 
-		highlightSelection: function(highlightIdentifier, selection) {
-			betterlink.exports.decorateSelection(highlightIdentifier, selection);
+		highlightSelection: function(highlighterIdentifier, selection) {
+			betterlink.exports.decorateSelection(highlighterIdentifier, selection);
 		},
 
-		removeAllHighlights: function(highlightIdentifier) {
+		removeAllHighlights: function(highlighterIdentifier) {
 			betterlink.exports.removeAllDecoration(highlighterIdentifier);
 		}
 	};
