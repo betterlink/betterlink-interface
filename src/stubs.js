@@ -83,7 +83,7 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 	addListener(window, "load", docReadyCallback);
 
 	//******************** 'api' Functions ********************//
-	
+
 	var api = {
 		config: betterlink['config'],
 		requireModules: function () { } // no-op
@@ -140,12 +140,25 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 			}
 		},
 
+		isArray: Array.isArray || function (obj) {
+			return "[object Array]" === Object.prototype.toString.call(obj);
+		},
+
 		isUndefined: function (a) {
 			return void 0 === a;
 		}
 	};
-	
+
 	apiInternal.util.dom = {
+		// Designed to be executed when adding a top-level HTML element
+		// to the DOM. In addition to adding the element to the DOM, we
+		// will register the element internally. This provides later
+		// access if we need to detach Betterlink.
+		registerAndAppend: function(target, new_node) {
+			betterlink.exports.registerDomElements(new_node);
+			target.appendChild(new_node);
+		},
+
 		// Adds a style element that defines the style for a particular class
 		// ex: <style>div.highlight { background: yellow; }</style>
 		addCssByClass: function (cssClass, cssStyle, optElement) {
@@ -154,7 +167,7 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 
 			return apiInternal.util.dom.createAndAppendStyleElement(css);
 		},
-		
+
 		// The result of this function is that the parent should
 		// have a single child node (the one supplied by param)
 		addOrReplaceChild: function(parent, newNode) {
@@ -172,7 +185,7 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 				parent.appendChild(newNode);
 			}
 		},
-		
+
 		// Creates and returns a new anchor <a> element
 		createAnchorElement: function (linkText, href, optTarget) {
 			var a = window.document.createElement("a");
@@ -185,7 +198,7 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 
 			return a;
 		},
-		
+
 		createAndAppendStyleElement: function(cssText) {
 			var head = document.head || document.getElementsByTagName('head')[0];
 			var style = document.createElement('style');
@@ -198,7 +211,7 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 				style.appendChild(document.createTextNode(cssText));
 			}
 
-			head.appendChild(style);
+			apiInternal.util.dom.registerAndAppend(head, style);
 			return style;
 		}
 	};
@@ -218,7 +231,7 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 			betterlink.exports.removeCurrentSelection();
 		}
 	};
-	
+
 	apiInternal.events = {
 		registerObserverForSubmissionDisplay: function (fn) {
 			betterlink.exports.registerObserverForSubmissionDisplay(fn);

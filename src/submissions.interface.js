@@ -104,7 +104,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 
 		selectionDiv.appendChild(submitButton);
 		selectionDivSubmissionButton = submitButton;
-		document.body.appendChild(selectionDiv);
+		apiInternal.util.dom.registerAndAppend(document.body, selectionDiv);
 		return selectionDiv;
 	}
 
@@ -115,7 +115,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 		urlDiv.id = URL_DIV_ID;
 		urlDiv.style.display = "none";
 
-		document.body.appendChild(urlDiv);
+		apiInternal.util.dom.registerAndAppend(document.body, urlDiv);
 		return urlDiv;
 	}
 
