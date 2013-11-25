@@ -233,6 +233,10 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 	};
 
 	apiInternal.events = {
+		registerObserverForRemoveBetterlink: function (fn) {
+			betterlink.exports.registerObserverForRemoveBetterlink(fn);
+		},
+
 		registerObserverForSubmissionDisplay: function (fn) {
 			betterlink.exports.registerObserverForSubmissionDisplay(fn);
 		},

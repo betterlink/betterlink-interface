@@ -24,6 +24,7 @@ betterlink_user_interface.createModule("Submissions.Viewer", function(api, apiIn
 	apiInternal.util.extend(api['config'], highlightConfig);
 
 	apiInternal.addInitListener(initializeHighlighterStyles);
+	apiInternal.events.registerObserverForRemoveBetterlink(removeDecorationFromLoadedSubmission);
 
 	function initializeHighlighterStyles() {
 		if(highlighterInitialized) {
