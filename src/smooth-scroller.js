@@ -5,8 +5,11 @@
  *
  */
 betterlink_user_interface.createModule("Smooth Scrolling", function(api, apiInternal, module) {
+	api.requireModules( ["Event Messaging"] );
+
+	apiInternal.events.registerObserverForRemoveBetterlink(stopAnyCurrentScrolling);
 	var scroller = {
-		// Setup and execute smooth scrolling. Assumes, this function is called explicitly,
+		// Setup and execute smooth scrolling. Assumes this function is called explicitly,
 		// not via a click handler.
 		// Returns if able to successfully scroll.
 		smoothScroll: function(destinationId, options) {
@@ -28,8 +31,7 @@ betterlink_user_interface.createModule("Smooth Scrolling", function(api, apiInte
 			}
 			if(scroller.PIXEL_BUFFER) desty -= scroller.PIXEL_BUFFER;
 
-			// Stop any current scrolling
-			clearInterval(scroller.INTERVAL);
+			stopAnyCurrentScrolling();
 
 			cypos = scroller.getCurrentYPos();
 
@@ -53,7 +55,7 @@ betterlink_user_interface.createModule("Smooth Scrolling", function(api, apiInte
 				// bottom of the page) then scroll exactly to the link
 				window.scrollTo(0,dest);
 				// cancel the repeating timer
-				clearInterval(scroller.INTERVAL);
+				stopAnyCurrentScrolling();
 			}
 		},
 
@@ -68,6 +70,10 @@ betterlink_user_interface.createModule("Smooth Scrolling", function(api, apiInte
 		}
 	};
 	apiInternal.smoothScroll = scroller.smoothScroll;
+
+	function stopAnyCurrentScrolling() {
+		clearInterval(scroller.INTERVAL);
+	}
 
 	function setOptions(options) {
 		// Defaults
