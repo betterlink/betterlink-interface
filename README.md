@@ -85,3 +85,5 @@ License
 ---------
 
 This library is distributed under the Apache 2.0 License found in the [LICENSE](https://github.com/betterlink/betterlink-interface/blob/master/LICENSE.txt) file.
+
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/1b3df9f53115d1cd77014833e5e698bc "githalytics.com")](http://githalytics.com/betterlink/betterlink-interface)
