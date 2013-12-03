@@ -1,3 +1,12 @@
+/**
+ * This file stubs out the core utilities that are used to initialize Betterlink
+ * modules and access their private API.
+ *
+ * You should not need to modify this file.
+ *
+ * This is not included in the public Betterlink build and is used specifically
+ * to glue the localy-defined modules into the core library.
+ */
 var betterlink_user_interface;
 betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 	var modules = [];
@@ -105,6 +114,7 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 
 	//******************** 'apiInternal' Sub-Modules ********************//
 
+	// 'Util'
 	apiInternal.util = {
 		extend: function (target) {
 			apiInternal.util.forEach(
@@ -149,6 +159,7 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 		}
 	};
 
+	// 'Util.DOM'
 	apiInternal.util.dom = {
 		// Designed to be executed when adding a top-level HTML element
 		// to the DOM. In addition to adding the element to the DOM, we
@@ -216,6 +227,7 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 		}
 	};
 
+	// 'Util.Ranges'
 	apiInternal.util.ranges = {
 		currentSelectionIsEmpty: function () {
 			// simple version for modern browsers + IE9
@@ -232,6 +244,7 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 		}
 	};
 
+	// 'Event Messaging'
 	apiInternal.events = {
 		registerObserverForRemoveBetterlink: function (fn) {
 			betterlink.exports.registerObserverForRemoveBetterlink(fn);
@@ -254,6 +267,7 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 		}
 	};
 
+	// 'Selection Highlighter'
 	apiInternal.highlighters = {
 		add: function(highlighterIdentifier, highlightOptions) {
 			betterlink.exports.addNewHighlighter(highlighterIdentifier, highlightOptions);
