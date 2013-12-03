@@ -9,6 +9,8 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 	var SELECTION_DIV_CLASS = "betterlink_selection";
 	var SUBMIT_BUTTON_TEXT = "Share Selection";
 
+	var LOADING_MESSAGE = "Generating your link...";
+
 	var SELECTION_CSS = ["{  margin: 2px;",
 							"padding: 3px;",
 							"width: auto;",
@@ -30,38 +32,6 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 							 	"color: #000080;",
 							 	"text-decoration: underline; }"].join(' ');
 
-	// via http://css-tricks.com/snippets/css/fixed-footer/
-	// Creates a 'sticky' footer at the bottom of the visible window.
-	//
-	// This is not a maintainable solution because I can't add a footer
-	// to pages that *already* have a persistent footer.
-	var URL_DIV_ID = "betterlink_url";
-	var RESPONSE_TEXT = "Your personal link: ";
-	var LOADING_MESSAGE = "Generating your link...";
-	var URL_CSS_TEXT = "#" + URL_DIV_ID +
-						 ["{ margin:0;",
-							"padding:0;",
-							"border:0;",
-							"border-radius:0;",
-							"position:fixed;",
-							"left:0px;",
-							"bottom:0px;",
-							"height:30px;",
-							"width:auto;",
-							"background:lightslategray;",
-							"color:whitesmoke; }"].join(' ') + 
-						"\n#" + URL_DIV_ID + " span" +
-						 ["{ padding:10px;",
-							"line-height:2; }"].join(' ') +
-						"\n#" + URL_DIV_ID + " a" +
-						 ["{ color:whitesmoke;",
-							"text-decoration:underline; }"].join(' ') +
-						"\n/* IE 6 */\n" +
-						"* html #" + URL_DIV_ID +
-						 ["{ position:absolute;",
-							"top:expression((0-(footer.offsetHeight)+(document.documentElement.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight)+(ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop))+'px');"
-							].join(' ');
-
 	var selectionDiv;
 	var selectionDivSubmissionButton;
 	var urlDiv;
@@ -77,7 +47,6 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 		apiInternal.interfaceInitialized = true;
 
 		selectionDiv = buildSelectionDiv();
-		//urlDiv = buildUrlDiv();
 		insertHighlightStyle();
 		attachMousedownEvent(function(e) { previousMousePosition = captureMousePosition(e); });
 		attachMouseupEvent(togglePositionAndDisplayOfSelectionDiv);
@@ -106,17 +75,6 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 		selectionDivSubmissionButton = submitButton;
 		apiInternal.util.dom.registerAndAppend(document.body, selectionDiv);
 		return selectionDiv;
-	}
-
-	function buildUrlDiv() {
-		insertFooterStyle();
-
-		var urlDiv = document.createElement("div");
-		urlDiv.id = URL_DIV_ID;
-		urlDiv.style.display = "none";
-
-		apiInternal.util.dom.registerAndAppend(document.body, urlDiv);
-		return urlDiv;
 	}
 
 	function attachMousedownEvent(eventName) {
@@ -204,10 +162,6 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 		apiInternal.util.dom.createAndAppendStyleElement(SELECTED_TEXT_CSS);
 	}
 
-	function insertFooterStyle() {
-		apiInternal.util.dom.createAndAppendStyleElement(URL_CSS_TEXT);
-	}
-
 	function sendSubmission() {
 		displayLoadingMessage();
 		apiInternal.events.fireNewSubmission();
@@ -219,52 +173,29 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 			var newUrl = result['message'];
 			console.log(newUrl);
 			
-			if(urlDiv) {
-				var span = document.createElement("span");
-				var anchor_element = apiInternal.util.dom.createAnchorElement(newUrl, newUrl, "_blank");
-				
-				span.appendChild(document.createTextNode(RESPONSE_TEXT));
-				span.appendChild(anchor_element);
-				apiInternal.util.dom.addOrReplaceChild(urlDiv, span);
+			var highlighterIdentifier = 'newSubmission';
+			createHighlighter(highlighterIdentifier, newUrl);
+			apiInternal.highlighters.highlightSelection(highlighterIdentifier, result['selection']);
+			apiInternal.util.ranges.removeCurrentSelection();
 
-				urlDiv.style.display = "";
-			}
-			else {
-				var highlighterIdentifier = 'newSubmission';
-				createHighlighter(highlighterIdentifier, newUrl);
-				apiInternal.highlighters.highlightSelection(highlighterIdentifier, result['selection']);
-				apiInternal.util.ranges.removeCurrentSelection();
-
-				apiInternal.util.dom.addOrReplaceChild(selectionDiv, selectionDivSubmissionButton);
-			}
+			apiInternal.util.dom.addOrReplaceChild(selectionDiv, selectionDivSubmissionButton);
 		}
 		else {
 			var message = result['message'];
 			
 			console.log(message);
-			if(urlDiv) {
-				var span = document.createElement("span");
-				span.appendChild(document.createTextNode(message));
-				apiInternal.util.dom.addOrReplaceChild(urlDiv, span);
-				
-				urlDiv.style.display = "";
-			}
+			// Display message for why the submission could not be completed
+			// Occurs if the server returns an error on submission, or the server
+			// response is invalid
+			// example message:
+			// "There was a problem building your share link"
 		}
 	}
 
 	function displayLoadingMessage() {
-		if(urlDiv) {
-			var span = document.createElement("span");
-			span.appendChild(document.createTextNode(LOADING_MESSAGE));
-			apiInternal.util.dom.addOrReplaceChild(urlDiv, span);
-
-			urlDiv.style.display = "";
-		}
-		else {
-			var span = document.createElement("span");
-			span.appendChild(document.createTextNode(LOADING_MESSAGE));
-			apiInternal.util.dom.addOrReplaceChild(selectionDiv, span);
-		}
+		var span = document.createElement("span");
+		span.appendChild(document.createTextNode(LOADING_MESSAGE));
+		apiInternal.util.dom.addOrReplaceChild(selectionDiv, span);
 	}
 
 	function createHighlighter(identifier, url) {
