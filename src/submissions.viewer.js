@@ -2,7 +2,7 @@
  * JS for building the styles to apply to highlighted content
  *
  */
-betterlink_user_interface.createModule("Submissions.Viewer", function(api, apiInternal, module) {
+betterlink_user_interface.createModule("Submissions.Viewer", function(api, apiInternal) {
 	api.requireModules( ["Util", "Util.DOM", "Event Messaging", "Selection Highlighter", "Smooth Scrolling"] );
 
 	var DEFAULT_HIGHLIGHT_CUSTOM_ELEMENT = "mark";				//the element type that will wrap the selections

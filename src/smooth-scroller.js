@@ -4,7 +4,7 @@
  * (http://www.kryogenix.org/code/browser/smoothscroll/smoothscroll.js)
  *
  */
-betterlink_user_interface.createModule("Smooth Scrolling", function(api, apiInternal, module) {
+betterlink_user_interface.createModule("Smooth Scrolling", function(api, apiInternal) {
 	api.requireModules( ["Event Messaging"] );
 
 	apiInternal.events.registerObserverForRemoveBetterlink(stopAnyCurrentScrolling);
