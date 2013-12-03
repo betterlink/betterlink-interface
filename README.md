@@ -68,6 +68,7 @@ We **do not** expect every feature to be available in every browser. However, th
 Within the core Betterlink library, we already handle most of the heavy-lifting to find selections and reconcile differences across browsers (using feature detection). The punchline: yes, we officially support IE6.
 
 This is motivated by two primary factors:
+
 1. We want to support the 20% ([and decreasing](http://www.ie6countdown.com/)) of the Internet population in China that still use IE6
 2. The user interface for Betterlink should be minimal
   - This interface could be displayed on literally any webpage around the web. Because we have limited knowledge of what those pages could look like or other libraries they may be using, the less interaction we create on the page, the less room there is for an improper assumption.
