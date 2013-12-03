@@ -26,7 +26,7 @@ This repository uses a special Betterlink build, `betterlink-no-interface.js`. T
 
 **Script Initialization**
 
-In order to allow custom styles and interaction to be defined, these have to be configured within Betterlink before initialization. If a Betterlink Highlight ID is present in the URL, we'd normally try to highlight that content immediately (but we can't without any styles!).
+In order to allow custom styles and interaction to be defined, these have to be configured within Betterlink before initialization. If a Betterlink Selection ID is present in the URL, we'd normally try to highlight that content immediately (but we can't without any styles!).
 
 To initialize Betterlink, the following two methods must be executed:
 - `betterlink.init()`
@@ -56,10 +56,6 @@ Platform Support
 
 With Betterlink, we strive to allow anyone to share content with anyone else \-\- the same way anyone can share a regular URL. To that end, we have wider platform support than most modern web services.
 
-Yes, that means IE6.
-
-Over 20% (and decreasing) of the Internet population in China still uses IE6. We'll continue to watch the numbers (http://www.ie6countdown.com/) and remove this support when appropriate.
-
 We **do not** expect every feature to be available in every browser. However, three basic features are priority:
 
 **For everyone**
@@ -67,7 +63,15 @@ We **do not** expect every feature to be available in every browser. However, th
 
 **For _almost_ everyone**
 - The ability to select content to share
-- The ability to store your new link
+- The ability to access the new link
+
+Within the core Betterlink library, we already handle most of the heavy-lifting to find selections and reconcile differences across browsers (using feature detection). The punchline: yes, we officially support IE6.
+
+This is motivated by two primary factors:
+1. We want to support the 20% ([and decreasing](http://www.ie6countdown.com/)) of the Internet population in China that still use IE6
+2. The user interface for Betterlink should be minimal
+  - This interface could be displayed on literally any webpage around the web. Because we have limited knowledge of what those pages could look like or other libraries they may be using, the less interaction we create on the page, the less room there is for an improper assumption.
+  - Our job is to provide a great new ability to the average web user, then get out of the way.
 
 Please consider the experience for mobile users and users with disabilities (ex: using a screenreader) in your contributions.
 
