@@ -179,6 +179,14 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 			return apiInternal.util.dom.createAndAppendStyleElement(css);
 		},
 
+		// Adds a style element that defines the style for a particular element
+		// ex: <style>#my_button { background: yellow; }</style>
+		addCssById: function (elementId, cssStyle) {
+			var css = '#' + elementId + ' ' + cssStyle;
+
+			return apiInternal.util.dom.createAndAppendStyleElement(css);
+		},
+
 		// The result of this function is that the parent should
 		// have a single child node (the one supplied by param)
 		addOrReplaceChild: function(parent, newNode) {

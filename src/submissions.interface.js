@@ -6,7 +6,6 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 	api.requireModules( ["Util.DOM", "Util.Ranges", "Event Messaging"] );
 
 	var SELECTION_DIV_ID = "betterlink_selection";
-	var SELECTION_DIV_CLASS = "betterlink_selection";
 	var SUBMIT_BUTTON_TEXT = "Share Selection";
 
 	var LOADING_MESSAGE = "Generating your link...";
@@ -61,7 +60,6 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 
 		var selectionDiv = document.createElement("div");
 		selectionDiv.id = SELECTION_DIV_ID;
-		selectionDiv.className = SELECTION_DIV_CLASS;
 		selectionDiv.style.position = "absolute";
 		hideSelectionDiv(selectionDiv);
 
@@ -155,7 +153,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 	}
 
 	function insertSelectionDivStyle() {
-		apiInternal.util.dom.addCssByClass(SELECTION_DIV_CLASS, SELECTION_CSS, "div");
+		apiInternal.util.dom.addCssById(SELECTION_DIV_ID, SELECTION_CSS);
 	}
 
 	function insertHighlightStyle() {
