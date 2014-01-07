@@ -6,6 +6,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 	api.requireModules( ["Util.DOM", "Util.Ranges", "Event Messaging"] );
 
 	var SELECTION_DIV_ID = "betterlink_selection";
+	var SUBMIT_BUTTON_ID = "betterlink_selection_button";
 	var SUBMIT_BUTTON_TEXT = "Share Selection";
 
 	var LOADING_MESSAGE = "Generating your link...";
@@ -16,6 +17,19 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 							"border: 1px solid black;",
 							"border-radius: 1em;",
 							"background-color: lightskyblue; }"].join(' ');
+
+	var SUBMIT_BUTTON_CSS = ["{  color: #333;",
+								"font-size: 14px;",
+								"font-weight: bold;",
+								"font-family: Arial, Helvetica, sans-serif;",
+								"line-height: initial;",
+								"margin: 2px;",
+								"padding: 2px 6px;",
+								"text-shadow: none;",
+								"box-shadow: none;",
+								"border: 2px outset buttonface;",
+								"border-radius: initial;",
+								"background: buttonface; }"].join(' ');
 
 	var SELECTED_TEXT_CSS_CLASS = "betterlink-selected";
 	var SELECTED_TEXT_CSS = "." + SELECTED_TEXT_CSS_CLASS + 
@@ -65,6 +79,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 
 		var submitButton = document.createElement("input");
 		submitButton.type = "button";
+		submitButton.id = SUBMIT_BUTTON_ID;
 		submitButton.value = SUBMIT_BUTTON_TEXT;
 		apiInternal.addListener(submitButton, "touchstart", sendSubmission);
 		apiInternal.addListener(submitButton, "click", sendSubmission);
@@ -154,6 +169,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 
 	function insertSelectionDivStyle() {
 		apiInternal.util.dom.addCssById(SELECTION_DIV_ID, SELECTION_CSS);
+		apiInternal.util.dom.addCssById(SUBMIT_BUTTON_ID, SUBMIT_BUTTON_CSS);
 	}
 
 	function insertHighlightStyle() {
