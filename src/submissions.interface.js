@@ -3,7 +3,7 @@
  *
  */
 betterlink_user_interface.createModule("Submissions.Interface", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "Util.Ranges", "Event Messaging"] );
+	api.requireModules( ["Util.DOM", "Util.Ranges", "Submissions", "Event Messaging"] );
 
 	var SELECTION_DIV_ID = "betterlink_selection";
 	var SUBMIT_BUTTON_ID = "betterlink_selection_button";
@@ -31,42 +31,29 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 								"border-radius: initial;",
 								"background: buttonface; }"].join(' ');
 
-	var SELECTED_TEXT_CSS_CLASS = "betterlink-selected";
-	var SELECTED_TEXT_CSS = "." + SELECTED_TEXT_CSS_CLASS + 
-							 [" { background: #F0E68C;",			// background: khaki
-								"color: #000080;",					// color: navy
-								"text-decoration: underline; }"].join(' ') + 
-							"a." + SELECTED_TEXT_CSS_CLASS + ":hover " +
-							 ["{ background: #F0E68C;",
-							 	"color: #000080;",
-							 	"text-decoration: underline; }"].join(' ') +
-							"a." + SELECTED_TEXT_CSS_CLASS + ":link " +
-							 ["{ background: #F0E68C;",
-							 	"color: #000080;",
-							 	"text-decoration: underline; }"].join(' ');
-
 	var selectionDiv;
 	var selectionDivSubmissionButton;
 	var urlDiv;
 	var previousMousePosition; // set on each mousedown event
+	apiInternal.submissions.interface = {
+		updateSubmissionDiv: updateSubmissionDiv,
+		resetSubmissionDiv: resetSubmissionDiv
+	};
 	/****************************************************************************************************/
 
 	apiInternal.addInitListener(initializeInterface);
 	function initializeInterface() {
-		if(apiInternal.interfaceInitialized) {
+		if(apiInternal.submissions.interface.initialized) {
 			return;
 		}
 
-		apiInternal.interfaceInitialized = true;
+		apiInternal.submissions.interface.initialized = true;
 
 		selectionDiv = buildSelectionDiv();
-		insertHighlightStyle();
 		attachMousedownEvent(function(e) { previousMousePosition = captureMousePosition(e); });
 		attachMouseupEvent(togglePositionAndDisplayOfSelectionDiv);
 		// TODO: Support keydown / keyup events for accessibility (when starting a selection)
 		// TODO: Handle when keydown event changes the selection (e.g., tabbing away from focus)
-
-		apiInternal.events.registerObserverForSubmissionDisplay(displaySubmissionResult);
 	}
 
 	function buildSelectionDiv() {
@@ -172,74 +159,25 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 		apiInternal.util.dom.addCssById(SUBMIT_BUTTON_ID, SUBMIT_BUTTON_CSS);
 	}
 
-	function insertHighlightStyle() {
-		apiInternal.util.dom.createAndAppendStyleElement(SELECTED_TEXT_CSS);
-	}
-
 	function sendSubmission() {
 		displayLoadingMessage();
 		apiInternal.events.fireNewSubmission();
 	}
 
-	// Expects an object { success: true, message: "my message here", selection: custom_obj }
-	function displaySubmissionResult(result) {
-		if(result['success']) {
-			var newUrl = result['message'];
-			console.log(newUrl);
-			
-			var highlighterIdentifier = 'newSubmission';
-			createHighlighter(highlighterIdentifier, newUrl);
-			apiInternal.highlighters.highlightSelection(highlighterIdentifier, result['selection']);
-			apiInternal.util.ranges.removeCurrentSelection();
-
-			apiInternal.util.dom.addOrReplaceChild(selectionDiv, selectionDivSubmissionButton);
-		}
-		else {
-			var message = result['message'];
-			
-			console.log(message);
-			// Display message for why the submission could not be completed
-			// Occurs if the server returns an error on submission, or the server
-			// response is invalid
-			// example message:
-			// "There was a problem building your share link"
-		}
-	}
-
 	function displayLoadingMessage() {
 		var span = document.createElement("span");
 		span.appendChild(document.createTextNode(LOADING_MESSAGE));
-		apiInternal.util.dom.addOrReplaceChild(selectionDiv, span);
+		updateSubmissionDiv(span);
 	}
 
-	function createHighlighter(identifier, url) {
-		var highlightOptions = {
+	// Update the 'selectionDiv' to contain the provided element
+	// Will replace any existing elements contained within the div
+	function updateSubmissionDiv(newElement) {
+		apiInternal.util.dom.addOrReplaceChild(selectionDiv, newElement);
+	}
 
-			// any element that's highlighted should have the following properties
-			'elementProperties': {
-				'href': url,
-				'title': 'Your custom link'
-			},
-
-			// elements that we will apply our CSS class to, instead of creating
-			// a new container element. ex:
-			// <span class="myclass">this is my text</span> v.
-			// <span><mark class="myclass">this is my text</mark></span>
-			//
-			// Note: if the existing element doesn't have all of the properties
-			// specified above, we'll create a new container element anyways.
-			'tagsToPreserve': ['a'],
-
-			// element type that we will wrap around the selected content when
-			// splitting text nodes or when we can't apply our class name to
-			// an existing element
-			'elementTagName': 'a',
-
-			// CSS class name that will be applied to each element that is
-			// highlighted
-			'cssClass': SELECTED_TEXT_CSS_CLASS
-		};
-
-		apiInternal.highlighters.add(identifier, highlightOptions);
+	// Reset the 'selectionDiv' to contain its original elements
+	function resetSubmissionDiv() {
+		updateSubmissionDiv(selectionDivSubmissionButton);
 	}
 });

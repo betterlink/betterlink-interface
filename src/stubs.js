@@ -290,5 +290,8 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 		}
 	};
 
+	// 'Submissions'
+	apiInternal.submissions = {};
+
 	return ret;
 })();
