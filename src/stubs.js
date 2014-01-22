@@ -170,6 +170,24 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 			target.appendChild(new_node);
 		},
 
+		// Designed to be executed when inserting a top-level HTML element
+		// to the DOM. In addition to adding the element to the DOM, we
+		// will register the element internally. This provides later
+		// access if we need to detach Betterlink.
+		registerAndInsertBefore: function(newElement, referenceElement) {
+			betterlink.exports.registerDomElements(newElement);
+			referenceElement.parentNode.insertBefore(newElement, referenceElement);
+		},
+
+		// Designed to be executed when inserting a top-level HTML element
+		// to the DOM. In addition to adding the element to the DOM, we
+		// will register the element internally. This provides later
+		// access if we need to detach Betterlink.
+		registerAndInsertAfter: function(newElement, referenceElement) {
+			betterlink.exports.registerDomElements(newElement);
+			referenceElement.parentNode.insertBefore(newElement, referenceElement.nextSibling);
+		},
+
 		// Adds a style element that defines the style for a particular class
 		// ex: <style>div.highlight { background: yellow; }</style>
 		addCssByClass: function (cssClass, cssStyle, optElement) {
