@@ -296,7 +296,7 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 	// 'Selection Highlighter'
 	apiInternal.highlighters = {
 		add: function(highlighterIdentifier, highlightOptions) {
-			betterlink.exports.addNewHighlighter(highlighterIdentifier, highlightOptions);
+			return betterlink.exports.addNewHighlighter(highlighterIdentifier, highlightOptions);
 		},
 
 		highlightSelection: function(highlighterIdentifier, selection) {
