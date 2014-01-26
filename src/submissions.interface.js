@@ -64,6 +64,9 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 
 	var activeHighlighters = [];
 
+	var userClickTimeout,
+		userClickThreshold = 250;	// milliseconds between a click & double-click
+
 	var identifierAttributeName = "data-identifier";
 	var highlightBookends = {};
 
@@ -81,7 +84,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 
 		insertProspectiveSubmissionStyle();
 		insertBookendStyles();
-		attachMouseupEvent(toggleDisplayOfProspectiveSubmissions);
+		insertDocumentListeners();
 	}
 
 	// The 'prospective submission' style is used to markup a selection that could
@@ -100,6 +103,54 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 		apiInternal.util.dom.addCssByClass(L_BOTTOM_CSS_CLASS, L_BOTTOM_CSS);
 	}
 
+	// When the user finishes a click (on mouseup), toggle the display of prospective
+	// submissions. Remove previously highlighted sections and mark the new selection.
+	function insertDocumentListeners() {
+		// Because we are highlighting the prospective submission and turning the result
+		// into a click-handler, a triple-click (selecting a full paragraph of text) will
+		// end up executing the result of a double-click (selecting a word of text).
+		//
+		// Instead, we attempt to consolidate multiple click events into a single execution.
+		// Complicating this, a 'mouseup' event executes anytime the user lets go of the
+		// mouse button. However, a 'click' event only executes when the user depresses and
+		// releases the mouse ontop of a single element. We need to handle both situations.
+		//
+		// General structure is similar to 'debouncing', as outlined by John Hann:
+		// http://unscriptable.com/2009/03/20/debouncing-javascript-methods/
+		//
+		// We execute the event once after we've stopped receiving signals within a
+		// predefined threshold. Mouseup events set the first timer. Click events reset
+		// the timer until they stop.
+		apiInternal.addListener(document, "mouseup", setUserClickTimeout);
+		apiInternal.addListener(document, "click", resetUserClickTimeout);
+	}
+
+	function setUserClickTimeout() {
+		if(!userClickTimeout) { // don't retrigger on subsequent mouseups
+			userClickTimeout = setTimeout(executeDelayedAction, userClickThreshold);
+		}
+	}
+
+	function resetUserClickTimeout() {
+		if(userClickTimeout) {
+			clearTimeout(userClickTimeout);
+			userClickTimeout = setTimeout(executeDelayedAction, userClickThreshold);
+		}
+
+		// A second option is to check if we've achieved three clicks (a triple-click)
+		// and immediately execute our action. However, this would no longer allow a
+		// user to cycle between triple and double-clicking a word v. paragraph. Since
+		// the delay is small enough, we'll just wait the extra time.
+		// Note: this behavior is browser-specific (ex: Firefox, not Chrome)
+	}
+
+	// This action should be executed only a single time during the consolidation of
+	// multiple click events.
+	function executeDelayedAction() {
+		userClickTimeout = null;
+		toggleDisplayOfProspectiveSubmissions();
+	}
+
 	// Triggered on a mouseup event. If the user is finishing their click with part of
 	// the document selected, then markup the document to identify the prospective
 	// Betterlink submission. Also, remove any prior submission markups.
@@ -115,6 +166,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 		apiInternal.util.forEach(activeHighlighters, function(highlighterName, index) {
 			apiInternal.highlighters.removeAllHighlights(highlighterName);
 
+			// example highlighterName: "prospectiveSubmission|123843723"
 			var highlighterId = /\|(.*)/.exec(highlighterName)[1];
 			removeSelectionBookends(highlighterId)
 		});
@@ -127,13 +179,12 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 	function decorateProspectiveSubmission() {
 		var uniqueIdentifier = Math.floor(1E8 * Math.random());
 		var highlighterName = HIGHLIGHTER_ID_PREFIX + "|" + uniqueIdentifier;
-		var activeSelection = apiInternal.util.ranges.getCurrentSelection();
 
 		activeHighlighters.push(highlighterName);
 		var success = createProspectiveSubmissionHighlighter(highlighterName, uniqueIdentifier);
 
 		if(success) {
-			apiInternal.highlighters.highlightSelection(highlighterName, activeSelection);
+			apiInternal.highlighters.highlightSelection(highlighterName);
 			insertSelectionBookends(uniqueIdentifier);
 		}
 		else {
@@ -165,7 +216,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 	}
 
 	// Remove the bookends associated with a particular highlighter identifier. When removing
-	// the elements from the DOM, we don't need to 'unregister' them with Betterlink. If\
+	// the elements from the DOM, we don't need to 'unregister' them with Betterlink. If
 	// Betterlink needs to be detached, it will silently skip over registered elements that
 	// have already been removed from the DOM.
 	function removeSelectionBookends(highlighterId) {
@@ -190,16 +241,8 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 	// Submit the selection to the server
 	function sendSubmission() {
 		// displayLoadingMessage();
-		apiInternal.events.fireNewSubmission(); // needs to pass the previous selection
+		apiInternal.events.fireNewSubmission(); // needs to pass the previous selection (from removeDecorations)
 		removeExistingDecorations();
-	}
-
-	function attachMousedownEvent(eventName) {
-		apiInternal.addListener(document, "mousedown", eventName);
-	}
-
-	function attachMouseupEvent(eventName) {
-		apiInternal.addListener(document, "mouseup", eventName);
 	}
 
 	// Return if the document has any text that is currently selected
@@ -247,7 +290,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 			// highlighted
 			'cssClass': PROSPECTIVE_SUBMISSION_CSS_CLASS,
 
-			// Callback function that will get executed for each HTML element
+			// callback function that will get executed for each HTML element
 			// that is created. Will be passed a single parameter for the element
 			// created.
 			'onElementCreate': decorationCallback
@@ -258,13 +301,19 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 
 	// Executed for each element that is created during the decoration process
 	function decorationCallback(element) {
+		storeReferencesForBookends(element);
+		addClickHandlers(element);
+	}
+
+	// Store references to the elements that are created, so that we can wrap the
+	// elements in visual bookends (to mark the range). The elements that are created
+	// each contain an identifier attribute to tell us which highlighter was used
+	// to create the element.
+	function storeReferencesForBookends(element) {
 		var identifier = element.getAttribute(identifierAttributeName);
 		if(identifier) {
 			storeBookends(identifier, element);
 		}
-
-		apiInternal.addListener(element, "touchstart", sendSubmission);
-		apiInternal.addListener(element, "click", sendSubmission);
 	}
 
 	// Store references to the first and last HTML elements that are created. The
@@ -279,5 +328,11 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 				end: mostRecentElement
 			};
 		}
+	}
+
+	// Execute sendSubmission() when the provided element is clicked
+	function addClickHandlers(element) {
+		apiInternal.addListener(element, "touchstart", sendSubmission);
+		apiInternal.addListener(element, "click", sendSubmission);
 	}
 });
