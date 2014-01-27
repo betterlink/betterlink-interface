@@ -236,6 +236,8 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 			return a;
 		},
 
+		// Creates and returns a new <style> element that has been added
+		// to the DOM, containing the provided CSS text.
 		createAndAppendStyleElement: function(cssText) {
 			var head = document.head || document.getElementsByTagName('head')[0];
 			var style = document.createElement('style');
@@ -265,6 +267,9 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 			}
 		},
 
+		// Removes the current selection from the document. Functionally,
+		// this means that a user selection (e.g., highlighting a portion
+		// of the document) will be undone.
 		removeCurrentSelection: function() {
 			betterlink.exports.removeCurrentSelection();
 		}
@@ -295,22 +300,74 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 
 	// 'Selection Highlighter'
 	apiInternal.highlighters = {
+		// Creates and internally stores a new 'highlighter' that will be used
+		// to decorate the DOM. The highlighter can be accessed by clients using
+		// a user-provided identifier.
+		// In addition to an identifer, the following parameters are required
+		// to define how the highlighter will function:
+		//
+		// elementProperties: array of properties; any element that's highlighted
+		//                    should have the provided properties
+		//
+		// elementAttributes: array of non-standard element attributes (ex: HTML5
+		//                    data attributes); any element that's highlighted should
+		//                    have the provided attributes
+		//
+		// tagsToPreserve:    elements that we will apply our CSS class to, instead
+		//                    of creating a new container element. ex:
+		//                    <span class="myclass">this is my text</span> v.
+		//                    <span><mark class="myclass">this is my text</mark></span>
+		//
+		//                    Note: if the existing element doesn't have all of the
+		//                    properties specified above, we'll create a new container
+		//                    element anyways.
+		//
+		// elementTagName:    element type that we will wrap around the selected
+		//                    content when splitting text nodes or when we can't apply
+		//                    our class name to an existing element
+		//
+		// cssClass:          CSS class name that will be applied to each element that
+		//                    is highlighted
+		//
+		// Optional:
+		// onElementCreate:   callback function that should be executed after the new
+		//                    elements are created
+		//
+		// If successful, this function will return the highlightIdentifier used to create
+		// the highlighter. Otherwise, the function will return `false`.
 		add: function(highlighterIdentifier, highlightOptions) {
 			return betterlink.exports.addNewHighlighter(highlighterIdentifier, highlightOptions);
 		},
 
+		// Highlight the provided selection using a particular highlighter. If
+		// no selection is provided, use the active user selection on the document.
+		// After highlight, will ensure that the user selection is still selected.
+		//
+		// Will return an array of ranges which enclose the highlighted content.
 		highlightSelection: function(highlighterIdentifier, selection) {
 			return betterlink.exports.decorateSelection(highlighterIdentifier, selection);
 		},
 
+		// Highlight the provided array of ranges using a particular highlighter.
+		//
+		// Will return a new array of ranges that match the initial input, but with
+		// the added highlighted markup.
 		highlightRanges: function(highlighterIdentifier, ranges) {
 			return betterlink.exports.decorateRanges(highlighterIdentifier, ranges);
 		},
 
+		// Remove any highlights that have been added to the page using the
+		// provided highlighter.
 		removeAllHighlights: function(highlighterIdentifier) {
 			betterlink.exports.removeAllDecoration(highlighterIdentifier);
 		},
 
+		// Remove any highlights that are contained within the provided array
+		// of ranges. In order to be removed, the range must be valid (not modified
+		// since creation) and must fully enclose the highlighted section.
+		//
+		// Will return a new array of ranges that match the initial input, but
+		// without the prior highlighted markup.
 		removeHighlightFromRanges: function(highlighterIdentifier, ranges) {
 			return betterlink.exports.removeDecorationFromRanges(highlighterIdentifier, ranges);
 		}
