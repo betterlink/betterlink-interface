@@ -303,8 +303,16 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 			return betterlink.exports.decorateSelection(highlighterIdentifier, selection);
 		},
 
+		highlightRanges: function(highlighterIdentifier, ranges) {
+			return betterlink.exports.decorateRanges(highlighterIdentifier, ranges);
+		},
+
 		removeAllHighlights: function(highlighterIdentifier) {
 			betterlink.exports.removeAllDecoration(highlighterIdentifier);
+		},
+
+		removeHighlightFromRanges: function(highlighterIdentifier, ranges) {
+			return betterlink.exports.removeDecorationFromRanges(highlighterIdentifier, ranges);
 		}
 	};
 
