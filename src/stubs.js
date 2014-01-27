@@ -300,7 +300,7 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 		},
 
 		highlightSelection: function(highlighterIdentifier, selection) {
-			betterlink.exports.decorateSelection(highlighterIdentifier, selection);
+			return betterlink.exports.decorateSelection(highlighterIdentifier, selection);
 		},
 
 		removeAllHighlights: function(highlighterIdentifier) {
