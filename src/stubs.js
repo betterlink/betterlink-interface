@@ -49,11 +49,13 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 	}
 
 	// Event Listener
-	function addListener (obj, eventType, listener) {
+	function addListener (obj, eventType, listener, scope) {
+		var scopedHandler = scope ? function(e) { return listener.apply(scope, [e]); } : listener;
 		if(isHostMethod(document, "addEventListener")) {
-			obj.addEventListener(eventType, listener, false);
+			obj.addEventListener(eventType, scopedHandler, false);
 		} else if (isHostMethod(document, "attachEvent")) {
-			obj.attachEvent("on" + eventType, listener);
+			obj.attachEvent("on" + eventType, scopedHandler);
+			return scopedHandler; // so can be removed
 		} else {
 			console.log("cannot add events");
 		}
