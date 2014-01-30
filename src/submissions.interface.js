@@ -63,6 +63,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 	// ************************************************************
 
 	var activeHighlighters = [];
+	var submittedHighlighters = [];
 
 	var userClickTimeout,
 		userClickThreshold = 250;	// milliseconds between a click & double-click
@@ -70,11 +71,13 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 	var identifierAttributeName = "data-identifier";
 	var highlightBookends = {};
 
-	apiInternal.submissions.interface = {};
+	apiInternal.submissions.interface = {
+		cleanupSubmittedHighlighters: cleanupSubmittedHighlighters
+	};
 	/****************************************************************************************************/
 
 	apiInternal.addInitListener(initializeInterface);
-	apiInternal.events.registerObserverForRemoveBetterlink(removeExistingDecorations);
+	apiInternal.events.registerObserverForRemoveBetterlink(removeExistingHighlighters);
 	function initializeInterface() {
 		if(apiInternal.submissions.interface.initialized) {
 			return;
@@ -151,24 +154,113 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 		toggleDisplayOfProspectiveSubmissions();
 	}
 
+	// ****** Highlighter Proxy Object ******
+	function HighlighterProxy(highlighterName, identifier) {
+		highlighter = this;
+		highlighter.name = highlighterName;
+		highlighter.identifier = identifier;
+	}
+
+	HighlighterProxy.prototype = {
+		// Store the last ranges that were associated with our highlighter API. Because
+		// these ranges are invalidated after any subsequent changes to the DOM, we
+		// only ever need the last set that was returned.
+		//
+		// A rangeEvent can be used as a reference for which action created the range.
+		storeLastRanges: function(ranges, rangeEvent) {
+			this.lastActiveRanges = ranges;
+			this.lastActiveRangeType = rangeEvent;
+		},
+
+		sendSubmission: function() {
+			this.removeExistingDecorations();
+			apiInternal.events.fireNewSubmission(this.lastActiveRanges);
+			submittedHighlighters.push(this);
+		},
+
+		// Remove any highlights from the document associated with this highlighter.
+		removeExistingDecorations: function() {
+			var rangesToRemove = this.lastActiveRanges;
+
+			if(rangesToRemove) {
+				var undoneRanges = this.removeHighlightFromRanges(rangesToRemove);
+				this.storeLastRanges(undoneRanges, 'afterUndo');
+			}
+
+			removeSelectionBookends(this.identifier);
+		},
+
+		// Fully remove any traces of this highlighter from the document and remove
+		// its associated bookends
+		nuclearRemoveFromDocument: function() {
+			this.removeAllHighlights();
+			removeSelectionBookends(this.identifier);
+		},
+
+		highlightSelection: function() {
+			return apiInternal.highlighters.highlightSelection(this.name);
+		},
+
+		highlightRanges: function(rangesToHighlight) {
+			return apiInternal.highlighters.highlightRanges(this.name, rangesToHighlight);
+		},
+
+		removeAllHighlights: function() {
+			apiInternal.highlighters.removeAllHighlights(this.name);
+		},
+
+		removeHighlightFromRanges: function(rangesToRemove) {
+			return apiInternal.highlighters.removeHighlightFromRanges(this.name, rangesToRemove);
+		},
+
+		// Signal that all decorations associated with this highlighter have been
+		// removed and that the highlighter shouldn't be used for anything else
+		detach: function() {
+			if(!this.detached) {
+				this.detached = true;
+				this.nuclearRemoveFromDocument();
+			}
+		}
+	};
+	// ****** Highlighter Proxy Object ******
+
+	function cleanupSubmittedHighlighters() {
+		// When we are submitting the result of a highlighter, we want to make
+		// sure everything about that highlighter is cleaned up once the submission
+		// is successful. However, there may be multiple submissions happening in
+		// parallel.
+		//
+		// Because of that, we can't just detach every highlighter that's been
+		// submitted. When we call detach(), we end up modifying the DOM, which
+		// will invalidate the previous range and make it more difficult to
+		// highlight the submitted result.
+		//
+		// We can fake it by cleaning up the oldest highlighter in the array. Ideally
+		// we could just attach an event listenter (or something) that would alert
+		// this particular object to clean itself up.
+		for(var i = 0, len = submittedHighlighters.length; i < len; i++) {
+			var highlighter = submittedHighlighters[i];
+			if(!highlighter.detached) {
+				highlighter.detach();
+				break;
+			}
+		}
+	}
+
 	// Triggered on a mouseup event. If the user is finishing their click with part of
 	// the document selected, then markup the document to identify the prospective
 	// Betterlink submission. Also, remove any prior submission markups.
 	function toggleDisplayOfProspectiveSubmissions() {
 		if(!selectionIsEmpty()) { // only change if something else is being selected
-			removeExistingDecorations();
+			removeExistingHighlighters();
 			decorateProspectiveSubmission();
 		}
 	}
 
 	// Remove any highlights that might already be on the page for previous selections
-	function removeExistingDecorations() {
-		apiInternal.util.forEach(activeHighlighters, function(highlighterName, index) {
-			apiInternal.highlighters.removeAllHighlights(highlighterName);
-
-			// example highlighterName: "prospectiveSubmission|123843723"
-			var highlighterId = /\|(.*)/.exec(highlighterName)[1];
-			removeSelectionBookends(highlighterId)
+	function removeExistingHighlighters() {
+		apiInternal.util.forEach(activeHighlighters, function(highlighter, index) {
+			highlighter.detach();
 		});
 		activeHighlighters.length = 0;
 	}
@@ -180,11 +272,15 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 		var uniqueIdentifier = Math.floor(1E8 * Math.random());
 		var highlighterName = HIGHLIGHTER_ID_PREFIX + "|" + uniqueIdentifier;
 
-		activeHighlighters.push(highlighterName);
 		var success = createProspectiveSubmissionHighlighter(highlighterName, uniqueIdentifier);
 
 		if(success) {
-			apiInternal.highlighters.highlightSelection(highlighterName);
+			var highlighter = new HighlighterProxy(highlighterName, uniqueIdentifier);
+			activeHighlighters.push(highlighter);
+
+			var highlightedRanges = highlighter.highlightSelection();
+			highlighter.storeLastRanges(highlightedRanges, 'afterHighlight');
+
 			insertSelectionBookends(uniqueIdentifier);
 		}
 		else {
@@ -236,13 +332,6 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 			}
 			delete highlightBookends[highlighterId];
 		}
-	}
-
-	// Submit the selection to the server
-	function sendSubmission() {
-		// displayLoadingMessage();
-		apiInternal.events.fireNewSubmission(); // needs to pass the previous selection (from removeDecorations)
-		removeExistingDecorations();
 	}
 
 	// Return if the document has any text that is currently selected
@@ -332,7 +421,29 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 
 	// Execute sendSubmission() when the provided element is clicked
 	function addClickHandlers(element) {
-		apiInternal.addListener(element, "touchstart", sendSubmission);
-		apiInternal.addListener(element, "click", sendSubmission);
+		var identifier = element.getAttribute(identifierAttributeName);
+		var highlighter = getHighlighterWithIdentifier(identifier);
+
+		var callback = highlighter ? highlighter.sendSubmission : displayCallbackWarning;
+
+		apiInternal.addListener(element, "touchstart", callback, highlighter);
+		apiInternal.addListener(element, "click", callback, highlighter);
+	}
+
+	// Return the active highlighter associated with a particular identifier
+	function getHighlighterWithIdentifier(identifier) {
+		if(identifier) {
+			for(var i = 0, len = activeHighlighters.length; i < len; i++) {
+				var highlighter = activeHighlighters[i];
+				if(highlighter.identifier+'' === identifier) {
+					return highlighter;
+				}
+			}
+		}
+		return null;
+	}
+
+	function displayCallbackWarning() {
+		apiInternal.warn("Unable to find the active highlighter and submission associated with this element");
 	}
 });

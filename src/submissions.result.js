@@ -42,10 +42,9 @@ betterlink_user_interface.createModule("Submissions.Result", function(api, apiIn
 
 			var highlighterIdentifier = 'newSubmission';
 			createSubmissionResultHighlighter(highlighterIdentifier, newUrl);
-			apiInternal.highlighters.highlightSelection(highlighterIdentifier, result['selection']);
-			apiInternal.util.ranges.removeCurrentSelection();
+			apiInternal.highlighters.highlightRanges(highlighterIdentifier, result['selection']);
 
-			apiInternal.submissions.interface.resetSubmissionDiv();
+			apiInternal.submissions.interface.cleanupSubmittedHighlighters();
 		}
 		else {
 			var message = result['message'];
