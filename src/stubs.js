@@ -287,8 +287,8 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 			betterlink.exports.registerObserverForSubmissionDisplay(fn);
 		},
 		
-		fireNewSubmission: function () {
-			betterlink.exports.fireNewSubmission();
+		fireNewSubmission: function (rangesToSubmit) {
+			betterlink.exports.fireNewSubmission(rangesToSubmit);
 		},
 		
 		registerObserverForReadyToDecorate: function (fn) {
