@@ -251,8 +251,17 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 	// the document selected, then markup the document to identify the prospective
 	// Betterlink submission. Also, remove any prior submission markups.
 	function toggleDisplayOfProspectiveSubmissions() {
-		if(!selectionIsEmpty()) { // only change if something else is being selected
+		if(!selectionIsEmpty()) {
+			// A simple remove-and-redecorate will fail if the user is selecting text
+			// that intersects an already-highlighted section. This is because the
+			// highlighter removal will adjust the DOM and change the ranges that are
+			// being selected.
+			//
+			// Saving and restoring the selection allows us to recreate the selection
+			// after the DOM has been modified.
+			var savedSelection = apiInternal.util.ranges.saveSelection();
 			removeExistingHighlighters();
+			apiInternal.util.ranges.restoreSelection(savedSelection);
 			decorateProspectiveSubmission();
 		}
 	}

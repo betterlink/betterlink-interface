@@ -269,6 +269,25 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 			}
 		},
 
+		// Create invisible bookends within the DOM that bound the active
+		// user selection. This function will return an object that can
+		// be used within restoreSelection() to recreate the previous
+		// selection.
+		//
+		// This method is useful when subsequent changes to the DOM will
+		// invalidate a saved range or remove the user selection. The
+		// selection can usually be recovered after these changes.
+		saveSelection: function() {
+			return betterlink.exports.saveSelection();
+		},
+
+		// Restores a previously saved selection created via saveSelection().
+		// Upon restoring the selection, the bookends in the DOM will be removed
+		// and cannot be reused.
+		restoreSelection: function(savedSelection) {
+			betterlink.exports.restoreSelection(savedSelection);
+		},
+
 		// Removes the current selection from the document. Functionally,
 		// this means that a user selection (e.g., highlighting a portion
 		// of the document) will be undone.
