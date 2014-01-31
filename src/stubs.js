@@ -288,6 +288,27 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 			betterlink.exports.restoreSelection(savedSelection);
 		},
 
+		// Enclose the provided array of ranges in bookend DOM elements. The
+		// elements will be added to the beginning and end of each range.
+		//
+		// By default, new <span> elements will be appended to the DOM. If a
+		// custom element is provided, clones of that node will enclose the
+		// range. If classnames are provided in addition to the custom element,
+		// then then class1 and class2 will be applied to the beginning and
+		// ending bookends, respectively.
+		//
+		// Returns an object that can be used within removeRangeEnclosures() to
+		// remove the created bookends.
+		encloseRanges: function(ranges, opt_element, class1, class2) {
+			return betterlink.exports.encloseRanges(ranges, opt_element, class1, class2);
+		},
+
+		// Removes the bookends that were created via encloseRanges(). Upon
+		// completion, the DOM elements will be completely removed.
+		removeRangeEnclosures: function(savedRangeEnclosure) {
+			betterlink.exports.removeRangeEnclosures(savedRangeEnclosure);
+		},
+
 		// Removes the current selection from the document. Functionally,
 		// this means that a user selection (e.g., highlighting a portion
 		// of the document) will be undone.
