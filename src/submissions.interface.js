@@ -69,7 +69,6 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 		userClickThreshold = 250;	// milliseconds between a click & double-click
 
 	var identifierAttributeName = "data-identifier";
-	var highlightBookends = {};
 
 	apiInternal.submissions.interface = {
 		cleanupSubmittedHighlighters: cleanupSubmittedHighlighters
@@ -172,6 +171,23 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 			this.lastActiveRangeType = rangeEvent;
 		},
 
+		// Insert bookend elements before and after the area that was highlighted. These
+		// indicate the range of the highlight to the user.
+		encloseInBookends: function() {
+			var baseElement = document.createElement('b');
+			var bookends = apiInternal.util.ranges.encloseRanges(
+				this.lastActiveRanges, baseElement, L_TOP_CSS_CLASS, L_BOTTOM_CSS_CLASS);
+			this.bookends = bookends;
+		},
+
+		// Remove the bookends that are enclosing this highlighted region
+		removeBookends: function() {
+			if(this.bookends) {
+				apiInternal.util.ranges.removeRangeEnclosures(this.bookends);
+				this.bookends = null;
+			}
+		},
+
 		sendSubmission: function() {
 			this.removeExistingDecorations();
 			apiInternal.events.fireNewSubmission(this.lastActiveRanges);
@@ -187,14 +203,15 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 				this.storeLastRanges(undoneRanges, 'afterUndo');
 			}
 
-			removeSelectionBookends(this.identifier);
+			// Bookends do not need to be removed because they become a part of the
+			// prior range and will get removed within removeHighlightFromRanges().
 		},
 
 		// Fully remove any traces of this highlighter from the document and remove
 		// its associated bookends
 		nuclearRemoveFromDocument: function() {
 			this.removeAllHighlights();
-			removeSelectionBookends(this.identifier);
+			this.removeBookends();
 		},
 
 		highlightSelection: function() {
@@ -290,56 +307,11 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 			var highlightedRanges = highlighter.highlightSelection();
 			highlighter.storeLastRanges(highlightedRanges, 'afterHighlight');
 
-			insertSelectionBookends(uniqueIdentifier);
+			//insertSelectionBookends(uniqueIdentifier);
+			highlighter.encloseInBookends();
 		}
 		else {
 			apiInternal.warn('There was a problem adding a highlighter to markup prospective submissions');
-		}
-	}
-
-	// Insert bookend elements before and after the area that was highlighted. These indicate
-	// the range of the highlight to the user.
-	// The start and end elements are saved via a callback function that runs when each of the
-	// elements are created.
-	function insertSelectionBookends(highlighterId) {
-		if(highlightBookends[highlighterId]) {
-			var startElement = highlightBookends[highlighterId].start;
-			var endElement = highlightBookends[highlighterId].end;
-
-			var startBookend = document.createElement('b');
-			startBookend.className = L_TOP_CSS_CLASS;
-
-			var endBookend = document.createElement('b');
-			endBookend.className = L_BOTTOM_CSS_CLASS;
-
-			apiInternal.util.dom.registerAndInsertBefore(startBookend, startElement);
-			apiInternal.util.dom.registerAndInsertAfter(endBookend, endElement);
-
-			highlightBookends[highlighterId].startBookend = startBookend;
-			highlightBookends[highlighterId].endBookend = endBookend;
-		}
-	}
-
-	// Remove the bookends associated with a particular highlighter identifier. When removing
-	// the elements from the DOM, we don't need to 'unregister' them with Betterlink. If
-	// Betterlink needs to be detached, it will silently skip over registered elements that
-	// have already been removed from the DOM.
-	function removeSelectionBookends(highlighterId) {
-		if(highlightBookends[highlighterId]) {
-			var startBookend = highlightBookends[highlighterId].startBookend;
-			var endBookend = highlightBookends[highlighterId].endBookend;
-
-			if(startBookend) {
-				if(startBookend.parentNode) {
-					startBookend.parentNode.removeChild(startBookend);
-				}
-			}
-			if(endBookend) {
-				if(endBookend.parentNode) {
-					endBookend.parentNode.removeChild(endBookend);
-				}
-			}
-			delete highlightBookends[highlighterId];
 		}
 	}
 
@@ -399,33 +371,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 
 	// Executed for each element that is created during the decoration process
 	function decorationCallback(element) {
-		storeReferencesForBookends(element);
 		addClickHandlers(element);
-	}
-
-	// Store references to the elements that are created, so that we can wrap the
-	// elements in visual bookends (to mark the range). The elements that are created
-	// each contain an identifier attribute to tell us which highlighter was used
-	// to create the element.
-	function storeReferencesForBookends(element) {
-		var identifier = element.getAttribute(identifierAttributeName);
-		if(identifier) {
-			storeBookends(identifier, element);
-		}
-	}
-
-	// Store references to the first and last HTML elements that are created. The
-	// intent is that we'll use these references to place our bookend elements
-	function storeBookends(identifier, mostRecentElement) {
-		if(highlightBookends[identifier]) {
-			highlightBookends[identifier].end = mostRecentElement;
-		}
-		else {
-			highlightBookends[identifier] = {
-				start: mostRecentElement,
-				end: mostRecentElement
-			};
-		}
 	}
 
 	// Execute sendSubmission() when the provided element is clicked
