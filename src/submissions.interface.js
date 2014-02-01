@@ -61,6 +61,10 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 	var L_BOTTOM_CSS_CLASS = "betterlink-l-bottom";
 	var L_BOTTOM_CSS = l_shared_css.replace("{", "{ " + l_bottom_addition);
 
+	// ******************** Hidden CSS ********************
+	var BOOKEND_HIDDEN_CSS_CLASS = "betterlink-bookend-hidden";
+	var BOOKEND_HIDDEN_CSS = "{ display: none; }";
+
 	// ************************************************************
 
 	var activeHighlighters = [];
@@ -99,11 +103,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 	// Bookends will be added to the DOM to enclose the prospective submission, so
 	// that it is clear to the user that they can interact with the content there.
 	function insertBookendStyles() {
-		apiInternal.util.dom.addCssByClass(ARROW_DOWN_CSS_CLASS, ARROW_DOWN_CSS);
-		apiInternal.util.dom.addCssByClass(ARROW_UP_CSS_CLASS, ARROW_UP_CSS);
-
-		apiInternal.util.dom.addCssByClass(L_TOP_CSS_CLASS, L_TOP_CSS);
-		apiInternal.util.dom.addCssByClass(L_BOTTOM_CSS_CLASS, L_BOTTOM_CSS);
+		apiInternal.util.dom.addCssByClass(BOOKEND_HIDDEN_CSS_CLASS, BOOKEND_HIDDEN_CSS);
 	}
 
 	// When the user finishes a click (on mouseup), toggle the display of prospective
@@ -177,7 +177,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 		encloseInBookends: function() {
 			var baseElement = document.createElement('b');
 			var bookends = apiInternal.util.ranges.encloseRanges(
-				this.lastActiveRanges, baseElement, L_TOP_CSS_CLASS, L_BOTTOM_CSS_CLASS);
+				this.lastActiveRanges, baseElement, BOOKEND_HIDDEN_CSS_CLASS, BOOKEND_HIDDEN_CSS_CLASS);
 			this.bookends = bookends;
 		},
 
