@@ -254,6 +254,37 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 
 			apiInternal.util.dom.registerAndAppend(head, style);
 			return style;
+		},
+
+		// Private function for getElementsByClassName for IE8- compatibility
+		// Derived from Eike Send, MIT License
+		// https://gist.github.com/eikes/2299607
+		getElementsByClassName: function(search) {
+			if(document.getElementsByClassName) {
+				return document.getElementsByClassName(search);
+			}
+
+			var d = document, elements, pattern, i, results = [];
+
+			if (d.querySelectorAll) { // IE8
+				return d.querySelectorAll("." + search);
+			}
+			if (d.evaluate) { // IE6, IE7
+				pattern = ".//*[contains(concat(' ', @class, ' '), ' " + search + " ')]";
+				elements = d.evaluate(pattern, d, null, 0, null);
+				while ((i = elements.iterateNext())) {
+					results.push(i);
+				}
+			} else {
+				elements = d.getElementsByTagName("*");
+				pattern = new RegExp("(^|\\s)" + search + "(\\s|$)");
+				for (i = 0; i < elements.length; i++) {
+					if ( pattern.test(elements[i].className) ) {
+						results.push(elements[i]);
+					}
+				}
+			}
+			return results;
 		}
 	};
 
