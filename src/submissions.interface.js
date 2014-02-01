@@ -9,7 +9,8 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 	var HIGHLIGHTER_ID_PREFIX = "prospectiveSubmission";
 
 	var PROSPECTIVE_SUBMISSION_CSS_CLASS = "betterlink-prospective-submission";
-	var PROSPECTIVE_SUBMISSION_CSS = "." + PROSPECTIVE_SUBMISSION_CSS_CLASS + ":hover" +
+	var PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS = "betterlink-prospective-hover";
+	var PROSPECTIVE_SUBMISSION_HOVER_CSS =
 							[" { background: #DADADA;",
 								"text-decoration: underline;",
 								"cursor: pointer; }"].join(' ');
@@ -92,7 +93,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 	// The 'prospective submission' style is used to markup a selection that could
 	// be submitted to Betterlink as a new link.
 	function insertProspectiveSubmissionStyle() {
-		apiInternal.util.dom.createAndAppendStyleElement(PROSPECTIVE_SUBMISSION_CSS);
+		apiInternal.util.dom.addCssByClass(PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS, PROSPECTIVE_SUBMISSION_HOVER_CSS);
 	}
 
 	// Bookends will be added to the DOM to enclose the prospective submission, so
@@ -199,6 +200,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 			var rangesToRemove = this.lastActiveRanges;
 
 			if(rangesToRemove) {
+				removeAddedAttributesOnHighlightElements();
 				var undoneRanges = this.removeHighlightFromRanges(rangesToRemove);
 				this.storeLastRanges(undoneRanges, 'afterUndo');
 			}
@@ -210,6 +212,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 		// Fully remove any traces of this highlighter from the document and remove
 		// its associated bookends
 		nuclearRemoveFromDocument: function() {
+			removeAddedAttributesOnHighlightElements();
 			this.removeAllHighlights();
 			this.removeBookends();
 		},
@@ -289,6 +292,13 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 			highlighter.detach();
 		});
 		activeHighlighters.length = 0;
+	}
+
+	// Remove any CSS classes or additional attributes that have been added ontop of
+	// our prospective submission elements. These additional classes will cause the
+	// wrapper elements to remain on the page when the highlgihter is removed.
+	function removeAddedAttributesOnHighlightElements() {
+		removeHoverCss();
 	}
 
 	// Highlight the current selection to indicate what would be saved if the selection
@@ -371,11 +381,43 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 
 	// Executed for each element that is created during the decoration process
 	function decorationCallback(element) {
-		addClickHandlers(element);
+		addHoverClickHandlers(element);
+		addSubmissionClickHandlers(element);
+	}
+
+	// Alert all 'prospective submission' elements that one of the elements is
+	// being hovered over.
+	function addHoverClickHandlers(element) {
+		apiInternal.addListener(element, "mouseover", applyHoverCss);
+		apiInternal.addListener(element, "mouseout", removeHoverCss);
+	}
+
+	// Add Hover CSS to all elements on the DOM that are part of a prospective submission
+	function applyHoverCss() {
+		var hasHoverClass = new RegExp('\\b' + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS + '\\b');
+
+		var nodes = apiInternal.util.dom.getElementsByClassName(PROSPECTIVE_SUBMISSION_CSS_CLASS);
+		for(var i = 0, len = nodes.length; i < len; i++) {
+			var node = nodes[i];
+			if(!hasHoverClass.test(node.className)) {
+				node.className = node.className + ' ' + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS;
+			}
+		}
+	}
+
+	// Remove the Hover CSS from all elements on the DOM that are part of a prospective submission
+	function removeHoverCss() {
+		var hasHoverClass = new RegExp('\\s*' + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS + '\\b');
+
+		var nodes = apiInternal.util.dom.getElementsByClassName(PROSPECTIVE_SUBMISSION_CSS_CLASS);
+		for(var i = 0, len = nodes.length; i < len; i++) {
+			var node = nodes[i];
+			node.className = node.className.replace(hasHoverClass, '');
+		}
 	}
 
 	// Execute sendSubmission() when the provided element is clicked
-	function addClickHandlers(element) {
+	function addSubmissionClickHandlers(element) {
 		var identifier = element.getAttribute(identifierAttributeName);
 		var highlighter = getHighlighterWithIdentifier(identifier);
 
