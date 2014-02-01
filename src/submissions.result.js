@@ -3,7 +3,7 @@
  *
  */
 betterlink_user_interface.createModule("Submissions.Result", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "Util.Ranges", "Submissions", "Submissions.Interface", "Selection Highlighter", "Event Messaging"] );
+	api.requireModules( ["Util.DOM", "Submissions", "Submissions.Interface", "Selection Highlighter", "Event Messaging"] );
 
 	var SELECTED_TEXT_CSS_CLASS = "betterlink-selected";
 	var SELECTED_TEXT_CSS = "." + SELECTED_TEXT_CSS_CLASS + 
