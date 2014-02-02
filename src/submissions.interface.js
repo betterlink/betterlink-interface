@@ -305,7 +305,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 	// were submitted to create a new link. We append an identifier to the highlighter
 	// name so that we can distinguish the multiple selections we'll end up creating.
 	function decorateProspectiveSubmission() {
-		var uniqueIdentifier = Math.floor(1E8 * Math.random());
+		var uniqueIdentifier = Math.floor(1E8 * Math.random()).toString(10);
 		var highlighterName = HIGHLIGHTER_ID_PREFIX + "|" + uniqueIdentifier;
 
 		var success = createProspectiveSubmissionHighlighter(highlighterName, uniqueIdentifier);
@@ -432,7 +432,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 		if(identifier) {
 			for(var i = 0, len = activeHighlighters.length; i < len; i++) {
 				var highlighter = activeHighlighters[i];
-				if(highlighter.identifier+'' === identifier) {
+				if(highlighter.identifier === identifier) {
 					return highlighter;
 				}
 			}
