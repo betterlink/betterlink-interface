@@ -44,6 +44,7 @@ betterlink_user_interface.createModule("Submissions.Result", function(api, apiIn
 			createSubmissionResultHighlighter(highlighterIdentifier, newUrl);
 			apiInternal.highlighters.highlightRanges(highlighterIdentifier, result['selection']);
 
+			// Alert Submissions.interface that the submission has completed.
 			apiInternal.submissions.interface.cleanupSubmittedHighlighters();
 		}
 		else {
@@ -52,7 +53,8 @@ betterlink_user_interface.createModule("Submissions.Result", function(api, apiIn
 			console.log(message);
 			// Display message for why the submission could not be completed
 			// Occurs if the server returns an error on submission, or the server
-			// response is invalid
+			// response is invalid.
+			//
 			// example message:
 			// "There was a problem building your share link"
 		}

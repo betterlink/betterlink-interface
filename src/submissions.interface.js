@@ -129,12 +129,15 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 	}
 
 	function setUserClickTimeout() {
-		if(!userClickTimeout) { // don't retrigger on subsequent mouseups
+		// Set timeout on first mouseup, but don't retrigger on subsequent mouseups
+		if(!userClickTimeout) {
 			userClickTimeout = setTimeout(executeDelayedAction, userClickThreshold);
 		}
 	}
 
 	function resetUserClickTimeout() {
+		// Another click was registered. If the timeout is still running, reset the
+		// counter.
 		if(userClickTimeout) {
 			clearTimeout(userClickTimeout);
 			userClickTimeout = setTimeout(executeDelayedAction, userClickThreshold);
@@ -189,6 +192,9 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 			}
 		},
 
+		// Submit the prospective submission to the server to create a new link.
+		// Clean up the interface in preparation for displaying the result of
+		// the submission.
 		sendSubmission: function() {
 			this.removeExistingDecorations();
 			apiInternal.events.fireNewSubmission(this.lastActiveRanges);
@@ -298,6 +304,19 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 	// our prospective submission elements. These additional classes will cause the
 	// wrapper elements to remain on the page when the highlgihter is removed.
 	function removeAddedAttributesOnHighlightElements() {
+		// NOTE: An alternative possibility is that when applying the highlighter, we
+		// added our custom class ontop of an existing HTML element (assuming it had
+		// all of the necessary elementProperties and elementAttributes). In this case,
+		// it is correct for the base element to NOT be removed. So we specifically
+		// want to remove any classes or attributes that we added to the elements that
+		// weren't there previously.
+		//
+		// Removing the hover CSS is required in the situation where a new prospective
+		// submission is being decorated which intersects an existing prospective
+		// submission. In that instance, the user's mouse will be ontop of the existing
+		// highlight, applying the hover class (and preventing the highlighter from
+		// completely being removed).
+
 		removeHoverCss();
 	}
 
@@ -317,7 +336,6 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 			var highlightedRanges = highlighter.highlightSelection();
 			highlighter.storeLastRanges(highlightedRanges, 'afterHighlight');
 
-			//insertSelectionBookends(uniqueIdentifier);
 			highlighter.encloseInBookends();
 		}
 		else {

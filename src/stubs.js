@@ -325,8 +325,8 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 		// By default, new <span> elements will be appended to the DOM. If a
 		// custom element is provided, clones of that node will enclose the
 		// range. If classnames are provided in addition to the custom element,
-		// then then class1 and class2 will be applied to the beginning and
-		// ending bookends, respectively.
+		// then class1 and class2 will be applied to the beginning and ending
+		// bookends, respectively.
 		//
 		// Returns an object that can be used within removeRangeEnclosures() to
 		// remove the created bookends.
