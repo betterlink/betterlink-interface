@@ -447,7 +447,17 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 	};
 
 	// 'Submissions'
-	apiInternal.submissions = {};
+	apiInternal.submissions = {
+		errorCodes: {
+			// ** Occur during betterlink.highlightRequestedSelections() -- happens on page load with bl-sid provided**
+
+			NO_ID: "no_id", // no highlight ID was passed into the URL or function
+			UNKNOWN_ID: "unknown_id", // unable to pull selection data from the server for the specified ID
+			CONTENT_NOT_FOUND: "content_not_found", // unable to find the requested selection's content on the current page
+			DOM_ERROR: "dom_error", // there was an error creating the Selection object after finding the requested content
+			DECORATE_ERROR: "decorate_error" // there was an error error calling interface code, decorating the selection on the DOM
+		}
+	};
 
 	return ret;
 })();
