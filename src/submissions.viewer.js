@@ -99,7 +99,7 @@ betterlink_user_interface.createModule("Submissions.Viewer", function(api, apiIn
 	function insertHighlightStyle() {
 		// always add the default CSS style with the default class name
 		// allow a custom class name to be applied to ignore this style
-		apiInternal.util.dom.addCssByClass(api['config']['highlightCssClass'], HIGHLIGHT_CSS, api['config']['highlightCustomElement']);
+		apiInternal.util.dom.addCssByClass(api['config']['highlightCssClass'], HIGHLIGHT_CSS);
 	}
 
 	// checks if the client has defined a custom CSS class name to override
