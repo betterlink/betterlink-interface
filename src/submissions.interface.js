@@ -99,7 +99,7 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 
 	// ****** Highlighter Proxy Object ******
 	function HighlighterProxy(highlighterName, identifier) {
-		highlighter = this;
+		var highlighter = this;
 		highlighter.name = highlighterName;
 		highlighter.identifier = identifier;
 	}
