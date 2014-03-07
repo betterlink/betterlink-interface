@@ -5,7 +5,6 @@
 betterlink_user_interface.createModule("Submissions.CreationInterface", function(api, apiInternal) {
 	api.requireModules( ["Util", "Util.DOM", "Util.Ranges", "Submissions", "Selection Highlighter", "Event Messaging"] );
 
-	var LOADING_MESSAGE = "Generating your link...";
 	var HIGHLIGHTER_ID_PREFIX = "prospectiveSubmission";
 
 	var PROSPECTIVE_SUBMISSION_CSS_CLASS = "betterlink-prospective-submission";
@@ -14,58 +13,6 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 							[" { background: #DADADA;",
 								"text-decoration: underline;",
 								"cursor: pointer; }"].join(' ');
-
-	// ********************   ARROW CSS   ********************
-	var ARROW_CSS = [" { position: absolute;",
-						"width: 0;",
-						"height: 0;",
-						"margin-top: -5px;",
-						"margin-left: -5px;",
-						"border-left: 5px solid transparent;",
-						"border-right: 5px solid transparent;",
-						// ie6 height fix
-						"font-size: 0;",
-						"line-height: 0;",
-						// ie6 transparent fix
-						"_border-right-color: pink;",
-						"_border-left-color: pink;",
-						"_filter: chroma(color=pink); }"].join(' ');
-
-	var ARROW_DOWN_CSS_CLASS = "betterlink-arrow-down";
-	var ARROW_DOWN_CSS = ARROW_CSS.replace("{", "{ border-top: 5px solid #4169E1;");
-
-	var ARROW_UP_CSS_CLASS = "betterlink-arrow-up";
-	var ARROW_UP_CSS = ARROW_CSS.replace("{", "{ border-bottom: 5px solid #4169E1;")
-								.replace(/margin-top:[^;]*;/, "margin-top: inherit;");
-
-	// ******************** L-Shape CSS ********************
-	var l_shared_css = [" { position: absolute;",
-					"width: 12px;",
-					"height: 5px;",
-					// ie6 height fix
-					"font-size: 0;",
-					"line-height: 0; }"].join(' ');
-
-	var l_top_addition =      [ "margin-top: -5px;",
-								"border-top: 2px solid #4169E1;",
-								"border-left: 2px solid #4169E1;"].join(' ');
-
-	var l_bottom_addition =   [ "margin-top: inherit;",
-								"margin-left: -12px;",
-								"border-bottom: 2px solid #4169E1;",
-								"border-right: 2px solid #4169E1;"].join(' ');
-
-	var L_TOP_CSS_CLASS = "betterlink-l-top";
-	var L_TOP_CSS = l_shared_css.replace("{", "{ " + l_top_addition);
-
-	var L_BOTTOM_CSS_CLASS = "betterlink-l-bottom";
-	var L_BOTTOM_CSS = l_shared_css.replace("{", "{ " + l_bottom_addition);
-
-	// ******************** Hidden CSS ********************
-	var BOOKEND_HIDDEN_CSS_CLASS = "betterlink-bookend-hidden";
-	var BOOKEND_HIDDEN_CSS = "{ display: none; }";
-
-	// ************************************************************
 
 	var activeHighlighters = [];
 	var submittedHighlighters = [];
@@ -90,7 +37,6 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 		apiInternal.submissions.creationInterface.initialized = true;
 
 		insertProspectiveSubmissionStyle();
-		insertBookendStyles();
 		insertDocumentListeners();
 	}
 
@@ -98,12 +44,6 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 	// be submitted to Betterlink as a new link.
 	function insertProspectiveSubmissionStyle() {
 		apiInternal.util.dom.addCssByClass(PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS, PROSPECTIVE_SUBMISSION_HOVER_CSS);
-	}
-
-	// Bookends will be added to the DOM to enclose the prospective submission, so
-	// that it is clear to the user that they can interact with the content there.
-	function insertBookendStyles() {
-		apiInternal.util.dom.addCssByClass(BOOKEND_HIDDEN_CSS_CLASS, BOOKEND_HIDDEN_CSS);
 	}
 
 	// When the user finishes a click (on mouseup), toggle the display of prospective
@@ -175,23 +115,6 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 			this.lastActiveRangeType = rangeEvent;
 		},
 
-		// Insert bookend elements before and after the area that was highlighted. These
-		// indicate the range of the highlight to the user.
-		encloseInBookends: function() {
-			var baseElement = document.createElement('b');
-			var bookends = apiInternal.util.ranges.encloseRanges(
-				this.lastActiveRanges, baseElement, BOOKEND_HIDDEN_CSS_CLASS, BOOKEND_HIDDEN_CSS_CLASS);
-			this.bookends = bookends;
-		},
-
-		// Remove the bookends that are enclosing this highlighted region
-		removeBookends: function() {
-			if(this.bookends) {
-				apiInternal.util.ranges.removeRangeEnclosures(this.bookends);
-				this.bookends = null;
-			}
-		},
-
 		// Submit the prospective submission to the server to create a new link.
 		// Clean up the interface in preparation for displaying the result of
 		// the submission.
@@ -210,17 +133,12 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 				var undoneRanges = this.removeHighlightFromRanges(rangesToRemove);
 				this.storeLastRanges(undoneRanges, 'afterUndo');
 			}
-
-			// Bookends do not need to be removed because they become a part of the
-			// prior range and will get removed within removeHighlightFromRanges().
 		},
 
-		// Fully remove any traces of this highlighter from the document and remove
-		// its associated bookends
+		// Fully remove any traces of this highlighter from the document
 		nuclearRemoveFromDocument: function() {
 			removeAddedAttributesOnHighlightElements();
 			this.removeAllHighlights();
-			this.removeBookends();
 		},
 
 		highlightSelection: function() {
@@ -335,8 +253,6 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 
 			var highlightedRanges = highlighter.highlightSelection();
 			highlighter.storeLastRanges(highlightedRanges, 'afterHighlight');
-
-			highlighter.encloseInBookends();
 		}
 		else {
 			apiInternal.warn('There was a problem adding a highlighter to markup prospective submissions');
