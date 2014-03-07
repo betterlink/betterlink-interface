@@ -33,9 +33,9 @@ betterlink_user_interface.createModule("Smooth Scrolling", function(api, apiInte
 
 			stopAnyCurrentScrolling();
 
-			cypos = scroller.getCurrentYPos();
+			var cypos = scroller.getCurrentYPos();
 
-			scroller_stepsize = parseInt((desty-cypos)/scroller.STEPS);
+			var scroller_stepsize = parseInt((desty-cypos)/scroller.STEPS);
 			// Alternative option is to include an IE polyfill
 			// (via https://developer.mozilla.org/en-US/docs/Web/API/Window.setInterval#Callback_arguments)
 			scroller.INTERVAL = setInterval(function() {scroller.scrollWindow(scroller_stepsize, desty, destinationId);} ,10);
@@ -44,11 +44,11 @@ betterlink_user_interface.createModule("Smooth Scrolling", function(api, apiInte
 		},
 
 		scrollWindow: function(scramount,dest) {
-			wascypos = scroller.getCurrentYPos();
-			isAbove = (wascypos < dest);
+			var wascypos = scroller.getCurrentYPos();
+			var isAbove = (wascypos < dest);
 			window.scrollTo(0,wascypos + scramount);
-			iscypos = scroller.getCurrentYPos();
-			isAboveNow = (iscypos < dest);
+			var iscypos = scroller.getCurrentYPos();
+			var isAboveNow = (iscypos < dest);
 			if ((isAbove != isAboveNow) || (wascypos == iscypos)) {
 				// if we've just scrolled past the destination, or
 				// we haven't moved from the last scroll (i.e., we're at the
