@@ -3,7 +3,7 @@
  *
  */
 betterlink_user_interface.createModule("Submissions.Result", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "Submissions", "Submissions.Interface", "Selection Highlighter", "Event Messaging"] );
+	api.requireModules( ["Util.DOM", "Submissions", "Submissions.CreationInterface", "Selection Highlighter", "Event Messaging"] );
 
 	var SELECTED_TEXT_CSS_CLASS = "betterlink-selected";
 	var SELECTED_TEXT_CSS = "." + SELECTED_TEXT_CSS_CLASS + 
@@ -44,8 +44,8 @@ betterlink_user_interface.createModule("Submissions.Result", function(api, apiIn
 			createSubmissionResultHighlighter(highlighterIdentifier, newUrl);
 			apiInternal.highlighters.highlightRanges(highlighterIdentifier, result['selection']);
 
-			// Alert Submissions.interface that the submission has completed.
-			apiInternal.submissions.interface.cleanupSubmittedHighlighters();
+			// Alert Submissions.creationInterface that the submission has completed.
+			apiInternal.submissions.creationInterface.cleanupSubmittedHighlighters();
 		}
 		else {
 			var message = result['message'];

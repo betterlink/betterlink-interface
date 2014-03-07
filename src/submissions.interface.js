@@ -2,7 +2,7 @@
  * JS for building an interface to to create and share new links
  *
  */
-betterlink_user_interface.createModule("Submissions.Interface", function(api, apiInternal) {
+betterlink_user_interface.createModule("Submissions.CreationInterface", function(api, apiInternal) {
 	api.requireModules( ["Util", "Util.DOM", "Util.Ranges", "Submissions", "Selection Highlighter", "Event Messaging"] );
 
 	var LOADING_MESSAGE = "Generating your link...";
@@ -75,7 +75,7 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 
 	var identifierAttributeName = "data-identifier";
 
-	apiInternal.submissions.interface = {
+	apiInternal.submissions.creationInterface = {
 		cleanupSubmittedHighlighters: cleanupSubmittedHighlighters
 	};
 	/****************************************************************************************************/
@@ -83,11 +83,11 @@ betterlink_user_interface.createModule("Submissions.Interface", function(api, ap
 	apiInternal.addInitListener(initializeInterface);
 	apiInternal.events.registerObserverForRemoveBetterlink(removeExistingHighlighters);
 	function initializeInterface() {
-		if(apiInternal.submissions.interface.initialized) {
+		if(apiInternal.submissions.creationInterface.initialized) {
 			return;
 		}
 
-		apiInternal.submissions.interface.initialized = true;
+		apiInternal.submissions.creationInterface.initialized = true;
 
 		insertProspectiveSubmissionStyle();
 		insertBookendStyles();
