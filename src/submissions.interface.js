@@ -11,6 +11,7 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 	var PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS = "betterlink-prospective-hover";
 	var PROSPECTIVE_SUBMISSION_HOVER_CSS =
 							[" { background: #DADADA;",
+								"color: #222;",
 								"text-decoration: underline;",
 								"cursor: pointer; }"].join(' ');
 
