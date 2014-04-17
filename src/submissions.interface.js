@@ -5,6 +5,8 @@
 betterlink_user_interface.createModule("Submissions.CreationInterface", function(api, apiInternal) {
 	api.requireModules( ["Util", "Util.DOM", "Util.Ranges", "Submissions", "Selection Highlighter", "Event Messaging"] );
 
+	var supportsCssInherit = supportsCssInherit(document);
+
 	var HIGHLIGHTER_ID_PREFIX = "prospectiveSubmission";
 
 	var PROSPECTIVE_SUBMISSION_CSS_CLASS = "betterlink-prospective-submission";
@@ -27,6 +29,30 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 		cleanupSubmittedHighlighters: cleanupSubmittedHighlighters
 	};
 	/****************************************************************************************************/
+
+	// Test if the browser supports the 'inherit' CSS value by creating a
+	// child and parent element with the display attribute (not inherited)
+	function supportsCssInherit(doc) {
+		var parent = doc.createElement('div');
+		var child = doc.createElement('p');
+		try {
+			parent.style.display = 'none';
+			child.style.display = 'inherit';
+		}
+		catch (e) {
+			return false;
+		}
+
+		parent.appendChild(child);
+		var body = doc.body || doc.getElementsByTagName('body')[0];
+		body.appendChild(parent);
+
+		var display = child.style.display;
+		var supported = display === 'inherit' || display === 'none';
+		body.removeChild(parent);
+
+		return supported;
+	}
 
 	apiInternal.addInitListener(initializeInterface);
 	apiInternal.events.registerObserverForRemoveBetterlink(removeExistingHighlighters);
