@@ -100,15 +100,6 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 			this.lastActiveRangeType = rangeEvent;
 		},
 
-		// Submit the prospective submission to the server to create a new link.
-		// Clean up the interface in preparation for displaying the result of
-		// the submission.
-		sendSubmission: function() {
-			this.removeExistingDecorations();
-			apiInternal.events.fireNewSubmission(this.lastActiveRanges);
-			submittedHighlighters.push(this);
-		},
-
 		// Remove any highlights from the document associated with this highlighter.
 		removeExistingDecorations: function() {
 			var rangesToRemove = this.lastActiveRanges;
@@ -148,6 +139,23 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 		}
 	};
 	// ****** Highlighter Proxy Object ******
+
+	// By extending the HighlighterProxy Prototype (instead of creating a separate
+	// function), we save ourselves from creating an anonymous function every time
+	// we attach the sendSubmission() function as a callback to our links. That's
+	// because we'd have to pass the provided highlighter into the function as a
+	// parameter.
+	apiInternal.util.extend(HighlighterProxy.prototype, {
+
+		// Submit the prospective submission to the server to create a new link.
+		// Clean up the interface in preparation for displaying the result of
+		// the submission.
+		sendSubmission: function() {
+			this.removeExistingDecorations();
+			apiInternal.events.fireNewSubmission(this.lastActiveRanges);
+			submittedHighlighters.push(this);
+		}
+	});
 
 	function cleanupSubmittedHighlighters() {
 		// When we are submitting the result of a highlighter, we want to make
