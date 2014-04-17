@@ -3,7 +3,7 @@
  *
  */
 betterlink_user_interface.createModule("Submissions.CreationInterface", function(api, apiInternal) {
-	api.requireModules( ["Multiclick", "Util", "Util.DOM", "Util.Ranges", "Submissions", "Selection Highlighter", "Event Messaging"] );
+	api.requireModules( ["Multiclick", "Util", "Util.DOM", "Util.Ranges", "Submissions", "Selection Highlighter", "Highlighter Proxy", "Event Messaging"] );
 
 	var supportsCssInherit = supportsCssInherit(document);
 
@@ -82,70 +82,12 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 		apiInternal.multiclick.insertDocumentListeners(toggleDisplayOfProspectiveSubmissions);
 	}
 
-	// ****** Highlighter Proxy Object ******
-	function HighlighterProxy(highlighterName, identifier) {
-		var highlighter = this;
-		highlighter.name = highlighterName;
-		highlighter.identifier = identifier;
-	}
-
-	HighlighterProxy.prototype = {
-		// Store the last ranges that were associated with our highlighter API. Because
-		// these ranges are invalidated after any subsequent changes to the DOM, we
-		// only ever need the last set that was returned.
-		//
-		// A rangeEvent can be used as a reference for which action created the range.
-		storeLastRanges: function(ranges, rangeEvent) {
-			this.lastActiveRanges = ranges;
-			this.lastActiveRangeType = rangeEvent;
-		},
-
-		// Remove any highlights from the document associated with this highlighter.
-		removeExistingDecorations: function() {
-			var rangesToRemove = this.lastActiveRanges;
-
-			if(rangesToRemove) {
-				removeAddedAttributesOnHighlightElements();
-				var undoneRanges = this.removeHighlightFromRanges(rangesToRemove);
-				this.storeLastRanges(undoneRanges, 'afterUndo');
-			}
-		},
-
-		// Fully remove any traces of this highlighter from the document
-		nuclearRemoveFromDocument: function() {
-			removeAddedAttributesOnHighlightElements();
-			apiInternal.highlighters.removeAllHighlights(this.name);
-		},
-
-		highlightSelection: function() {
-			return apiInternal.highlighters.highlightSelection(this.name);
-		},
-
-		highlightRanges: function(rangesToHighlight) {
-			return apiInternal.highlighters.highlightRanges(this.name, rangesToHighlight);
-		},
-
-		removeHighlightFromRanges: function(rangesToRemove) {
-			return apiInternal.highlighters.removeHighlightFromRanges(this.name, rangesToRemove);
-		},
-
-		// Signal that all decorations associated with this highlighter have been
-		// removed and that the highlighter shouldn't be used for anything else
-		detach: function() {
-			if(!this.detached) {
-				this.detached = true;
-				this.nuclearRemoveFromDocument();
-			}
-		}
-	};
-	// ****** Highlighter Proxy Object ******
-
 	// By extending the HighlighterProxy Prototype (instead of creating a separate
 	// function), we save ourselves from creating an anonymous function every time
 	// we attach the sendSubmission() function as a callback to our links. That's
 	// because we'd have to pass the provided highlighter into the function as a
 	// parameter.
-	apiInternal.util.extend(HighlighterProxy.prototype, {
+	apiInternal.util.extend(apiInternal.HighlighterProxyPrototype, {
 
 		// Submit the prospective submission to the server to create a new link.
 		// Clean up the interface in preparation for displaying the result of
@@ -207,26 +149,6 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 		activeHighlighters.length = 0;
 	}
 
-	// Remove any CSS classes or additional attributes that have been added ontop of
-	// our prospective submission elements. These additional classes will cause the
-	// wrapper elements to remain on the page when the highlgihter is removed.
-	function removeAddedAttributesOnHighlightElements() {
-		// NOTE: An alternative possibility is that when applying the highlighter, we
-		// added our custom class ontop of an existing HTML element (assuming it had
-		// all of the necessary elementProperties and elementAttributes). In this case,
-		// it is correct for the base element to NOT be removed. So we specifically
-		// want to remove any classes or attributes that we added to the elements that
-		// weren't there previously.
-		//
-		// Removing the hover CSS is required in the situation where a new prospective
-		// submission is being decorated which intersects an existing prospective
-		// submission. In that instance, the user's mouse will be ontop of the existing
-		// highlight, applying the hover class (and preventing the highlighter from
-		// completely being removed).
-
-		removeHoverCss();
-	}
-
 	// Highlight the current selection to indicate what would be saved if the selection
 	// were submitted to create a new link. We append an identifier to the highlighter
 	// name so that we can distinguish the multiple selections we'll end up creating.
@@ -237,7 +159,7 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 		var success = createProspectiveSubmissionHighlighter(highlighterName, uniqueIdentifier);
 
 		if(success) {
-			var highlighter = new HighlighterProxy(highlighterName, uniqueIdentifier);
+			var highlighter = new apiInternal.HighlighterProxy(highlighterName, uniqueIdentifier, removeAddedAttributesOnHighlightElements);
 			activeHighlighters.push(highlighter);
 
 			var highlightedRanges = highlighter.highlightSelection();
@@ -251,6 +173,17 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 	// Return if the document has any text that is currently selected
 	function selectionIsEmpty() {
 		return apiInternal.util.ranges.currentSelectionIsEmpty();
+	}
+
+	// Passed into the HighlighterProxy constructor
+	function removeAddedAttributesOnHighlightElements() {
+		// Removing the hover CSS is required in the situation where a new prospective
+		// submission is being decorated which intersects an existing prospective
+		// submission. In that instance, the user's mouse will be ontop of the existing
+		// highlight, applying the hover class (and preventing the highlighter from
+		// completely being removed).
+
+		removeHoverCss();
 	}
 
 	// Create a new Highlighter (referenced by a provided identifier) and register
