@@ -123,7 +123,7 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 		// Fully remove any traces of this highlighter from the document
 		nuclearRemoveFromDocument: function() {
 			removeAddedAttributesOnHighlightElements();
-			this.removeAllHighlights();
+			apiInternal.highlighters.removeAllHighlights(this.name);
 		},
 
 		highlightSelection: function() {
@@ -132,10 +132,6 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 
 		highlightRanges: function(rangesToHighlight) {
 			return apiInternal.highlighters.highlightRanges(this.name, rangesToHighlight);
-		},
-
-		removeAllHighlights: function() {
-			apiInternal.highlighters.removeAllHighlights(this.name);
 		},
 
 		removeHighlightFromRanges: function(rangesToRemove) {
