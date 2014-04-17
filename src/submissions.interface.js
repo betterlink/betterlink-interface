@@ -3,11 +3,9 @@
  *
  */
 betterlink_user_interface.createModule("Submissions.CreationInterface", function(api, apiInternal) {
-	api.requireModules( ["Multiclick", "Util", "Util.DOM", "Util.Ranges", "Submissions", "Selection Highlighter", "Highlighter Proxy", "Event Messaging"] );
+	api.requireModules( ["Util", "Util.DOM", "Multiclick", "Selection Toggle", "Submissions", "Selection Highlighter", "Highlighter Proxy", "Event Messaging"] );
 
 	var supportsCssInherit = supportsCssInherit(document);
-
-	var HIGHLIGHTER_ID_PREFIX = "prospectiveSubmission";
 
 	var PROSPECTIVE_SUBMISSION_CSS_CLASS = "betterlink-prospective-submission";
 	var PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS = "betterlink-prospective-hover";
@@ -17,7 +15,6 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 								"text-decoration: underline;",
 								"cursor: pointer; }"].join(' ');
 
-	var activeHighlighters = [];
 	var submittedHighlighters = [];
 
 	var identifierAttributeName = "data-identifier";
@@ -52,7 +49,6 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 	}
 
 	apiInternal.addInitListener(initializeInterface);
-	apiInternal.events.registerObserverForRemoveBetterlink(removeExistingHighlighters);
 	function initializeInterface() {
 		if(apiInternal.submissions.creationInterface.initialized) {
 			return;
@@ -79,7 +75,12 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 		//
 		// Instead, we use the multiclick handler to reconcile multiple mouse events.
 
-		apiInternal.multiclick.insertDocumentListeners(toggleDisplayOfProspectiveSubmissions);
+		initializeSelectionToggle();
+		apiInternal.multiclick.insertDocumentListeners(apiInternal.selectionToggle.toggleDisplay);
+	}
+
+	function initializeSelectionToggle() {
+		apiInternal.selectionToggle.initialize(createProspectiveSubmissionHighlighter, removeAddedAttributesOnHighlightElements);
 	}
 
 	// By extending the HighlighterProxy Prototype (instead of creating a separate
@@ -120,59 +121,6 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 				break;
 			}
 		}
-	}
-
-	// Triggered on a mouseup event. If the user is finishing their click with part of
-	// the document selected, then markup the document to identify the prospective
-	// Betterlink submission. Also, remove any prior submission markups.
-	function toggleDisplayOfProspectiveSubmissions() {
-		if(!selectionIsEmpty()) {
-			// A simple remove-and-redecorate will fail if the user is selecting text
-			// that intersects an already-highlighted section. This is because the
-			// highlighter removal will adjust the DOM and change the ranges that are
-			// being selected.
-			//
-			// Saving and restoring the selection allows us to recreate the selection
-			// after the DOM has been modified.
-			var savedSelection = apiInternal.util.ranges.saveSelection();
-			removeExistingHighlighters();
-			apiInternal.util.ranges.restoreSelection(savedSelection);
-			decorateProspectiveSubmission();
-		}
-	}
-
-	// Remove any highlights that might already be on the page for previous selections
-	function removeExistingHighlighters() {
-		apiInternal.util.forEach(activeHighlighters, function(highlighter, index) {
-			highlighter.detach();
-		});
-		activeHighlighters.length = 0;
-	}
-
-	// Highlight the current selection to indicate what would be saved if the selection
-	// were submitted to create a new link. We append an identifier to the highlighter
-	// name so that we can distinguish the multiple selections we'll end up creating.
-	function decorateProspectiveSubmission() {
-		var uniqueIdentifier = Math.floor(1E8 * Math.random()).toString(10);
-		var highlighterName = HIGHLIGHTER_ID_PREFIX + "|" + uniqueIdentifier;
-
-		var success = createProspectiveSubmissionHighlighter(highlighterName, uniqueIdentifier);
-
-		if(success) {
-			var highlighter = new apiInternal.HighlighterProxy(highlighterName, uniqueIdentifier, removeAddedAttributesOnHighlightElements);
-			activeHighlighters.push(highlighter);
-
-			var highlightedRanges = highlighter.highlightSelection();
-			highlighter.storeLastRanges(highlightedRanges, 'afterHighlight');
-		}
-		else {
-			apiInternal.warn('There was a problem adding a highlighter to markup prospective submissions');
-		}
-	}
-
-	// Return if the document has any text that is currently selected
-	function selectionIsEmpty() {
-		return apiInternal.util.ranges.currentSelectionIsEmpty();
 	}
 
 	// Passed into the HighlighterProxy constructor
@@ -275,25 +223,12 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 	// Execute sendSubmission() when the provided element is clicked
 	function addSubmissionClickHandlers(element) {
 		var identifier = element.getAttribute(identifierAttributeName);
-		var highlighter = getHighlighterWithIdentifier(identifier);
+		var highlighter = apiInternal.selectionToggle.getHighlighterWithIdentifier(identifier);
 
 		var callback = highlighter ? highlighter.sendSubmission : displayCallbackWarning;
 
 		apiInternal.addListener(element, "touchstart", callback, highlighter);
 		apiInternal.addListener(element, "click", callback, highlighter);
-	}
-
-	// Return the active highlighter associated with a particular identifier
-	function getHighlighterWithIdentifier(identifier) {
-		if(identifier) {
-			for(var i = 0, len = activeHighlighters.length; i < len; i++) {
-				var highlighter = activeHighlighters[i];
-				if(highlighter.identifier === identifier) {
-					return highlighter;
-				}
-			}
-		}
-		return null;
 	}
 
 	function displayCallbackWarning() {
