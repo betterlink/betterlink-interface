@@ -4,7 +4,7 @@
  *
  */
 betterlink_user_interface.createModule("Selection Toggle", function(api, apiInternal) {
-	api.requireModules( ["Util", "Util.Ranges", "Highlighter Proxy"] );
+	api.requireModules( ["Util", "Util.Ranges", "Event Messaging", "Highlighter Proxy"] );
 
 	var HIGHLIGHTER_ID_PREFIX = "prospectiveSubmission";
 
