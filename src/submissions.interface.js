@@ -25,8 +25,14 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 	}
 
 	function initializeHighlighters() {
-		cleanupSubmittedHighlighters = apiInternal.spanHighlighter.cleanupSubmittedHighlighters;
-		apiInternal.spanHighlighter.initialize();
+		if(supportsCssInherit) {
+			cleanupSubmittedHighlighters = apiInternal.anchorHighlighter.cleanupSubmittedHighlighters;
+			apiInternal.anchorHighlighter.initialize();
+		}
+		else {
+			cleanupSubmittedHighlighters = apiInternal.spanHighlighter.cleanupSubmittedHighlighters;
+			apiInternal.spanHighlighter.initialize();
+		}
 	}
 
 	// Test if the browser supports the 'inherit' CSS value by creating a
