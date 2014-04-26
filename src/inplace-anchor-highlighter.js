@@ -12,25 +12,25 @@
  *
  */
 betterlink_user_interface.createModule("Anchor Highlighter", function(api, apiInternal) {
-	api.requireModules( ["Util", "Util.DOM", "Multiclick", "Selection Toggle", "Selection Highlighter", "Highlighter Proxy", "Event Messaging"] );
+	api.requireModules( ["Util", "Util.DOM", "Anchor CSS", "Multiclick", "Selection Toggle", "Selection Highlighter", "Highlighter Proxy", "Event Messaging"] );
 
 	var PROSPECTIVE_SUBMISSION_CSS_CLASS = "betterlink-prospective-submission";
 	var PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS = "betterlink-prospective-hover";
 	var PROSPECTIVE_SUBMISSION_HOVER_CSS =
-							"." + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS + 
-							[" { background: #DADADA;",
+							"." + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS + " " +
+							[ "{ background: #DADADA;",
 								"color: #222;",
-								"text-decoration: underline; }"].join(' ') +
+								"text-decoration: underline; } "].join(' ') +
 							"a." + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS + ":link " +
-							[" { background: #DADADA;",
+							[ "{ background: #DADADA;",
 								"color: #222;",
-								"text-decoration: underline; }"].join(' ') +
+								"text-decoration: underline; } "].join(' ') +
 							"a." + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS + ":hover " +
-							[" { background: #DADADA;",
+							[ "{ background: #DADADA;",
 								"color: #222;",
-								"text-decoration: underline; }"].join(' ') +
+								"text-decoration: underline; } "].join(' ') +
 							"a." + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS + ":active " +
-							[" { background: #DADADA;",
+							[ "{ background: #DADADA;",
 								"color: #222;",
 								"text-decoration: underline; }"].join(' ');
 
@@ -76,6 +76,7 @@ betterlink_user_interface.createModule("Anchor Highlighter", function(api, apiIn
 	// The 'prospective submission' style is used to markup a selection that could
 	// be submitted to Betterlink as a new link.
 	function insertProspectiveSubmissionStyle() {
+		apiInternal.util.dom.addCssByClass(PROSPECTIVE_SUBMISSION_CSS_CLASS, apiInternal.anchorResetCss, 'a');
 		apiInternal.util.dom.createAndAppendStyleElement(PROSPECTIVE_SUBMISSION_HOVER_CSS);
 	}
 
