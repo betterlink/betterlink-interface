@@ -12,7 +12,7 @@ betterlink_user_interface.createModule("Anchor CSS", function(api, apiInternal) 
 			"color: inherit;",
 			"cursor: inherit;",
 			"direction: inherit;",
-			"display: inline;", // note: inline
+			"display: inline !important;", // note: inline
 			"font: inherit;",
 			"letter-spacing: inherit;",
 			"line-height: inherit;",
