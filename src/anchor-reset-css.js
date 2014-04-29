@@ -12,7 +12,6 @@ betterlink_user_interface.createModule("Anchor CSS", function(api, apiInternal) 
 			"color: inherit;",
 			"cursor: inherit;",
 			"direction: inherit;",
-			"display: inline !important;", // note: inline
 			"font: inherit;",
 			"letter-spacing: inherit;",
 			"line-height: inherit;",
@@ -20,11 +19,15 @@ betterlink_user_interface.createModule("Anchor CSS", function(api, apiInternal) 
 			"outline: inherit;",
 			"text-align: inherit;",
 			"text-decoration: inherit;",
-			"vertical-align: inherit;",
 			"word-spacing: inherit;",
 			"word-wrap: inherit;",
 			"z-index: inherit;",
 			"zoom: inherit;",
 			"-moz-opacity: inherit;",
-			"-moz-outline: inherit; }"].join(' ');
+			"-moz-outline: inherit;",
+
+			"display: inline !important;",
+			"font-size: inherit !important;",
+			"padding: 0 !important;",
+			"margin: 0 !important; }"].join(' ');
 });
