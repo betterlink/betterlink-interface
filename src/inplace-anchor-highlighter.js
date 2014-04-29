@@ -161,7 +161,7 @@ betterlink_user_interface.createModule("Anchor Highlighter", function(api, apiIn
 			//
 			// Note: if the existing element doesn't have all of the properties
 			// specified above, we'll create a new container element anyways.
-			'tagsToPreserve': ['a'],
+			'tagsToPreserve': [],
 
 			// element type that we will wrap around the selected content when
 			// splitting text nodes or when we can't apply our class name to
