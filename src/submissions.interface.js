@@ -25,14 +25,11 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 	}
 
 	function initializeHighlighters() {
-		if(supportsCssInherit) {
-			cleanupSubmittedHighlighters = apiInternal.anchorHighlighter.cleanupSubmittedHighlighters;
-			apiInternal.anchorHighlighter.initialize();
-		}
-		else {
-			cleanupSubmittedHighlighters = apiInternal.spanHighlighter.cleanupSubmittedHighlighters;
-			apiInternal.spanHighlighter.initialize();
-		}
+		// Functionally, IE 7 & 6 get the spanHighlighter.
+		var highlighter = supportsCssInherit ? apiInternal.anchorHighlighter : apiInternal.spanHighlighter;
+
+		cleanupSubmittedHighlighters = highlighter.cleanupSubmittedHighlighters;
+		highlighter.initialize();
 	}
 
 	// Test if the browser supports the 'inherit' CSS value by creating a
