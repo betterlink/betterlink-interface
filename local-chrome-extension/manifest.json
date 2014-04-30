@@ -1,0 +1,29 @@
+{
+  "manifest_version": 2,
+
+  "name": "Betterlink-local-interface",
+  "description": "Create and share personalized links to text within a webpage",
+  "version": "1.2",
+
+  "author": "Betterlink",
+  "homepage_url": "http://betterlink.io",
+
+  "icons": { "48": "icons/betterlink-icon-48.png",
+             "128": "icons/betterlink-icon-128.png" },
+  "incognito": "spanning",
+  "short_name": "Betterlink",
+  
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "<all_urls>"
+  ],
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["injector.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
