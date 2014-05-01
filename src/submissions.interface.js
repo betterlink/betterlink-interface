@@ -3,7 +3,7 @@
  *
  */
 betterlink_user_interface.createModule("Submissions.CreationInterface", function(api, apiInternal) {
-	api.requireModules( ["Submissions", "Span Highlighter"] );
+	api.requireModules( ["Submissions", "Span Highlighter", "Anchor Highlighter"] );
 
 	var supportsCssInherit = supportsCssInherit(document);
 	var cleanupSubmittedHighlighters;
