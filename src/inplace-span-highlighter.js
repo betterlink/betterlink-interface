@@ -92,6 +92,7 @@ betterlink_user_interface.createModule("Span Highlighter", function(api, apiInte
 		// Clean up the interface in preparation for displaying the result of
 		// the submission.
 		sendSubmission: function() {
+			apiInternal.util.ranges.removeCurrentSelection();
 			this.removeExistingDecorations();
 			apiInternal.events.fireNewSubmission(this.lastActiveRanges);
 			submittedHighlighters.push(this);

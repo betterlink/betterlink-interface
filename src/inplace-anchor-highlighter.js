@@ -114,6 +114,7 @@ betterlink_user_interface.createModule("Anchor Highlighter", function(api, apiIn
 		sendSubmission: function(e) {
 			e.preventDefault ? e.preventDefault() : window.event.returnValue = false;
 
+			apiInternal.util.ranges.removeCurrentSelection();
 			this.removeExistingDecorations();
 			apiInternal.events.fireNewSubmission(this.lastActiveRanges);
 			submittedHighlighters.push(this);
