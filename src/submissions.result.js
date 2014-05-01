@@ -7,17 +7,17 @@ betterlink_user_interface.createModule("Submissions.Result", function(api, apiIn
 
 	var SELECTED_TEXT_CSS_CLASS = "betterlink-selected";
 	var SELECTED_TEXT_CSS = "." + SELECTED_TEXT_CSS_CLASS + 
-							 [" { background: #F0E68C;",			// background: khaki
+							[ "{ background: #F0E68C;",			// background: khaki
 								"color: #000080;",					// color: navy
 								"text-decoration: underline; }"].join(' ') + 
 							"a." + SELECTED_TEXT_CSS_CLASS + ":hover " +
-							 ["{ background: #F0E68C;",
-							 	"color: #000080;",
-							 	"text-decoration: underline; }"].join(' ') +
+							[ "{ background: #F0E68C;",
+								"color: #000080;",
+								"text-decoration: underline; }"].join(' ') +
 							"a." + SELECTED_TEXT_CSS_CLASS + ":link " +
-							 ["{ background: #F0E68C;",
-							 	"color: #000080;",
-							 	"text-decoration: underline; }"].join(' ');
+							[ "{ background: #F0E68C;",
+								"color: #000080;",
+								"text-decoration: underline; }"].join(' ');
 
 	apiInternal.submissions.results = {};
 	/****************************************************************************************************/
