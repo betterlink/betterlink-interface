@@ -6,11 +6,8 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 	api.requireModules( ["Submissions", "Span Highlighter", "Anchor Highlighter"] );
 
 	var supportsCssInherit = supportsCssInherit(document);
-	var cleanupSubmittedHighlighters;
 
-	apiInternal.submissions.creationInterface = {
-		cleanupSubmittedHighlighters: cleanupSubmittedHighlighters
-	};
+	apiInternal.submissions.creationInterface = {};
 
 	/****************************************************************************************************/
 
@@ -28,7 +25,7 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 		// Functionally, IE 7 & 6 get the spanHighlighter.
 		var highlighter = supportsCssInherit ? apiInternal.anchorHighlighter : apiInternal.spanHighlighter;
 
-		cleanupSubmittedHighlighters = highlighter.cleanupSubmittedHighlighters;
+		apiInternal.submissions.creationInterface.cleanupSubmittedHighlighters = highlighter.cleanupSubmittedHighlighters;
 		highlighter.initialize();
 	}
 
