@@ -24,6 +24,9 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 	function initializeHighlighters() {
 		// Functionally, IE 7 & 6 get the spanHighlighter.
 		var highlighter = supportsCssInherit ? apiInternal.anchorHighlighter : apiInternal.spanHighlighter;
+		if("%%build:highlighter_override%%" === "true") {
+			highlighter = apiInternal.spanHighlighter;
+		}
 
 		apiInternal.submissions.creationInterface.cleanupSubmittedHighlighters = highlighter.cleanupSubmittedHighlighters;
 		highlighter.initialize();
