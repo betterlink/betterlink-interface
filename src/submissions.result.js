@@ -19,10 +19,15 @@ betterlink_user_interface.createModule("Submissions.Result", function(api, apiIn
 								"color: #000080;",
 								"text-decoration: underline; }"].join(' ');
 
+	var highlighterIdentifier = 'newSubmission';
+	var highlighterInitialized = false;
+
 	apiInternal.submissions.results = {};
 	/****************************************************************************************************/
 
 	apiInternal.addInitListener(initializeInterface);
+	apiInternal.events.registerObserverForRemoveBetterlink(removeDecorationFromLoadedSubmission);
+
 	function initializeInterface() {
 		if(apiInternal.submissions.results.interfaceInitialized) {
 			return;
@@ -40,7 +45,6 @@ betterlink_user_interface.createModule("Submissions.Result", function(api, apiIn
 			var newUrl = result['message'];
 			console.log(newUrl);
 
-			var highlighterIdentifier = 'newSubmission';
 			createSubmissionResultHighlighter(highlighterIdentifier, newUrl);
 			apiInternal.highlighters.highlightRanges(highlighterIdentifier, result['selection']);
 
@@ -64,7 +68,20 @@ betterlink_user_interface.createModule("Submissions.Result", function(api, apiIn
 		apiInternal.util.dom.createAndAppendStyleElement(SELECTED_TEXT_CSS);
 	}
 
+	function removeDecorationFromLoadedSubmission() {
+		if(!highlighterInitialized) {
+			return;
+		}
+
+		apiInternal.highlighters.removeAllHighlights(highlighterIdentifier);
+	}
+
 	function createSubmissionResultHighlighter(identifier, url) {
+		if(highlighterInitialized) {
+			return;
+		}
+
+		highlighterInitialized = true;
 		var highlightOptions = {
 
 			// any element that's highlighted should have the following properties
