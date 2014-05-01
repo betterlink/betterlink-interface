@@ -5,7 +5,7 @@
 betterlink_user_interface.createModule("Submissions.CreationInterface", function(api, apiInternal) {
 	api.requireModules( ["Submissions", "Span Highlighter", "Anchor Highlighter"] );
 
-	var supportsCssInherit = supportsCssInherit(document);
+	var supportsCssInherit = canUseCssInherit(document);
 
 	apiInternal.submissions.creationInterface = {};
 
@@ -34,7 +34,7 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 
 	// Test if the browser supports the 'inherit' CSS value by creating a
 	// child and parent element with the display attribute (not inherited)
-	function supportsCssInherit(doc) {
+	function canUseCssInherit(doc) {
 		var parent = doc.createElement('div');
 		var child = doc.createElement('p');
 		try {
