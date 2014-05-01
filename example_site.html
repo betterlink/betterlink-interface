@@ -36,15 +36,6 @@
 		}
 	}
 	</style>
-
-	<script type="text/javascript">
-		function finishBetterlinkInitialization() {
-			if(window.betterlink_user_interface) {
-				betterlink.init();
-				betterlink_user_interface.executeInitListeners();
-			}
-		}
-	</script>
 	
 	<script type="text/javascript" src="http://code.betterlink.io/betterlink-no-interface.js"></script>
 	<script type="text/javascript" src="src/stubs.js"></script>
@@ -59,11 +50,20 @@
 	<script type="text/javascript" src="src/submissions.interface.js"></script>
 	<script type="text/javascript" src="src/submissions.result.js"></script>
 	<script type="text/javascript" src="src/submissions.viewer.js"></script>
+
+	<script type="text/javascript">
+		if(window.betterlink_user_interface) {
+			betterlink.init();
+
+			// Unsure why, but this timeout seems to be necessary to allow the interface
+			// modules to initialize
+			window.setTimeout(betterlink_user_interface.executeInitListeners, 200);
+		}
+	</script>
 </head>
 
 <body>
 <div>
-	<button style="float: right;" onclick="finishBetterlinkInitialization()">Initialize Betterlink</button>
 	<h1>Example Domain</h1>
 	<p>This domain is established to be used for illustrative examples in documents. You do not need to
 		coordinate or ask for permission to use this domain in examples, and it is not available for

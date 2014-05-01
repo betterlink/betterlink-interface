@@ -11,10 +11,8 @@ Use
 
 1. Clone the repository
 2. In a browser, navigate to `file:///path/to/example_site.html`
-  - the `betterlink` and `betterlink_user_interface` global variables will automatically load with the page \-\- **not initialized**
-3. Click the 'Initialize Betterlink' button on the page
-  - This executes the `finishBetterlinkInitialization()` function to initialize the core Betterlink script and the custom, locally-defined user interface
-4. Select content on the page and 'share' as you normally would
+  - the `betterlink` and `betterlink_user_interface` global variables will automatically load with the page
+3. Select content on the page and 'share' as you normally would
 
 Details
 ----------
@@ -32,7 +30,7 @@ To initialize Betterlink, the following two methods must be executed:
 - `betterlink.init()`
 - `betterlink_user_interface.executeInitListeners()`
 
-These are executed in the `finishBetterlinkInitialization()` function defined in `example_site.html`.
+These are executed in the final script tag defined in `example_site.html`.
 
 **Test Mode**
 
