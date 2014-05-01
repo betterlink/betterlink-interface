@@ -112,7 +112,7 @@ betterlink_user_interface.createModule("Anchor Highlighter", function(api, apiIn
 		// Clean up the interface in preparation for displaying the result of
 		// the submission.
 		sendSubmission: function(e) {
-			e.preventDefault ? e.preventDefault() : event.returnValue = false;
+			e.preventDefault ? e.preventDefault() : window.event.returnValue = false;
 
 			this.removeExistingDecorations();
 			apiInternal.events.fireNewSubmission(this.lastActiveRanges);
