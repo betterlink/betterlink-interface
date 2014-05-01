@@ -7,7 +7,7 @@
  *
  */
 betterlink_user_interface.createModule("Anchor CSS", function(api, apiInternal) {
-	apiInternal.anchorResetCss = 
+	apiInternal.anchorResetCss =
 		[ "{ background: inherit;",
 			"color: inherit;",
 			"cursor: inherit;",
