@@ -171,133 +171,6 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 		}
 	};
 
-	// 'Util.DOM'
-	apiInternal.util.dom = {
-		// Designed to be executed when adding a top-level HTML element
-		// to the DOM. In addition to adding the element to the DOM, we
-		// will register the element internally. This provides later
-		// access if we need to detach Betterlink.
-		registerAndAppend: function(target, new_node) {
-			betterlink.exports.registerDomElements(new_node);
-			target.appendChild(new_node);
-		},
-
-		// Designed to be executed when inserting a top-level HTML element
-		// to the DOM. In addition to adding the element to the DOM, we
-		// will register the element internally. This provides later
-		// access if we need to detach Betterlink.
-		registerAndInsertBefore: function(newElement, referenceElement) {
-			betterlink.exports.registerDomElements(newElement);
-			referenceElement.parentNode.insertBefore(newElement, referenceElement);
-		},
-
-		// Designed to be executed when inserting a top-level HTML element
-		// to the DOM. In addition to adding the element to the DOM, we
-		// will register the element internally. This provides later
-		// access if we need to detach Betterlink.
-		registerAndInsertAfter: function(newElement, referenceElement) {
-			betterlink.exports.registerDomElements(newElement);
-			referenceElement.parentNode.insertBefore(newElement, referenceElement.nextSibling);
-		},
-
-		// Adds a style element that defines the style for a particular class
-		// ex: <style>div.highlight { background: yellow; }</style>
-		addCssByClass: function (cssClass, cssStyle, optElement) {
-			var css = '.' + cssClass + ' ' + cssStyle;
-			if(optElement) { css = optElement + css; }
-
-			return apiInternal.util.dom.createAndAppendStyleElement(css);
-		},
-
-		// Adds a style element that defines the style for a particular element
-		// ex: <style>#my_button { background: yellow; }</style>
-		addCssById: function (elementId, cssStyle) {
-			var css = '#' + elementId + ' ' + cssStyle;
-
-			return apiInternal.util.dom.createAndAppendStyleElement(css);
-		},
-
-		// The result of this function is that the parent should
-		// have a single child node (the one supplied by param)
-		addOrReplaceChild: function(parent, newNode) {
-			var nodeCount = parent.childNodes.length;
-			if(nodeCount === 0) {
-				parent.appendChild(newNode);
-			}
-			else if(nodeCount === 1) {
-				parent.replaceChild(newNode, parent.childNodes[0]);
-			}
-			else {
-				while(parent.hasChildNodes()) {
-					parent.removeChild(parent.lastChild);
-				}
-				parent.appendChild(newNode);
-			}
-		},
-
-		// Creates and returns a new anchor <a> element
-		createAnchorElement: function (linkText, href, optTarget) {
-			var a = window.document.createElement("a");
-			var textNode = document.createTextNode(linkText);
-			a.appendChild(textNode);
-			a.href = href;
-			if(optTarget) { 
-				a.target = optTarget;
-			}
-
-			return a;
-		},
-
-		// Creates and returns a new <style> element that has been added
-		// to the DOM, containing the provided CSS text.
-		createAndAppendStyleElement: function(cssText) {
-			var head = document.head || document.getElementsByTagName('head')[0];
-			var style = document.createElement('style');
-
-			style.type = 'text/css';
-			if (style.styleSheet){
-				style.styleSheet.cssText = cssText;
-			}
-			else {
-				style.appendChild(document.createTextNode(cssText));
-			}
-
-			apiInternal.util.dom.registerAndAppend(head, style);
-			return style;
-		},
-
-		// Private function for getElementsByClassName for IE8- compatibility
-		// Derived from Eike Send, MIT License
-		// https://gist.github.com/eikes/2299607
-		getElementsByClassName: function(search) {
-			if(document.getElementsByClassName) {
-				return document.getElementsByClassName(search);
-			}
-
-			var d = document, elements, pattern, i, results = [];
-
-			if (d.querySelectorAll) { // IE8
-				return d.querySelectorAll("." + search);
-			}
-			if (d.evaluate) { // IE6, IE7
-				pattern = ".//*[contains(concat(' ', @class, ' '), ' " + search + " ')]";
-				elements = d.evaluate(pattern, d, null, 0, null);
-				while ((i = elements.iterateNext())) {
-					results.push(i);
-				}
-			} else {
-				elements = d.getElementsByTagName("*");
-				pattern = new RegExp("(^|\\s)" + search + "(\\s|$)");
-				for (i = 0; i < elements.length; i++) {
-					if ( pattern.test(elements[i].className) ) {
-						results.push(elements[i]);
-					}
-				}
-			}
-			return results;
-		}
-	};
-
 	// 'Util.Ranges'
 	apiInternal.util.ranges = {
 		currentSelectionIsEmpty: function () {
@@ -378,6 +251,15 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 
 		fireHighlighterStylesInitialized: function () {
 			betterlink.exports.fireHighlighterStylesInitialized();
+		}
+	};
+
+	// 'Version Manager'
+	apiInternal.versions = {
+		// Hold a reference to elements added to the DOM. Accepts either
+		// a single element, or an array of elements.
+		registerDomElements: function (elements) {
+			betterlink.exports.registerDomElements(elements);
 		}
 	};
 
