@@ -82,7 +82,17 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 	var docReadyCallback = function(e) {
 		if (!docReady) {
 			docReady = true;
-			ret.initializeModules();
+
+			// Compiled together, we'd have no issue initializing all modules based
+			// on their dependencies. Here, we need to ensure the core library is
+			// loaded first and exposes the necessary API. IE 7 & 8 seem to need a
+			// bit more time.
+			if(betterlink.exports) {
+				ret.initializeModules();
+			}
+			else {
+				window.setTimeout(ret.initializeModules, 100);
+			}
 		}
 	};
 
