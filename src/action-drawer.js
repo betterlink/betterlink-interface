@@ -75,10 +75,13 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 
 	function addDropHandler() {
 		var nodes = apiInternal.util.dom.getElementsByClassName(DROPPABLE_CLASS);
-		apiInternal.draggable.addDropHandlers(nodes, dropCallback);
+		apiInternal.draggable.addDropHandlers(nodes);
+		apiInternal.draggable.subscribe.drop(dropCallback);
 	}
 
-	function dropCallback(item) {
-		console.log(item, " was just dropped");
+	function dropCallback(item, dropzone) {
+		console.log(item);
+		console.log("just dropped in");
+		console.log(dropzone);
 	}
 });

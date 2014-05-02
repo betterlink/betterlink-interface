@@ -6,82 +6,167 @@
 betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 	api.requireModules( ["Util"] );
 
+	var DRAGSTART = 'dragstart',
+		DRAG = 'drag',
+		DRAGEND = 'dragend',
+
+		DRAGENTER = 'dragenter',
+		DRAGOVER = 'dragover',
+		DRAGLEAVE = 'dragleave',
+		DROP = 'drop';
+
 	var currentDragItem;
+	var eventSubscriptions = {};
 
 	apiInternal.draggable = {
 		addDragHandlers: function(elements) {
 			addHandlers(elements, true);
 		},
 
-		addDropHandlers: function(elements, dropCallback) {
-			addHandlers(elements, false, dropCallback);
+		addDropHandlers: function(elements) {
+			addHandlers(elements, false);
+		},
+
+		// Exposes a suite of events that can be subscribed to. The passed-in
+		// function will be notified when the event fires.
+		subscribe: {
+			// Occurs once when a watched element is first dragged
+			//   callback params: the dragged element
+			dragstart: function(fn) {
+				subscribe(DRAGSTART, fn);
+			},
+
+			// Occurs continuously while an element is dragged
+			//   callback params: the dragged element
+			drag: function(fn) {
+				subscribe(DRAG, fn);
+			},
+
+			// Occurs once when a watched element is no longer dragged. If
+			// there is a 'drop' event, this will trigger afterwards.
+			//   callback params: the dragged element
+			dragend: function(fn) {
+				subscribe(DRAGEND, fn);
+			},
+
+			// Occurs once when an element enters a watched dropzone
+			//   callback params: the dragged element, the dropzone
+			dragenter: function(fn) {
+				subscribe(DRAGENTER, fn);
+			},
+
+			// Occurs continuously while an element is over a dropzone
+			//   callback params: the dragged element, the dropzone
+			dragover: function(fn) {
+				subscribe(DRAGOVER, fn);
+			},
+
+			// Occurs once if an element is pulled out of a dropzone
+			//   callback params: the dragged element, the dropzone
+			dragleave: function(fn) {
+				subscribe(DRAGLEAVE, fn);
+			},
+
+			// Occurs once if an element is dropped
+			//   callback params: the dragged element, the dropzone
+			drop: function(fn) {
+				subscribe(DROP, fn);
+			}
 		}
 	};
 
 	/****************************************************************************************************/
 
-	function addHandlers(elements, isDrag, opt_callback) {
+	function addHandlers(elements, isDrag) {
 		if(elements.length) {
 			apiInternal.util.forEach(elements, function(el) {
-				_addHandlers(el, isDrag, opt_callback);
+				_addHandlers(el, isDrag);
 			});
 		}
 		else {
-			_addHandlers(elements, isDrag, opt_callback);
+			_addHandlers(elements, isDrag);
 		}
 
-		function _addHandlers(element, isDrag, opt_callback) {
+		function _addHandlers(element, isDrag) {
 			if(isDrag) {
-				apiInternal.addListener(element, "dragstart", setDragItem, element);
-				apiInternal.addListener(element, "drag", handleDrag);
-				apiInternal.addListener(element, "dragend", removeDragItem);
+				apiInternal.addListener(element, DRAGSTART, setDragItem, element);
+				apiInternal.addListener(element, DRAG, handleDrag);
+				apiInternal.addListener(element, DRAGEND, removeDragItem);
 			}
 			else {
-				apiInternal.addListener(element, "dragenter", handleDragenter);
-				apiInternal.addListener(element, "dragover", handleDragover);
-				apiInternal.addListener(element, "dragleave", handleDragleave);
-				apiInternal.addListener(element, "drop", handleDrop);
-			}
-
-			// Will execute a custom callback function, passing in the HTML element
-			// that is dropped. Relies on a closure to the addDropHandlers() method
-			// as well as a shared reference to the item that is being dragged.
-			function handleDrop(e) {
-				var dropCallback = opt_callback;
-				dropCallback(currentDragItem);
+				apiInternal.addListener(element, DRAGENTER, handleDragenter, element);
+				apiInternal.addListener(element, DRAGOVER, handleDragover, element);
+				apiInternal.addListener(element, DRAGLEAVE, handleDragleave, element);
+				apiInternal.addListener(element, DROP, handleDrop, element);
 			}
 		}
 	}
 
-	// **** Drag Events ****
+	// If a client subscribes to an event, store the callback associated with the
+	// calling context and the event type that's being subscribed to.
+	function subscribe(eventType, fn) {
+		if(!eventSubscriptions[eventType]) {
+			eventSubscriptions[eventType] = [];
+		}
+		eventSubscriptions[eventType].push({context: this, callback: fn});
+	}
+
+	// Alert all clients that the given event has fired. Pass all additional params
+	// onto the client callback function.
+	function fireEvents(eventType) {
+		if(eventSubscriptions[eventType]) {
+			var options = Array.prototype.slice.call(arguments, 1);
+			apiInternal.util.forEach(eventSubscriptions[eventType], function(subscription) {
+				subscription.callback.apply(subscription.context, options);
+			});
+		}
+	}
+
+	// ****** Drag Events ******
 	function setDragItem(e) {
 		// currentTarget will typically refer to the element on which we placed our
-		// event handler. This is what we want, instead of attempting to store the
-		// Text Node that's a child of our link.
+		// event handler. This is what we want (as opposed to target or srcElement),
+		// instead of attempting to store the Text Node that's a child of our link.
+		//
 		// Internet Explorer doesn't support currentTarget, but `this` communicates
 		// the same thing if we pass the element into the event handler as the `this`
 		// context.
 		currentDragItem = e.currentTarget || this;
+		fireEvents(DRAGSTART, currentDragItem);
 	}
 
 	function handleDrag(e) {
-
+		fireEvents(DRAG, currentDragItem);
 	}
 
 	function removeDragItem(e) {
+		var formerDragItem = currentDragItem;
 		currentDragItem = null;
+		fireEvents(DRAGEND, formerDragItem);
 	}
 
-	// **** Drop Events ****
+	// ****** Drop Events ******
 	function handleDragenter(e) {
 		e.preventDefault ? e.preventDefault() : window.event.returnValue = false;
+
+		var dropTarget = e.currentTarget || this;
+		fireEvents(DRAGENTER, currentDragItem, dropTarget);
 	}
 
 	function handleDragover(e) {
 		e.preventDefault ? e.preventDefault() : window.event.returnValue = false;
+
+		var dropTarget = e.currentTarget || this;
+		fireEvents(DRAGOVER, currentDragItem, dropTarget);
 	}
 
 	function handleDragleave(e) {
-		
+		var dropTarget = e.currentTarget || this;
+		fireEvents(DRAGLEAVE, currentDragItem, dropTarget);
+	}
+
+	function handleDrop(e) {
+		var dropTarget = e.currentTarget || this;
+		fireEvents(DROP, currentDragItem, dropTarget);
 	}
 });
