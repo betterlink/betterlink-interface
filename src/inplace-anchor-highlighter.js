@@ -12,7 +12,7 @@
  *
  */
 betterlink_user_interface.createModule("Anchor Highlighter", function(api, apiInternal) {
-	api.requireModules( ["Util", "Util.DOM", "Anchor CSS", "Multiclick", "Selection Toggle", "Selection Highlighter", "Highlighter Proxy", "Event Messaging"] );
+	api.requireModules( ["Util", "Util.DOM", "Anchor CSS", "Multiclick", "Selection Toggle", "Selection Highlighter", "Highlighter Proxy", "Event Messaging", "Draggable"] );
 
 	var PROSPECTIVE_SUBMISSION_CSS_CLASS = "betterlink-prospective-submission";
 	var PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS = "betterlink-prospective-hover";
@@ -186,6 +186,7 @@ betterlink_user_interface.createModule("Anchor Highlighter", function(api, apiIn
 	function decorationCallback(element) {
 		addHoverClickHandlers(element);
 		addSubmissionClickHandlers(element);
+		addDragHandlers(element);
 	}
 
 	// Alert all 'prospective submission' elements that one of the elements is
@@ -232,5 +233,9 @@ betterlink_user_interface.createModule("Anchor Highlighter", function(api, apiIn
 
 	function displayCallbackWarning() {
 		apiInternal.warn("Unable to find the active highlighter and submission associated with this element");
+	}
+
+	function addDragHandlers(element) {
+		apiInternal.draggable.addDragHandlers(element);
 	}
 });

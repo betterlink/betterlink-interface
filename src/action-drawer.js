@@ -5,7 +5,7 @@
  *
  */
 betterlink_user_interface.createModule("Action Drawer", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM"] );
+	api.requireModules( ["Util", "Util.DOM", "Draggable"] );
 
 	var HTML5_CSS = "article, aside, footer, header, nav, section { display: block; }";
 	var DRAWER_ID = "betterlink-drawer";
@@ -41,6 +41,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 	function initializeDrawer() {
 		insertDrawerStyles();
 		createDrawer();
+		addDropHandler();
 	}
 
 	function insertDrawerStyles() {
@@ -70,5 +71,14 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		drawer.appendChild(footer);
 
 		apiInternal.util.dom.registerAndAppend(document.body, drawer);
+	}
+
+	function addDropHandler() {
+		var nodes = apiInternal.util.dom.getElementsByClassName(DROPPABLE_CLASS);
+		apiInternal.draggable.addDropHandlers(nodes, dropCallback);
+	}
+
+	function dropCallback(item) {
+		console.log(item, " was just dropped");
 	}
 });
