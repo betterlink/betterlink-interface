@@ -4,7 +4,7 @@
  *
  */
 betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
-	api.requireModules( ["Util"] );
+	api.requireModules( ["Util", "Util.DOM"] );
 
 	var DRAGSTART = 'dragstart',
 		DRAG = 'drag',
@@ -15,16 +15,21 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 		DRAGLEAVE = 'dragleave',
 		DROP = 'drop';
 
+	var DRAG_CSS_CLASS = 'betterlink-draggable',
+		DROP_CSS_CLASS = 'betterlink-droppable';
+
 	var currentDragItem;
 	var eventSubscriptions = {};
 
 	apiInternal.draggable = {
 		addDragHandlers: function(elements) {
 			addHandlers(elements, true);
+			addClassname(elements, DRAG_CSS_CLASS);
 		},
 
 		addDropHandlers: function(elements) {
 			addHandlers(elements, false);
+			addClassname(elements, DROP_CSS_CLASS);
 		},
 
 		// Exposes a suite of events that can be subscribed to. The passed-in
@@ -72,6 +77,17 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 			drop: function(fn) {
 				subscribe(DROP, fn);
 			}
+		},
+
+		// Turn off Drag & Drop functions on the provided elements
+		remove: function(elements) {
+			removeClassname(elements);
+			// removeHandlers(elements);
+			// The difficulty with removing the event listeners is that the listeners are
+			// scoped. In order to support 'this' handling for IE, we pass the element
+			// into the addListener method. Internally, this creates a new function that
+			// wraps the original listener. The side effect is that we cannot easily call
+			// removeListener, because a modified version of the listener is used.
 		}
 	};
 
@@ -106,6 +122,27 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 				apiInternal.addListener(element, DRAGLEAVE, handleDragleave, element);
 				apiInternal.addListener(element, DROP, handleDrop, element);
 			}
+		}
+	}
+
+	// Add a classname to the provided elements to indicate that the elements are
+	// drag & drop-able.
+	function addClassname(elements, classname) {
+		executeForOneOrMany(elements, _addClassname, Array.prototype.slice.call(arguments, 1));
+
+		function _addClassname(element, classname) {
+			apiInternal.util.dom.applyClassToElement(element, classname);
+		}
+	}
+
+	// Remove the drag & drop classnames from the provided elements. Because it won't
+	// be obvious which need to be removed, we should just attempt to remove both.
+	function removeClassname(elements) {
+		executeForOneOrMany(elements, _removeClassname, Array.prototype.slice.call(arguments, 1));
+
+		function _removeClassname(element) {
+			apiInternal.util.dom.removeClassFromElement(element, DRAG_CSS_CLASS);
+			apiInternal.util.dom.removeClassFromElement(element, DROP_CSS_CLASS);
 		}
 	}
 
