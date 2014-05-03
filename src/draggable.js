@@ -191,26 +191,40 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 
 	// ****** Drop Events ******
 	function handleDragenter(e) {
-		e.preventDefault ? e.preventDefault() : window.event.returnValue = false;
+		if(watchedItemIsBeingDragged()) {
+			e.preventDefault ? e.preventDefault() : window.event.returnValue = false;
 
-		var dropTarget = e.currentTarget || this;
-		fireEvents(DRAGENTER, currentDragItem, dropTarget);
+			var dropTarget = e.currentTarget || this;
+			fireEvents(DRAGENTER, currentDragItem, dropTarget);
+		}
 	}
 
 	function handleDragover(e) {
-		e.preventDefault ? e.preventDefault() : window.event.returnValue = false;
+		if(watchedItemIsBeingDragged()) {
+			e.preventDefault ? e.preventDefault() : window.event.returnValue = false;
 
-		var dropTarget = e.currentTarget || this;
-		fireEvents(DRAGOVER, currentDragItem, dropTarget);
+			var dropTarget = e.currentTarget || this;
+			fireEvents(DRAGOVER, currentDragItem, dropTarget);
+		}
 	}
 
 	function handleDragleave(e) {
-		var dropTarget = e.currentTarget || this;
-		fireEvents(DRAGLEAVE, currentDragItem, dropTarget);
+		if(watchedItemIsBeingDragged()) {
+			var dropTarget = e.currentTarget || this;
+			fireEvents(DRAGLEAVE, currentDragItem, dropTarget);
+		}
 	}
 
 	function handleDrop(e) {
-		var dropTarget = e.currentTarget || this;
-		fireEvents(DROP, currentDragItem, dropTarget);
+		if(watchedItemIsBeingDragged()) {
+			var dropTarget = e.currentTarget || this;
+			fireEvents(DROP, currentDragItem, dropTarget);
+		}
+	}
+
+	// Check if the element triggering the drop events is one of our elements
+	// that we set drag handlers on
+	function watchedItemIsBeingDragged() {
+		return currentDragItem && apiInternal.util.dom.elementHasClass(currentDragItem, DRAG_CSS_CLASS);
 	}
 });
