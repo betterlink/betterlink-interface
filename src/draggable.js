@@ -77,15 +77,22 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 
 	/****************************************************************************************************/
 
-	function addHandlers(elements, isDrag) {
-		if(elements.length) {
-			apiInternal.util.forEach(elements, function(el) {
-				_addHandlers(el, isDrag);
+	// Executes a provided function against all members of the 'target'. This is
+	// just some shorthand that allows us to easily expose the Draggable API to
+	// operate on a single element or array of elements.
+	function executeForOneOrMany(target, fn, args) {
+		if(target.length) {
+			apiInternal.util.forEach(target, function(t) {
+				fn.apply(this, [t].concat(args));
 			});
 		}
 		else {
-			_addHandlers(elements, isDrag);
+			fn.apply(this, [target].concat(args));
 		}
+	}
+
+	function addHandlers(elements, isDrag) {
+		executeForOneOrMany(elements, _addHandlers, Array.prototype.slice.call(arguments, 1));
 
 		function _addHandlers(element, isDrag) {
 			if(isDrag) {
