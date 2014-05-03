@@ -114,8 +114,10 @@ betterlink_user_interface.createModule("Util.DOM", function(api, apiInternal) {
 
 		// If the provided element has the given class name, remove the class
 		removeClassFromElement: function(element, className) {
-			var hasClass = new RegExp('\\s*' + className + '\\b');
-			element.className = element.className.replace(hasClass, '');
+			if(element.className) {
+				var hasClass = new RegExp('\\s*' + className + '\\b');
+				element.className = element.className.replace(hasClass, '');
+			}
 		},
 
 		// Private function for getElementsByClassName for IE8- compatibility
