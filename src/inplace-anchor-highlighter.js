@@ -17,22 +17,10 @@ betterlink_user_interface.createModule("Anchor Highlighter", function(api, apiIn
 	var PROSPECTIVE_SUBMISSION_CSS_CLASS = "betterlink-prospective-submission";
 	var PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS = "betterlink-prospective-hover";
 	var PROSPECTIVE_SUBMISSION_HOVER_CSS =
-							"." + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS + " " +
-							[ "{ background: #DADADA;",
-								"border-color: transparent;",
-								"color: #222;",
-								"text-decoration: underline; } "].join(' ') +
-							"a." + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS + ":link " +
-							[ "{ background: #DADADA;",
-								"border-color: transparent;",
-								"color: #222;",
-								"text-decoration: underline; } "].join(' ') +
-							"a." + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS + ":hover " +
-							[ "{ background: #DADADA;",
-								"border-color: transparent;",
-								"color: #222;",
-								"text-decoration: underline; } "].join(' ') +
-							"a." + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS + ":active " +
+							"." + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS + ", " +
+							"." + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS + ":link, " +
+							"." + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS + ":hover, " +
+							"." + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS + ":active " +
 							[ "{ background: #DADADA;",
 								"border-color: transparent;",
 								"color: #222;",
