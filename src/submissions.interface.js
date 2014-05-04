@@ -26,9 +26,16 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 		// Functionally, IE 7 & 6 get the spanHighlighter.
 		if(supportsCssInherit && "%%build:highlighter_override%%" !== "true") {
 			elementHighlighter = apiInternal.anchorHighlighter;
+			// Set events that should occur for each element that gets created
+			// as part of the highlight process
 			elementHighlighter.decorationCallback = function(element) {
 				addSubmissionClickHandlers(element);
 				addDragHandlers(element);
+			};
+			// Set events that should happen for all highlighted elements as
+			// they are about to be removed
+			elementHighlighter.decorationRemovalCallback = function(elements) {
+				subscribeDragHandlerRemoval(elements);
 			};
 		}
 		else {
@@ -55,9 +62,13 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 	// listeners to handle Drag events
 	function addDragHandlers(element) {
 		apiInternal.draggable.addDragHandlers(element);
+	}
 
-		// If we put this here, how do we tell the highlighter to remove the
-		// draggable CSS before removing the element?
+	// When our highlight elements are going to be removed, ensure that the drag
+	// handlers are removed first as well. Specifically, ensure that any added
+	// classnames to our elements are removed first.
+	function subscribeDragHandlerRemoval(elements) {
+		apiInternal.draggable.remove(elements);
 	}
 
 	// Test if the browser supports the 'inherit' CSS value by creating a
