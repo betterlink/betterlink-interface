@@ -118,6 +118,10 @@ betterlink_user_interface.createModule("Anchor Highlighter", function(api, apiIn
 		// highlight, applying the hover class (and preventing the highlighter from
 		// completely being removed).
 		removeHoverCss(elements);
+
+		if(apiInternal.anchorHighlighter.decorationRemovalCallback) {
+			apiInternal.anchorHighlighter.decorationRemovalCallback(elements);
+		}
 	}
 
 	// Create a new Highlighter (referenced by a provided identifier) and register
@@ -174,7 +178,7 @@ betterlink_user_interface.createModule("Anchor Highlighter", function(api, apiIn
 	function decorationCallback(element) {
 		addHoverClickHandlers(element);
 		if(apiInternal.anchorHighlighter.decorationCallback) {
-			// Trigger any additional events that have supplied by a client
+			// Trigger any additional events that have been supplied by a client
 			apiInternal.anchorHighlighter.decorationCallback(element);
 		}
 	}

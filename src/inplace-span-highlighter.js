@@ -108,6 +108,10 @@ betterlink_user_interface.createModule("Span Highlighter", function(api, apiInte
 		// highlight, applying the hover class (and preventing the highlighter from
 		// completely being removed).
 		removeHoverCss(elements);
+
+		if(apiInternal.spanHighlighter.decorationRemovalCallback) {
+			apiInternal.spanHighlighter.decorationRemovalCallback(elements);
+		}
 	}
 
 	// Create a new Highlighter (referenced by a provided identifier) and register
@@ -163,7 +167,7 @@ betterlink_user_interface.createModule("Span Highlighter", function(api, apiInte
 	function decorationCallback(element) {
 		addHoverClickHandlers(element);
 		if(apiInternal.spanHighlighter.decorationCallback) {
-			// Trigger any additional events that have supplied by a client
+			// Trigger any additional events that have been supplied by a client
 			apiInternal.spanHighlighter.decorationCallback(element);
 		}
 	}
