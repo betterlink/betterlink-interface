@@ -110,13 +110,14 @@ betterlink_user_interface.createModule("Anchor Highlighter", function(api, apiIn
 
 	// Passed into the HighlighterProxy constructor
 	function removeAddedAttributesOnHighlightElements() {
+		var elements = apiInternal.util.dom.getElementsByClassName(PROSPECTIVE_SUBMISSION_CSS_CLASS);
+
 		// Removing the hover CSS is required in the situation where a new prospective
 		// submission is being decorated which intersects an existing prospective
 		// submission. In that instance, the user's mouse will be ontop of the existing
 		// highlight, applying the hover class (and preventing the highlighter from
 		// completely being removed).
-
-		removeHoverCss();
+		removeHoverCss(elements);
 	}
 
 	// Create a new Highlighter (referenced by a provided identifier) and register
@@ -182,7 +183,7 @@ betterlink_user_interface.createModule("Anchor Highlighter", function(api, apiIn
 	// being hovered over.
 	function addHoverClickHandlers(element) {
 		apiInternal.addListener(element, "mouseover", applyHoverCss);
-		apiInternal.addListener(element, "mouseout", removeHoverCss);
+		apiInternal.addListener(element, "mouseout", function(e) { removeHoverCss(); } );
 	}
 
 	// Add Hover CSS to all elements on the DOM that are part of a prospective submission
@@ -198,8 +199,8 @@ betterlink_user_interface.createModule("Anchor Highlighter", function(api, apiIn
 	}
 
 	// Remove the Hover CSS from all elements on the DOM that are part of a prospective submission
-	function removeHoverCss() {
-		var nodes = domUtil.getElementsByClassName(PROSPECTIVE_SUBMISSION_CSS_CLASS);
+	function removeHoverCss(elements) {
+		var nodes = elements || domUtil.getElementsByClassName(PROSPECTIVE_SUBMISSION_CSS_CLASS);
 
 		for(var i = 0, len = nodes.length; i < len; i++) {
 			domUtil.removeClassFromElement(nodes[i], PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS);
