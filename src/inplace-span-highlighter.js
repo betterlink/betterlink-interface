@@ -4,9 +4,6 @@
  * to avoid applying any inadvertent styles to the page (since we'll
  * be using whatever styles are already defined on the page).
  *
- * Apply event handlers on the highlighted elements so that they
- * trigger a submission on 'click'.
- *
  */
 betterlink_user_interface.createModule("Span Highlighter", function(api, apiInternal) {
 	api.requireModules( ["Util", "Util.DOM", "Multiclick", "Selection Toggle", "Selection Highlighter", "Highlighter Proxy", "Event Messaging"] );
@@ -26,7 +23,8 @@ betterlink_user_interface.createModule("Span Highlighter", function(api, apiInte
 
 	apiInternal.spanHighlighter = {
 		initialize: initializeInterface,
-		cleanupSubmittedHighlighters: cleanupSubmittedHighlighters
+		cleanupSubmittedHighlighters: cleanupSubmittedHighlighters,
+		getHighlighterForElement: getHighlighterForElement
 	};
 
 	/****************************************************************************************************/
@@ -163,7 +161,10 @@ betterlink_user_interface.createModule("Span Highlighter", function(api, apiInte
 	// Executed for each element that is created during the decoration process
 	function decorationCallback(element) {
 		addHoverClickHandlers(element);
-		addSubmissionClickHandlers(element);
+		if(apiInternal.spanHighlighter.decorationCallback) {
+			// Trigger any additional events that have supplied by a client
+			apiInternal.spanHighlighter.decorationCallback(element);
+		}
 	}
 
 	// Alert all 'prospective submission' elements that one of the elements is
@@ -194,18 +195,9 @@ betterlink_user_interface.createModule("Span Highlighter", function(api, apiInte
 		}
 	}
 
-	// Execute sendSubmission() when the provided element is clicked
-	function addSubmissionClickHandlers(element) {
+	// Return the HighlighterProxy that was used to decorate a particular element
+	function getHighlighterForElement(element) {
 		var identifier = element.getAttribute(identifierAttributeName);
-		var highlighter = apiInternal.selectionToggle.getHighlighterWithIdentifier(identifier);
-
-		var callback = highlighter ? highlighter.sendSubmission : displayCallbackWarning;
-
-		apiInternal.addListener(element, "touchstart", callback, highlighter);
-		apiInternal.addListener(element, "click", callback, highlighter);
-	}
-
-	function displayCallbackWarning() {
-		apiInternal.warn("Unable to find the active highlighter and submission associated with this element");
+		return apiInternal.selectionToggle.getHighlighterWithIdentifier(identifier);
 	}
 });

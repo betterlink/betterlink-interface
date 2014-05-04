@@ -7,12 +7,9 @@
  * are draggable (although HTML5 provides the ability to add draggable
  * support to arbitrary elements).
  *
- * Apply event handlers on the highlighted elements so that they
- * trigger a submission on 'click'.
- *
  */
 betterlink_user_interface.createModule("Anchor Highlighter", function(api, apiInternal) {
-	api.requireModules( ["Util", "Util.DOM", "Anchor CSS", "Multiclick", "Selection Toggle", "Selection Highlighter", "Highlighter Proxy", "Event Messaging", "Draggable"] );
+	api.requireModules( ["Util", "Util.DOM", "Anchor CSS", "Multiclick", "Selection Toggle", "Selection Highlighter", "Highlighter Proxy", "Event Messaging"] );
 
 	var PROSPECTIVE_SUBMISSION_CSS_CLASS = "betterlink-prospective-submission";
 	var PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS = "betterlink-prospective-hover";
@@ -33,7 +30,8 @@ betterlink_user_interface.createModule("Anchor Highlighter", function(api, apiIn
 
 	apiInternal.anchorHighlighter = {
 		initialize: initializeInterface,
-		cleanupSubmittedHighlighters: cleanupSubmittedHighlighters
+		cleanupSubmittedHighlighters: cleanupSubmittedHighlighters,
+		getHighlighterForElement: getHighlighterForElement
 	};
 
 	/****************************************************************************************************/
@@ -174,8 +172,10 @@ betterlink_user_interface.createModule("Anchor Highlighter", function(api, apiIn
 	// Executed for each element that is created during the decoration process
 	function decorationCallback(element) {
 		addHoverClickHandlers(element);
-		addSubmissionClickHandlers(element);
-		addDragHandlers(element);
+		if(apiInternal.anchorHighlighter.decorationCallback) {
+			// Trigger any additional events that have supplied by a client
+			apiInternal.anchorHighlighter.decorationCallback(element);
+		}
 	}
 
 	// Alert all 'prospective submission' elements that one of the elements is
@@ -206,22 +206,9 @@ betterlink_user_interface.createModule("Anchor Highlighter", function(api, apiIn
 		}
 	}
 
-	// Execute sendSubmission() when the provided element is clicked
-	function addSubmissionClickHandlers(element) {
+	// Return the HighlighterProxy that was used to decorate a particular element
+	function getHighlighterForElement(element) {
 		var identifier = element.getAttribute(identifierAttributeName);
-		var highlighter = apiInternal.selectionToggle.getHighlighterWithIdentifier(identifier);
-
-		var callback = highlighter ? highlighter.sendSubmission : displayCallbackWarning;
-
-		apiInternal.addListener(element, "touchstart", callback, highlighter);
-		apiInternal.addListener(element, "click", callback, highlighter);
-	}
-
-	function displayCallbackWarning() {
-		apiInternal.warn("Unable to find the active highlighter and submission associated with this element");
-	}
-
-	function addDragHandlers(element) {
-		apiInternal.draggable.addDragHandlers(element);
+		return apiInternal.selectionToggle.getHighlighterWithIdentifier(identifier);
 	}
 });
