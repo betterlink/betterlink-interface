@@ -20,6 +20,7 @@ betterlink_user_interface.createModule("Span Highlighter", function(api, apiInte
 								"cursor: pointer; }"].join(' ');
 
 	var submittedHighlighters = [];
+	var domUtil = apiInternal.util.dom;
 
 	var identifierAttributeName = "data-identifier";
 
@@ -61,7 +62,7 @@ betterlink_user_interface.createModule("Span Highlighter", function(api, apiInte
 	// The 'prospective submission' style is used to markup a selection that could
 	// be submitted to Betterlink as a new link.
 	function insertProspectiveSubmissionStyle() {
-		apiInternal.util.dom.addCssByClass(PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS, PROSPECTIVE_SUBMISSION_HOVER_CSS);
+		domUtil.addCssByClass(PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS, PROSPECTIVE_SUBMISSION_HOVER_CSS);
 	}
 
 	// When the user finishes a click (on mouseup), toggle the display of prospective
@@ -174,25 +175,22 @@ betterlink_user_interface.createModule("Span Highlighter", function(api, apiInte
 
 	// Add Hover CSS to all elements on the DOM that are part of a prospective submission
 	function applyHoverCss() {
-		var hasHoverClass = new RegExp('\\b' + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS + '\\b');
+		var nodes = domUtil.getElementsByClassName(PROSPECTIVE_SUBMISSION_CSS_CLASS);
 
-		var nodes = apiInternal.util.dom.getElementsByClassName(PROSPECTIVE_SUBMISSION_CSS_CLASS);
 		for(var i = 0, len = nodes.length; i < len; i++) {
 			var node = nodes[i];
-			if(!hasHoverClass.test(node.className)) {
-				node.className = node.className + ' ' + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS;
+			if(!domUtil.elementHasClass(node, PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS)) {
+				domUtil.applyClassToElement(node, PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS);
 			}
 		}
 	}
 
 	// Remove the Hover CSS from all elements on the DOM that are part of a prospective submission
 	function removeHoverCss() {
-		var hasHoverClass = new RegExp('\\s*' + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS + '\\b');
+		var nodes = domUtil.getElementsByClassName(PROSPECTIVE_SUBMISSION_CSS_CLASS);
 
-		var nodes = apiInternal.util.dom.getElementsByClassName(PROSPECTIVE_SUBMISSION_CSS_CLASS);
 		for(var i = 0, len = nodes.length; i < len; i++) {
-			var node = nodes[i];
-			node.className = node.className.replace(hasHoverClass, '');
+			domUtil.removeClassFromElement(nodes[i], PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS);
 		}
 	}
 
