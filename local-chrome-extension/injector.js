@@ -16,7 +16,7 @@ if(!betterlink){
       js=d.createElement(s);
       js.innerHTML = '\
           var dir = "http://localhost:1000/src/";\
-          var modules = ["stubs.js", "smooth-scroller.js", "anchor-reset-css.js", "multiclick.js", "highlighter-proxy.js", "selection-toggle.js", "inplace-span-highlighter.js", "inplace-anchor-highlighter.js", "submissions.interface.js", "submissions.result.js", "submissions.viewer.js"];\
+          var modules = ["stubs.js", "util.dom.js", "draggable.js", "smooth-scroller.js", "anchor-reset-css.js", "multiclick.js", "highlighter-proxy.js", "selection-toggle.js", "inplace-span-highlighter.js", "inplace-anchor-highlighter.js", "action-drawer.js", "submissions.interface.js", "submissions.result.js", "submissions.viewer.js"];\
           modules = modules.map(function(f){return dir+f;});\
           $LAB.script("//code.betterlink.io/betterlink-no-interface.js").wait().script(modules).wait(function(){\
             betterlink.init({ setScriptSource: "chrome extension" });\
