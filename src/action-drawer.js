@@ -69,6 +69,17 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		apiInternal.util.dom.applyClassToElement(drawer, DRAWER_HIDDEN_CLASS);
 	}
 
+	// Update the UI to indiate something is hovering over the dropzone
+	function highlightDropzone(dragItem, dropzone) {
+		apiInternal.util.dom.applyClassToElement(dropzone, DROPPABLE_HOVER_CLASS);
+	}
+
+	// Update the UI to indiate there is no longer anything hovering over the
+	// dropzone
+	function unhighlightDropzone(dragItem, dropzone) {
+		apiInternal.util.dom.removeClassFromElement(dropzone, DROPPABLE_HOVER_CLASS);
+	}
+
 	// Show and hide the Action Drawer when the user starts/stops dragging selected
 	// content
 	function toggleDrawerOnDrag() {
@@ -104,6 +115,9 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 	function addDropHandler() {
 		var nodes = apiInternal.util.dom.getElementsByClassName(DROPPABLE_CLASS);
 		apiInternal.draggable.addDropHandlers(nodes);
+		apiInternal.draggable.subscribe.dragenter(highlightDropzone);
+		apiInternal.draggable.subscribe.dragleave(unhighlightDropzone);
+		apiInternal.draggable.subscribe.drop(unhighlightDropzone);
 		apiInternal.draggable.subscribe.drop(dropCallback);
 	}
 
