@@ -11,6 +11,8 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 	var DRAWER_ID = "betterlink-drawer";
 	var DROPPABLE_CLASS = "betterlink-droppable";
 	var DROPPABLE_HOVER_CLASS = "betterlink-droppable-hover";
+	var DRAWER_HIDDEN_CLASS = "betterlink-drawer-hidden";
+	var DRAWER_HIDDEN_CSS = "{ display: none; }"
 
 	// Drawer Animation
 	// http://www.berriart.com/sidr/
@@ -31,9 +33,15 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 			".footer.row { height: 50px; bottom: 0; line-height: 50px; text-align: center; border-top: 1px solid black; }",
 
 			"." + DROPPABLE_CLASS + " { padding: 10px; width: initial; border: 1px solid black; background: inherit; border-radius: 0; margin: 0; }",
-			"." + DROPPABLE_CLASS + " " + DROPPABLE_HOVER_CLASS + " { background-color: darkgray; }",
+			"." + DROPPABLE_CLASS + "." + DROPPABLE_HOVER_CLASS + " { background-color: darkgray; }",
 
 			"#" + DRAWER_ID + " { background: lightcoral; }"].join(' ');
+
+	var drawer;
+	apiInternal.drawer = {
+		show: showDrawer,
+		hide: hideDrawer
+	};
 
 	/****************************************************************************************************/
 
@@ -42,15 +50,34 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		insertDrawerStyles();
 		createDrawer();
 		addDropHandler();
+		toggleDrawerOnDrag();
 	}
 
 	function insertDrawerStyles() {
 		apiInternal.util.dom.createAndAppendStyleElement(HTML5_CSS);
 		apiInternal.util.dom.createAndAppendStyleElement(DRAWER_CSS);
+		apiInternal.util.dom.addCssByClass(DRAWER_HIDDEN_CLASS, DRAWER_HIDDEN_CSS);
+	}
+
+	// Display the drawer to the user
+	function showDrawer() {
+		apiInternal.util.dom.removeClassFromElement(drawer, DRAWER_HIDDEN_CLASS);
+	}
+
+	// Hide the drawer from the user
+	function hideDrawer() {
+		apiInternal.util.dom.applyClassToElement(drawer, DRAWER_HIDDEN_CLASS);
+	}
+
+	// Show and hide the Action Drawer when the user starts/stops dragging selected
+	// content
+	function toggleDrawerOnDrag() {
+		apiInternal.draggable.subscribe.dragstart(showDrawer);
+		apiInternal.draggable.subscribe.dragend(hideDrawer);
 	}
 
 	function createDrawer() {
-		var drawer = document.createElement('aside');
+		drawer = document.createElement('aside');
 		drawer.id = DRAWER_ID;
 		drawer.className = 'right col';
 
@@ -70,6 +97,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		drawer.appendChild(body);
 		drawer.appendChild(footer);
 
+		hideDrawer();
 		apiInternal.util.dom.registerAndAppend(document.body, drawer);
 	}
 
