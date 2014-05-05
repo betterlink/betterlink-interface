@@ -37,45 +37,45 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 		subscribe: {
 			// Occurs once when a watched element is first dragged
 			//   callback params: the dragged element
-			dragstart: function(fn) {
-				subscribe(DRAGSTART, fn);
+			dragstart: function(fn, thisContext) {
+				subscribe(DRAGSTART, fn, thisContext);
 			},
 
 			// Occurs continuously while an element is dragged
 			//   callback params: the dragged element
-			drag: function(fn) {
-				subscribe(DRAG, fn);
+			drag: function(fn, thisContext) {
+				subscribe(DRAG, fn, thisContext);
 			},
 
 			// Occurs once when a watched element is no longer dragged. If
 			// there is a 'drop' event, this will trigger afterwards.
 			//   callback params: the dragged element
-			dragend: function(fn) {
-				subscribe(DRAGEND, fn);
+			dragend: function(fn, thisContext) {
+				subscribe(DRAGEND, fn, thisContext);
 			},
 
 			// Occurs once when an element enters a watched dropzone
 			//   callback params: the dragged element, the dropzone
-			dragenter: function(fn) {
-				subscribe(DRAGENTER, fn);
+			dragenter: function(fn, thisContext) {
+				subscribe(DRAGENTER, fn, thisContext);
 			},
 
 			// Occurs continuously while an element is over a dropzone
 			//   callback params: the dragged element, the dropzone
-			dragover: function(fn) {
-				subscribe(DRAGOVER, fn);
+			dragover: function(fn, thisContext) {
+				subscribe(DRAGOVER, fn, thisContext);
 			},
 
 			// Occurs once if an element is pulled out of a dropzone
 			//   callback params: the dragged element, the dropzone
-			dragleave: function(fn) {
-				subscribe(DRAGLEAVE, fn);
+			dragleave: function(fn, thisContext) {
+				subscribe(DRAGLEAVE, fn, thisContext);
 			},
 
 			// Occurs once if an element is dropped
 			//   callback params: the dragged element, the dropzone
-			drop: function(fn) {
-				subscribe(DROP, fn);
+			drop: function(fn, thisContext) {
+				subscribe(DROP, fn, thisContext);
 			}
 		},
 
@@ -148,11 +148,11 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 
 	// If a client subscribes to an event, store the callback associated with the
 	// calling context and the event type that's being subscribed to.
-	function subscribe(eventType, fn) {
+	function subscribe(eventType, fn, thisContext) {
 		if(!eventSubscriptions[eventType]) {
 			eventSubscriptions[eventType] = [];
 		}
-		eventSubscriptions[eventType].push({context: this, callback: fn});
+		eventSubscriptions[eventType].push({context: thisContext || this, callback: fn});
 	}
 
 	// Alert all clients that the given event has fired. Pass all additional params
