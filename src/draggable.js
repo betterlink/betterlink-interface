@@ -33,49 +33,83 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 		},
 
 		// Exposes a suite of events that can be subscribed to. The passed-in
-		// function will be notified when the event fires.
-		subscribe: {
+		// function will be notified when the event fires on any application
+		// element.
+		subscribeGlobal: {
 			// Occurs once when a watched element is first dragged
 			//   callback params: the dragged element
 			dragstart: function(fn, thisContext) {
-				subscribe(DRAGSTART, fn, thisContext);
+				subscribe(null, DRAGSTART, fn, thisContext);
 			},
 
 			// Occurs continuously while an element is dragged
 			//   callback params: the dragged element
 			drag: function(fn, thisContext) {
-				subscribe(DRAG, fn, thisContext);
+				subscribe(null, DRAG, fn, thisContext);
 			},
 
 			// Occurs once when a watched element is no longer dragged. If
 			// there is a 'drop' event, this will trigger afterwards.
 			//   callback params: the dragged element
 			dragend: function(fn, thisContext) {
-				subscribe(DRAGEND, fn, thisContext);
+				subscribe(null, DRAGEND, fn, thisContext);
 			},
 
 			// Occurs once when an element enters a watched dropzone
 			//   callback params: the dragged element, the dropzone
 			dragenter: function(fn, thisContext) {
-				subscribe(DRAGENTER, fn, thisContext);
+				subscribe(null, DRAGENTER, fn, thisContext);
 			},
 
 			// Occurs continuously while an element is over a dropzone
 			//   callback params: the dragged element, the dropzone
 			dragover: function(fn, thisContext) {
-				subscribe(DRAGOVER, fn, thisContext);
+				subscribe(null, DRAGOVER, fn, thisContext);
 			},
 
 			// Occurs once if an element is pulled out of a dropzone
 			//   callback params: the dragged element, the dropzone
 			dragleave: function(fn, thisContext) {
-				subscribe(DRAGLEAVE, fn, thisContext);
+				subscribe(null, DRAGLEAVE, fn, thisContext);
 			},
 
 			// Occurs once if an element is dropped
 			//   callback params: the dragged element, the dropzone
 			drop: function(fn, thisContext) {
-				subscribe(DROP, fn, thisContext);
+				subscribe(null, DROP, fn, thisContext);
+			}
+		},
+
+		// Exposes a suite of events that can be subscribed to. The passed-in
+		// function will be notified when the event fires on the specifically
+		// provided element.
+		subscribeToElement: {
+			dragstart: function(element, fn, thisContext) {
+				subscribe(element, DRAGSTART, fn, thisContext);
+			},
+
+			drag: function(element, fn, thisContext) {
+				subscribe(element, DRAG, fn, thisContext);
+			},
+
+			dragend: function(element, fn, thisContext) {
+				subscribe(element, DRAGEND, fn, thisContext);
+			},
+
+			dragenter: function(element, fn, thisContext) {
+				subscribe(element, DRAGENTER, fn, thisContext);
+			},
+
+			dragover: function(element, fn, thisContext) {
+				subscribe(element, DRAGOVER, fn, thisContext);
+			},
+
+			dragleave: function(element, fn, thisContext) {
+				subscribe(element, DRAGLEAVE, fn, thisContext);
+			},
+
+			drop: function(element, fn, thisContext) {
+				subscribe(element, DROP, fn, thisContext);
 			}
 		},
 
@@ -148,20 +182,23 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 
 	// If a client subscribes to an event, store the callback associated with the
 	// calling context and the event type that's being subscribed to.
-	function subscribe(eventType, fn, thisContext) {
+	function subscribe(element, eventType, fn, thisContext) {
 		if(!eventSubscriptions[eventType]) {
 			eventSubscriptions[eventType] = [];
 		}
-		eventSubscriptions[eventType].push({context: thisContext || this, callback: fn});
+		eventSubscriptions[eventType].push({context: thisContext || this, callback: fn, watchedTarget: element});
 	}
 
 	// Alert all clients that the given event has fired. Pass all additional params
 	// onto the client callback function.
-	function fireEvents(eventType) {
+	function fireEvents(currentTarget, eventType) {
 		if(eventSubscriptions[eventType]) {
-			var options = Array.prototype.slice.call(arguments, 1);
+			var options = Array.prototype.slice.call(arguments, 2);
 			apiInternal.util.forEach(eventSubscriptions[eventType], function(subscription) {
-				subscription.callback.apply(subscription.context, options);
+				// Alert all global subscribers or any subscribers for this currentTarget
+				if(!subscription.watchedTarget || subscription.watchedTarget === currentTarget) {
+					subscription.callback.apply(subscription.context, options);
+				}
 			});
 		}
 	}
@@ -176,17 +213,17 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 		// the same thing if we pass the element into the event handler as the `this`
 		// context.
 		currentDragItem = e.currentTarget || this;
-		fireEvents(DRAGSTART, currentDragItem);
+		fireEvents(currentDragItem, DRAGSTART, currentDragItem);
 	}
 
 	function handleDrag(e) {
-		fireEvents(DRAG, currentDragItem);
+		fireEvents(currentDragItem, DRAG, currentDragItem);
 	}
 
 	function removeDragItem(e) {
 		var formerDragItem = currentDragItem;
 		currentDragItem = null;
-		fireEvents(DRAGEND, formerDragItem);
+		fireEvents(currentDragItem, DRAGEND, formerDragItem);
 	}
 
 	// ****** Drop Events ******
@@ -195,7 +232,7 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 			e.preventDefault ? e.preventDefault() : window.event.returnValue = false;
 
 			var dropTarget = e.currentTarget || this;
-			fireEvents(DRAGENTER, currentDragItem, dropTarget);
+			fireEvents(dropTarget, DRAGENTER, currentDragItem, dropTarget);
 		}
 	}
 
@@ -204,21 +241,21 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 			e.preventDefault ? e.preventDefault() : window.event.returnValue = false;
 
 			var dropTarget = e.currentTarget || this;
-			fireEvents(DRAGOVER, currentDragItem, dropTarget);
+			fireEvents(dropTarget, DRAGOVER, currentDragItem, dropTarget);
 		}
 	}
 
 	function handleDragleave(e) {
 		if(watchedItemIsBeingDragged()) {
 			var dropTarget = e.currentTarget || this;
-			fireEvents(DRAGLEAVE, currentDragItem, dropTarget);
+			fireEvents(dropTarget, DRAGLEAVE, currentDragItem, dropTarget);
 		}
 	}
 
 	function handleDrop(e) {
 		if(watchedItemIsBeingDragged()) {
 			var dropTarget = e.currentTarget || this;
-			fireEvents(DROP, currentDragItem, dropTarget);
+			fireEvents(dropTarget, DROP, currentDragItem, dropTarget);
 		}
 	}
 

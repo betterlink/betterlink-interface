@@ -70,8 +70,8 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 	// Show and hide the Action Drawer when the user starts/stops dragging selected
 	// content
 	function toggleDrawerOnDrag() {
-		apiInternal.draggable.subscribe.dragstart(showDrawer);
-		apiInternal.draggable.subscribe.dragend(hideDrawer);
+		apiInternal.draggable.subscribeGlobal.dragstart(showDrawer);
+		apiInternal.draggable.subscribeGlobal.dragend(hideDrawer);
 	}
 
 	function createDrawer() {

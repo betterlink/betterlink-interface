@@ -46,13 +46,13 @@ betterlink_user_interface.createModule("Drawer Dropzone", function(api, apiInter
 		},
 
 		// Update the UI to indiate something is hovering over the dropzone
-		highlight: function() {
+		highlight: function(dragItem, dropTarget) {
 			apiInternal.util.dom.applyClassToElement(this.element, DROPZONE_HOVER_CLASS);
 		},
 
 		// Update the UI to indiate there is no longer anything hovering over the
 		// dropzone
-		unhiglight: function() {
+		unhiglight: function(dragItem, dropTarget) {
 			apiInternal.util.dom.removeClassFromElement(this.element, DROPZONE_HOVER_CLASS);
 		}
 	}
@@ -77,10 +77,10 @@ betterlink_user_interface.createModule("Drawer Dropzone", function(api, apiInter
 
 	// Get notified when elements are dragged or dropped onto of this dropzone
 	function subscribeToDragEvents(dropzone) {
-		apiInternal.draggable.subscribe.dragenter(dropzone.highlight, dropzone);
-		apiInternal.draggable.subscribe.dragleave(dropzone.unhiglight, dropzone);
-		apiInternal.draggable.subscribe.drop(dropzone.unhiglight, dropzone);
-		apiInternal.draggable.subscribe.drop(dropCallback);
+		apiInternal.draggable.subscribeToElement.dragenter(dropzone.element, dropzone.highlight, dropzone);
+		apiInternal.draggable.subscribeToElement.dragleave(dropzone.element, dropzone.unhiglight, dropzone);
+		apiInternal.draggable.subscribeToElement.drop(dropzone.element, dropzone.unhiglight, dropzone);
+		apiInternal.draggable.subscribeToElement.drop(dropzone.element, dropCallback);
 	}
 
 	function dropCallback(item, dropzone) {
