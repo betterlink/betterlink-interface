@@ -21,14 +21,15 @@ betterlink_user_interface.createModule("Drawer Dropzone", function(api, apiInter
 	/****************************************************************************************************/
 
 	// Creates a new Dropzone object that will be returned to the client
-	function createDropzone() {
-		var dropzone = new Dropzone();
+	function createDropzone(opt_text) {
+		var dropzone = new Dropzone(opt_text);
 		dropzone.initialize();
 		return dropzone;
 	}
 
-	function Dropzone() {
+	function Dropzone(textContent) {
 		var dropzone = this;
+		dropzone.text = textContent;
 	}
 
 	Dropzone.prototype = {
@@ -90,7 +91,7 @@ betterlink_user_interface.createModule("Drawer Dropzone", function(api, apiInter
 	function createDropzoneElement(dropzone) {
 		var element = document.createElement('div');
 		apiInternal.util.dom.applyClassToElement(element, DROPZONE_CLASS);
-		element.appendChild(document.createTextNode('Drop Here'));
+		element.appendChild(document.createTextNode(dropzone.text || 'Drop Here'));
 		return element;
 	}
 

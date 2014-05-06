@@ -104,14 +104,15 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		var list = document.createElement('ul');
 		list.id = DROPZONES_LIST_ID;
 		list.appendChild(createDropzone());
+		list.appendChild(createDropzone('Drop Two'));
 
 		element.appendChild(list);
 	}
 
 	// Create and return a generic dropzone element
-	function createDropzone() {
+	function createDropzone(opt_text) {
 		var li = document.createElement('li');
-		var dropzone = apiInternal.dropzone.create();
+		var dropzone = apiInternal.dropzone.create(opt_text);
 		li.appendChild(dropzone.element);
 
 		dropzone.subscribeToDrop(dropCallback);
