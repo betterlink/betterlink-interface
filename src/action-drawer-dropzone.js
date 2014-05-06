@@ -54,6 +54,30 @@ betterlink_user_interface.createModule("Drawer Dropzone", function(api, apiInter
 		// dropzone
 		unhiglight: function(dragItem, dropTarget) {
 			apiInternal.util.dom.removeClassFromElement(this.element, DROPZONE_HOVER_CLASS);
+		},
+
+		// A suite of events that can be subscribed to. This passed-in function will
+		// be notified when the event fires on this dropzone. Each callback will
+		// receive two parameters (both DOM elements):
+		//   currentDragitem, dropTarget
+
+		// Occurs once when an element enters the dropzone
+		subscribeToDragenter: function(fn, thisContext) {
+			apiInternal.draggable.subscribeToElement.dragenter(this.element, fn, thisContext);
+		},
+
+		// Occurs once when an element leave the dropzone.
+		// NOTE: Unlike the standard HTML spec, this will also fire on the drop event.
+		//       This is because the drop event also indicates when an element is no
+		//       longer being dragged over the dropzone.
+		subscribeToDragleave: function(fn, thisContext) {
+			apiInternal.draggable.subscribeToElement.dragleave(this.element, fn, thisContext);
+			apiInternal.draggable.subscribeToElement.drop(this.element, fn, thisContext);
+		},
+
+		// Occurs once if an element is dropped
+		subscribeToDrop: function(fn, thisContext) {
+			apiInternal.draggable.subscribeToElement.drop(this.element, fn, thisContext);
 		}
 	}
 
@@ -80,12 +104,5 @@ betterlink_user_interface.createModule("Drawer Dropzone", function(api, apiInter
 		apiInternal.draggable.subscribeToElement.dragenter(dropzone.element, dropzone.highlight, dropzone);
 		apiInternal.draggable.subscribeToElement.dragleave(dropzone.element, dropzone.unhiglight, dropzone);
 		apiInternal.draggable.subscribeToElement.drop(dropzone.element, dropzone.unhiglight, dropzone);
-		apiInternal.draggable.subscribeToElement.drop(dropzone.element, dropCallback);
-	}
-
-	function dropCallback(item, dropzone) {
-		console.log(item);
-		console.log("just dropped in");
-		console.log(dropzone);
 	}
 });

@@ -113,6 +113,15 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		var li = document.createElement('li');
 		var dropzone = apiInternal.dropzone.create();
 		li.appendChild(dropzone.element);
+
+		dropzone.subscribeToDrop(dropCallback);
+
 		return li;
+	}
+
+	function dropCallback(draggedItem, dropzone) {
+		console.log(draggedItem);
+		console.log("just dropped in");
+		console.log(dropzone);
 	}
 });
