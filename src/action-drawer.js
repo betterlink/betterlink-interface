@@ -5,14 +5,13 @@
  *
  */
 betterlink_user_interface.createModule("Action Drawer", function(api, apiInternal) {
-	api.requireModules( ["Util", "Util.DOM", "Draggable"] );
+	api.requireModules( ["Util", "Util.DOM", "Draggable", "Drawer Dropzone"] );
 
 	var HTML5_CSS = "article, aside, footer, header, nav, section { display: block; }";
 	var DRAWER_ID = "betterlink-drawer";
-	var DROPPABLE_CLASS = "betterlink-droppable";
-	var DROPPABLE_HOVER_CLASS = "betterlink-droppable-hover";
 	var DRAWER_HIDDEN_CLASS = "betterlink-drawer-hidden";
 	var DRAWER_HIDDEN_CSS = "{ display: none; }"
+	var DROPZONES_LIST_ID = "betterlink-dropzones";
 
 	// Drawer Animation
 	// http://www.berriart.com/sidr/
@@ -32,8 +31,8 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 			".body.row { top: 75px; bottom: 50px; }",
 			".footer.row { height: 50px; bottom: 0; line-height: 50px; text-align: center; border-top: 1px solid black; }",
 
-			"." + DROPPABLE_CLASS + " { padding: 10px; width: initial; border: 1px solid black; background: inherit; border-radius: 0; margin: 0; }",
-			"." + DROPPABLE_CLASS + "." + DROPPABLE_HOVER_CLASS + " { background-color: darkgray; }",
+			"#" + DROPZONES_LIST_ID + " { margin: 0; padding: 0; }",
+			"#" + DROPZONES_LIST_ID + ">li { list-style: none; }",
 
 			"#" + DRAWER_ID + " { background: lightcoral; }"].join(' ');
 
@@ -49,7 +48,6 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 	function initializeDrawer() {
 		insertDrawerStyles();
 		createDrawer();
-		addDropHandler();
 		toggleDrawerOnDrag();
 	}
 
@@ -67,17 +65,6 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 	// Hide the drawer from the user
 	function hideDrawer() {
 		apiInternal.util.dom.applyClassToElement(drawer, DRAWER_HIDDEN_CLASS);
-	}
-
-	// Update the UI to indiate something is hovering over the dropzone
-	function highlightDropzone(dragItem, dropzone) {
-		apiInternal.util.dom.applyClassToElement(dropzone, DROPPABLE_HOVER_CLASS);
-	}
-
-	// Update the UI to indiate there is no longer anything hovering over the
-	// dropzone
-	function unhighlightDropzone(dragItem, dropzone) {
-		apiInternal.util.dom.removeClassFromElement(dropzone, DROPPABLE_HOVER_CLASS);
 	}
 
 	// Show and hide the Action Drawer when the user starts/stops dragging selected
@@ -98,7 +85,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 
 		var body = document.createElement('section');
 		body.className = 'body row';
-		body.innerHTML = '<div class="betterlink-droppable">Drop Here</div>';
+		addDropzones(body);
 
 		var footer = document.createElement('section');
 		footer.className = 'footer row';
@@ -112,18 +99,20 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		apiInternal.util.dom.registerAndAppend(document.body, drawer);
 	}
 
-	function addDropHandler() {
-		var nodes = apiInternal.util.dom.getElementsByClassName(DROPPABLE_CLASS);
-		apiInternal.draggable.addDropHandlers(nodes);
-		apiInternal.draggable.subscribe.dragenter(highlightDropzone);
-		apiInternal.draggable.subscribe.dragleave(unhighlightDropzone);
-		apiInternal.draggable.subscribe.drop(unhighlightDropzone);
-		apiInternal.draggable.subscribe.drop(dropCallback);
+	// Add a list of Dropzone elements to the provide parent element
+	function addDropzones(element) {
+		var list = document.createElement('ul');
+		list.id = DROPZONES_LIST_ID;
+		list.appendChild(createDropzone());
+
+		element.appendChild(list);
 	}
 
-	function dropCallback(item, dropzone) {
-		console.log(item);
-		console.log("just dropped in");
-		console.log(dropzone);
+	// Create and return a generic dropzone element
+	function createDropzone() {
+		var li = document.createElement('li');
+		var dropzone = apiInternal.dropzone.create();
+		li.appendChild(dropzone.element);
+		return li;
 	}
 });
