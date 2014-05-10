@@ -120,7 +120,13 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 		addListener: addListener,
 
 		warn: function(reason) {
-			console.log("Betterlink warning: " + reason);
+			if(Function.prototype.bind) {
+				var log = Function.prototype.bind.call(console.log, console);
+				log.apply(console, ["Betterlink warning: "].concat(Array.prototype.slice.call(arguments, 0)));
+			}
+			else {
+				console.log("Betterlink warning: " + reason);
+			}
 		}
 	};
 
