@@ -173,14 +173,14 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 
 	// 'Util.Ranges'
 	apiInternal.util.ranges = {
+		// Return whether there is any text that is selected on
+		// the current document.
 		currentSelectionIsEmpty: function () {
-			// simple version for modern browsers + IE9
-			if(window.getSelection) {
-				return window.getSelection().isCollapsed;
-			}
-			else {
-				return false;
-			}
+			// Functionally equivalent to the below script, with
+			// additional feature testing and support for older browsers.
+			//
+			// return window.getSelection && window.getSelection.isCollapsed;
+			return betterlink.exports.currentSelectionIsEmpty();
 		},
 
 		// Create invisible bookends within the DOM that bound the active
