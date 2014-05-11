@@ -4,7 +4,7 @@
  *
  */
 betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
-	api.requireModules( ["Util", "Util.DOM"] );
+	api.requireModules( ["Util", "Util.DOM", "SingleEntryWatcher"] );
 
 	var DRAGSTART = 'dragstart',
 		DRAG = 'drag',
@@ -110,6 +110,30 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 
 			drop: function(element, fn, thisContext) {
 				subscribe(element, DROP, fn, thisContext);
+			},
+
+			// A custom dragenter event. Fires when an element enters a watched
+			// dropzone. Will not fire additional times for children of the
+			// dropzone.
+			simpledragenter: function(element, fn, thisContext) {
+				var watcher = apiInternal.singleEntryWatcher.getOrCreate(element, fireEvents);
+
+				subscribe(element, apiInternal.singleEntryWatcher.SINGLE_ENTRY, fn, thisContext);
+				subscribe(element, DRAGENTER, watcher.enter, watcher);
+			},
+
+			// A custom dragleave event. Fires when an element leaves a watched
+			// dropzone. Will not fire additional times for children of the
+			// dropzone.
+			simpledragleave: function(element, fn, thisContext) {
+				var watcher = apiInternal.singleEntryWatcher.findExisting(element);
+				if(!watcher) {
+					apiInternal.warn("Could not find an existing watcher for", element);
+				}
+
+				subscribe(element, apiInternal.singleEntryWatcher.SINGLE_EXIT, fn, thisContext);
+				subscribe(element, DRAGLEAVE, watcher.exit, watcher);
+				subscribe(element, DROP, watcher.exit, watcher);
 			}
 		},
 

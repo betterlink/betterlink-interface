@@ -64,7 +64,7 @@ betterlink_user_interface.createModule("Drawer Dropzone", function(api, apiInter
 
 		// Occurs once when an element enters the dropzone
 		subscribeToDragenter: function(fn, thisContext) {
-			apiInternal.draggable.subscribeToElement.dragenter(this.element, fn, thisContext);
+			apiInternal.draggable.subscribeToElement.simpledragenter(this.element, fn, thisContext);
 		},
 
 		// Occurs once when an element leave the dropzone.
@@ -72,8 +72,7 @@ betterlink_user_interface.createModule("Drawer Dropzone", function(api, apiInter
 		//       This is because the drop event also indicates when an element is no
 		//       longer being dragged over the dropzone.
 		subscribeToDragleave: function(fn, thisContext) {
-			apiInternal.draggable.subscribeToElement.dragleave(this.element, fn, thisContext);
-			apiInternal.draggable.subscribeToElement.drop(this.element, fn, thisContext);
+			apiInternal.draggable.subscribeToElement.simpledragleave(this.element, fn, thisContext);
 		},
 
 		// Occurs once if an element is dropped
@@ -102,8 +101,7 @@ betterlink_user_interface.createModule("Drawer Dropzone", function(api, apiInter
 
 	// Get notified when elements are dragged or dropped onto of this dropzone
 	function subscribeToDragEvents(dropzone) {
-		apiInternal.draggable.subscribeToElement.dragenter(dropzone.element, dropzone.highlight, dropzone);
-		apiInternal.draggable.subscribeToElement.dragleave(dropzone.element, dropzone.unhiglight, dropzone);
-		apiInternal.draggable.subscribeToElement.drop(dropzone.element, dropzone.unhiglight, dropzone);
+		dropzone.subscribeToDragenter(dropzone.highlight, dropzone);
+		dropzone.subscribeToDragleave(dropzone.unhiglight, dropzone);
 	}
 });
