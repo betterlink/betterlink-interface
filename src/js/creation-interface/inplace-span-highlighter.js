@@ -81,10 +81,8 @@ betterlink_user_interface.createModule("Span Highlighter", function(api, apiInte
 	}
 
 	// By extending the HighlighterProxy Prototype (instead of creating a separate
-	// function), we save ourselves from creating an anonymous function every time
-	// we attach the sendSubmission() function as a callback to our links. That's
-	// because we'd have to pass the provided highlighter into the function as a
-	// parameter.
+	// function), we have access to the submittedHighlighters array, which is used
+	// for the cleanupSubmittedHighlighters() function this class exposes.
 	apiInternal.util.extend(apiInternal.HighlighterProxyPrototype, {
 
 		// Submit the prospective submission to the server to create a new link.

@@ -51,11 +51,42 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 
 	// Execute sendSubmission() when the provided element is clicked
 	function addSubmissionClickHandlers(element) {
-		var highlighter = elementHighlighter.getHighlighterForElement(element);
-		var callback = highlighter ? highlighter.sendSubmission : displayCallbackWarning;
+		// NOTE: We could alternatively try finding the associated element at time
+		// of creation, storing it, then simply executing sendSubmission() at time
+		// of click. Instead, we'll do everything at time of click.
+		// There are two benefits to deferring the search until the point of click:
+		//  1. It allows us to only write the submitSelectionFromElement() function
+		//     once and send to any necessary clients. Otherwise, we would need a
+		//     duplicate version that only sends the sendSubmission() into the event
+		//     callback.
+		//  2. It actually defers the longer work to a point when the user is more
+		//     willing to wait. By searching at element creation, we're doing the
+		//     hard work *every* time we create an element -- even if we don't end
+		//     up submitting it. It also happens while the user is interacting with
+		//     the page. If we wait, the user is expecting the system to wait and
+		//     process.
+		apiInternal.addListener(element, "touchstart", triggerSubmitSelection, element);
+		apiInternal.addListener(element, "click", triggerSubmitSelection, element);
+	}
 
-		apiInternal.addListener(element, "touchstart", callback, highlighter);
-		apiInternal.addListener(element, "click", callback, highlighter);
+	// Executed as a callback on a click event
+	function triggerSubmitSelection(e) {
+		e.preventDefault ? e.preventDefault() : window.event.returnValue = false;
+
+		var element = e.currentTarget || this;
+		submitSelectionFromElement(element);
+	}
+
+	// When provided with an HTML element, find an associated Highlighter and
+	// submit its most recent selection
+	function submitSelectionFromElement(element) {
+		var highlighter = elementHighlighter.getHighlighterForElement(element);
+		if(highlighter) {
+			highlighter.sendSubmission();
+		}
+		else {
+			displayHighlighterNotFound();
+		}
 	}
 
 	// When each highlighted element is created, markup the element with event
@@ -95,7 +126,7 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 		return supported;
 	}
 
-	function displayCallbackWarning() {
+	function displayHighlighterNotFound() {
 		apiInternal.warn("Unable to find the active highlighter and submission associated with this element");
 	}
 });
