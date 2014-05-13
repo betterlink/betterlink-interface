@@ -20,6 +20,7 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 
 		apiInternal.submissions.creationInterface.initialized = true;
 		initializeHighlighters();
+		initializeActionDrawer();
 	}
 
 	function initializeHighlighters() {
@@ -47,6 +48,10 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 
 		apiInternal.submissions.creationInterface.cleanupSubmittedHighlighters = elementHighlighter.cleanupSubmittedHighlighters;
 		elementHighlighter.initialize();
+	}
+
+	function initializeActionDrawer() {
+		apiInternal.drawer.create(submitSelectionFromElement);
 	}
 
 	// Execute sendSubmission() when the provided element is clicked

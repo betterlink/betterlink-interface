@@ -5,7 +5,7 @@
  *
  */
 betterlink_user_interface.createModule("Action Drawer", function(api, apiInternal) {
-	api.requireModules( ["Util", "Util.DOM", "Draggable", "Drawer Dropzone"] );
+	api.requireModules( ["Util", "Util.DOM", "Draggable", "Drawer Dropzone", "Link Viewer"] );
 
 	var HTML5_CSS = "article, aside, footer, header, nav, section { display: block; }";
 	var DRAWER_ID = "betterlink-drawer";
@@ -49,15 +49,23 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 			"." + DRAWER_HIDDEN_CLASS + " { display: none; }"].join(' ');
 
 	var drawer;
+	var submissionFunction;
+
 	apiInternal.drawer = {
+		create: initializeDrawer,
 		show: showDrawer,
 		hide: hideDrawer
 	};
 
 	/****************************************************************************************************/
 
-	apiInternal.addInitListener(initializeDrawer);
-	function initializeDrawer() {
+	function initializeDrawer(submissionFn) {
+		if(apiInternal.drawer.initialized)
+			return;
+
+		apiInternal.drawer.initialized = true;
+		submissionFunction = submissionFn;
+
 		insertDrawerStyles();
 		createDrawer();
 		toggleDrawerOnDrag();
@@ -104,7 +112,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		center_bottom.className = 'betterlink-bottom-to-top betterlink-reset';
 
 		addDropzones(center_top);
-		addDropzones(center_bottom);
+		center_bottom.appendChild(apiInternal.linkViewer.create(submissionFunction));
 		center.appendChild(center_top);
 		center.appendChild(center_bottom);
 
