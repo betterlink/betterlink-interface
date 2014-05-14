@@ -4,7 +4,7 @@
  *
  */
 betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "Drawer Dropzone", "Event Messaging"] );
+	api.requireModules( ["Util.DOM", "Util.Ranges", "Drawer Dropzone", "Event Messaging"] );
 
 	var LINK_VIEWER_ID = 'betterlink-link-display';
 	var LAST_LINK_ID = 'betterlink-last-link';
@@ -106,7 +106,7 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 		function _selectText(e) {
 			e.preventDefault ? e.preventDefault() : window.event.returnValue = false;
 
-			element.select();
+			apiInternal.util.ranges.selectNodeContents(element);
 		}
 	}
 });

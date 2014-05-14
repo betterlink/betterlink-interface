@@ -234,6 +234,12 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 		// of the document) will be undone.
 		removeCurrentSelection: function() {
 			betterlink.exports.removeCurrentSelection();
+		},
+
+		// Selects all of the content contained within the provided node.
+		// As a consequence, this will remove any current user selection.
+		selectNodeContents: function(node) {
+			betterlink.exports.selectNodeContents(node);
 		}
 	};
 
