@@ -27,7 +27,8 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 	var lastTextElement;
 
 	apiInternal.linkViewer = {
-		create: initializeLinkViewer
+		create: initializeLinkViewer,
+		selectLastLink: selectLastLink
 	};
 	/****************************************************************************************************/
 
@@ -80,18 +81,20 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 
 		if(success) {
 			apiInternal.util.dom.removeClassFromElement(lastLinkElement, NO_LINK);
+			apiInternal.util.dom.applyClassToElement(lastLinkElement, ELLIPSIS);
 			apiInternal.util.dom.removeClassFromElement(linkDropzone.element, ERROR);
 			apiInternal.util.dom.applyClassToElement(linkDropzone.element, SUCCESS);
 
 			apiInternal.util.dom.addOrReplaceChild(lastLinkElement, document.createTextNode(message));
 			if(selectedText) {
-				selectedText = '"' + selectedText.replace(/\s+/g,' ') + '"';
+				selectedText = '"' + collapseWhitespace(selectedText) + '"';
 				apiInternal.util.dom.addOrReplaceChild(lastTextElement, document.createTextNode(selectedText));
 			}
 		}
 		else {
 			apiInternal.util.dom.removeClassFromElement(linkDropzone.element, SUCCESS);
 			apiInternal.util.dom.applyClassToElement(linkDropzone.element, ERROR);
+			apiInternal.util.dom.removeClassFromElement(lastLinkElement, ELLIPSIS);
 			apiInternal.util.dom.applyClassToElement(lastLinkElement, NO_LINK);
 
 			apiInternal.util.dom.addOrReplaceChild(lastLinkElement, document.createTextNode(message));
@@ -106,7 +109,15 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 		function _selectText(e) {
 			e.preventDefault ? e.preventDefault() : window.event.returnValue = false;
 
-			apiInternal.util.ranges.selectNodeContents(element);
+			selectLastLink();
 		}
+	}
+
+	function selectLastLink() {
+		apiInternal.util.ranges.selectNodeContents(lastLinkElement);
+	}
+
+	function collapseWhitespace(text) {
+		return text.replace(/\s+/g,' ');
 	}
 });
