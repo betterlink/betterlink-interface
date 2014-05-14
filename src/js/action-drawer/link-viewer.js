@@ -8,11 +8,23 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 
 	var LINK_VIEWER_ID = 'betterlink-link-display';
 	var LAST_LINK_ID = 'betterlink-last-link';
+	var LAST_TEXT_ID = 'betterlink-last-link-text';
 
-	var LINK_DISPLAYER_CSS = "#" + LINK_VIEWER_ID + " { width: auto; }";
+	var NO_LINK = "betterlink-no-link";
+	var SUCCESS = "betterlink-link-success";
+	var ERROR = "betterlink-link-error";
+	var ELLIPSIS = "betterlink-ellipsis";
+
+	var LINK_DISPLAYER_CSS = 
+		[   "#" + LINK_VIEWER_ID + " { width: auto; }",
+			"#" + LAST_LINK_ID + " { font-size: 13px; }",
+			"#" + LAST_TEXT_ID + " { color: #333; font-style: italic; font-size: 70%; }",
+			"." + NO_LINK + " { font-style: italic; }",
+			"." + ELLIPSIS + " { width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; -o-text-overflow: ellipsis; }"].join(' ');
 
 	var linkDropzone;
 	var lastLinkElement;
+	var lastTextElement;
 
 	apiInternal.linkViewer = {
 		create: initializeLinkViewer
@@ -43,12 +55,16 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 		linkDropzone = apiInternal.dropzone.create('Last Link');
 		linkDropzone.element.id = LINK_VIEWER_ID;
 
-		lastLinkElement = document.createElement('input');
-		lastLinkElement.id = LAST_LINK_ID;
-		lastLinkElement.type = 'text';
-		lastLinkElement.setAttribute('placeholder', 'my placeholder');
-		lastLinkElement.setAttribute('readonly', '');
+		lastTextElement = document.createElement('div');
+		lastTextElement.id = LAST_TEXT_ID;
+		lastTextElement.className = "betterlink-reset " + ELLIPSIS;
 
+		lastLinkElement = document.createElement('div');
+		lastLinkElement.id = LAST_LINK_ID;
+		lastLinkElement.className = "betterlink-reset " + NO_LINK;
+		lastLinkElement.appendChild(document.createTextNode('no recent submissions'));
+
+		linkDropzone.element.appendChild(lastTextElement);
 		linkDropzone.element.appendChild(lastLinkElement);
 	}
 
@@ -58,12 +74,27 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 
 	// Expects an object { success: true, message: "my message here", text: "Example text...", selection: custom_obj }
 	function displaySubmissionResult(result) {
+		var success = result['success'];
 		var message = result['message'];
 		var selectedText = result['text'];
 
-		var lastLink = document.getElementById(LAST_LINK_ID);
-		if(lastLink) {
-			lastLink.value = message;
+		if(success) {
+			apiInternal.util.dom.removeClassFromElement(lastLinkElement, NO_LINK);
+			apiInternal.util.dom.removeClassFromElement(linkDropzone.element, ERROR);
+			apiInternal.util.dom.applyClassToElement(linkDropzone.element, SUCCESS);
+
+			apiInternal.util.dom.addOrReplaceChild(lastLinkElement, document.createTextNode(message));
+			if(selectedText) {
+				selectedText = '"' + selectedText.replace(/\s+/g,' ') + '"';
+				apiInternal.util.dom.addOrReplaceChild(lastTextElement, document.createTextNode(selectedText));
+			}
+		}
+		else {
+			apiInternal.util.dom.removeClassFromElement(linkDropzone.element, SUCCESS);
+			apiInternal.util.dom.applyClassToElement(linkDropzone.element, ERROR);
+			apiInternal.util.dom.applyClassToElement(lastLinkElement, NO_LINK);
+
+			apiInternal.util.dom.addOrReplaceChild(lastLinkElement, document.createTextNode(message));
 		}
 	}
 
