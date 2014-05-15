@@ -49,19 +49,32 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 	}
 
 	// Event Listener
-	function addListener (obj, eventType, listener, scope) {
+	// Very simple event handler wrapper function that attempts to solve "this" handling for
+	// callbacks, but does not address event property normalization.
+	function addListener(obj, eventType, listener, scope) {
 		var scopedHandler = scope ? function(e) { return listener.apply(scope, [e]); } : listener;
 		if(isHostMethod(document, "addEventListener")) {
 			obj.addEventListener(eventType, scopedHandler, false);
+			return scopedHandler;
 		} else if (isHostMethod(document, "attachEvent")) {
 			obj.attachEvent("on" + eventType, scopedHandler);
 			return scopedHandler; // so can be removed
 		} else {
-			console.log("cannot add events");
+			apiInternal.warn("cannot add events");
 		}
 	}
 
-	function executeListeners (listeners) {
+	function removeListener(obj, eventType, listener) {
+		if(isHostMethod(document, "removeEventListener")) {
+			obj.removeEventListener(eventType, listener, false);
+		} else if (isHostMethod(document, "detachEvent")) {
+			obj.detachEvent("on" + eventType, listener);
+		} else {
+			apiInternal.warn("cannot remove events");
+		}
+	}
+
+	function executeListeners(listeners) {
 		for (var i = 0, len = listeners.length; i < len; ++i) {
 			try {
 				listeners[i]();
@@ -118,6 +131,7 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 		},
 
 		addListener: addListener,
+		removeListener: removeListener,
 
 		warn: function(reason) {
 			if(Function.prototype.bind) {
