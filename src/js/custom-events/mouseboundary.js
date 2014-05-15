@@ -13,8 +13,20 @@ betterlink_user_interface.createModule("Mouseboundary", function(api, apiInterna
 
 	apiInternal.mouseboundary = {
 		subscribe: {
-			mouseenter: subscribeMouseenter,
-			mouseleave: subscribeMouseleave
+			mouseenter: function(element, fn, thisContext) {
+				return subscribe('mouseenter', element, fn, thisContext);
+			},
+			mouseleave: function(element, fn, thisContext) {
+				return subscribe('mouseleave', element, fn, thisContext);
+			}
+		},
+		remove: {
+			mouseenter: function(element, fn) {
+				remove('mouseenter', element, fn);
+			},
+			mouseleave: function(element, fn) {
+				remove('mouseleave', element, fn);
+			}
 		}
 	};
 	/****************************************************************************************************/
@@ -32,14 +44,18 @@ betterlink_user_interface.createModule("Mouseboundary", function(api, apiInterna
 		return isSupported;
 	}
 
-	function subscribeMouseenter(element, fn, thisContext) {
-		subscribe('mouseenter', element, fn, thisContext);
+	// Remove the specified event listener from the provided element
+	function remove(eventType, element, fn) {
+		if(mouseenterSupported) {
+			apiInternal.removeListener(element, eventType, fn);
+		}
+		else {
+			var simulatedEventType = pairs[eventType];
+			apiInternal.removeListener(element, simulatedEventType, fn);
+		}
 	}
 
-	function subscribeMouseleave(element, fn, thisContext) {
-		subscribe('mouseleave', element, fn, thisContext);
-	}
-
+	// Add the specified event listener to the provided element
 	function subscribe(eventType, element, fn, thisContext) {
 		if(mouseenterSupported) {
 			return apiInternal.addListener(element, eventType, fn, thisContext);
