@@ -99,10 +99,16 @@ betterlink_user_interface.createModule("Util.DOM", function(api, apiInternal) {
 		},
 
 		// Test if the provided element has the given class name
-		elementHasClass: function(element, className) {
-			var hasClass = new RegExp('\\b' + className + '\\b');
-			return hasClass.test(element.className)
-		},
+		elementHasClass: (function() {
+			// Use a IIFE to keep a memoization cache of previously-generated
+			// regular expressions.
+			var cache = {};
+			return function(element, className) {
+				var hasClass = cache[className] || 
+					(cache[className] = new RegExp('\\b' + className + '\\b'));
+				return hasClass.test(element.className)
+			};
+		})(),
 
 		// Apply the given class name to the provided element. Don't re-apply
 		// if the class name is already applied.
@@ -113,12 +119,18 @@ betterlink_user_interface.createModule("Util.DOM", function(api, apiInternal) {
 		},
 
 		// If the provided element has the given class name, remove the class
-		removeClassFromElement: function(element, className) {
-			if(element.className) {
-				var hasClass = new RegExp('\\s*' + className + '\\b');
-				element.className = element.className.replace(hasClass, '');
-			}
-		},
+		removeClassFromElement: (function() {
+			// Use a IIFE to keep a memoization cache of previously-generated
+			// regular expressions.
+			var cache = {};
+			return function(element, className) {
+				if(element.className) {
+					var hasClass = cache[className] || 
+						(cache[className] = new RegExp('\\s*' + className + '\\b'));
+					element.className = element.className.replace(hasClass, '');
+				}
+			};
+		})(),
 
 		// Private function for getElementsByClassName for IE8- compatibility
 		// Derived from Eike Send, MIT License
