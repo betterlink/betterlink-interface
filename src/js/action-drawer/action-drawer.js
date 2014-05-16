@@ -5,7 +5,7 @@
  *
  */
 betterlink_user_interface.createModule("Action Drawer", function(api, apiInternal) {
-	api.requireModules( ["Util", "Util.DOM", "Draggable", "Drawer Dropzone", "Link Viewer"] );
+	api.requireModules( ["Util", "Util.DOM", "Neglected", "Draggable", "Drawer Dropzone", "Link Viewer"] );
 
 	var HTML5_CSS = "article, aside, footer, header, nav, section { display: block; }";
 	var DRAWER_ID = "betterlink-drawer";
@@ -76,21 +76,30 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		apiInternal.util.dom.createAndAppendStyleElement(DRAWER_CSS);
 	}
 
-	// Display the drawer to the user
+	// Use the Neglected event to indicate when the user has stopped interacting
+	// with the drawer. We'll start watching once the drawer is open (to keep
+	// accurate track of the mouse position), but only allow the drawer to close
+	// once the user has stopped dragging their element and is no longer interacting
+	// with the drawer.
 	function showDrawer() {
 		apiInternal.util.dom.removeClassFromElement(drawer, DRAWER_HIDDEN_CLASS);
+		apiInternal.neglected.watchTarget(drawer, hideDrawer);
 	}
 
-	// Hide the drawer from the user
 	function hideDrawer() {
 		apiInternal.util.dom.applyClassToElement(drawer, DRAWER_HIDDEN_CLASS);
+		apiInternal.neglected.stopWatchingTarget(drawer, hideDrawer);
+	}
+
+	function allowDrawerToClose() {
+		apiInternal.neglected.actOnTarget(drawer, hideDrawer);
 	}
 
 	// Show and hide the Action Drawer when the user starts/stops dragging selected
 	// content
 	function toggleDrawerOnDrag() {
 		apiInternal.draggable.subscribeGlobal.dragstart(showDrawer);
-		apiInternal.draggable.subscribeGlobal.dragend(hideDrawer);
+		apiInternal.draggable.subscribeGlobal.dragend(allowDrawerToClose);
 	}
 
 	function createDrawer() {

@@ -32,6 +32,12 @@ betterlink_user_interface.createModule("Neglected", function(api, apiInternal) {
 	// informs us whether the user's mouse is already hovering on top of the
 	// watched element. Otherwise, we will assume the user is not yet on top
 	// of the element.
+	//
+	// We need to separate watching v. acting to determine mouse placement. At
+	// the moment we're allowed (or supposed) to act, we need to determine if
+	// the mouse is on top of our target. The problem is that unless the mouse
+	// moves, there's no way for us to know its position. By beginning to watch
+	// earlier, we can be more confident in the mouse's placement.
 	function watchTarget(target, action, opt_mouseOnTop) {
 		if(!getWatchedTarget(target, action)) {
 			var watchedTarget = new WatchedTarget(target, action);
@@ -58,8 +64,7 @@ betterlink_user_interface.createModule("Neglected", function(api, apiInternal) {
 	function stopWatchingTarget(target, action) {
 		var watchedTarget = getWatchedTarget(target, action);
 		if(watchedTarget) {
-			watchedTarget.stopped = true;
-			watchedTarget.removeWatcherEvents();
+			watchedTarget.stopWatching();
 		}
 	}
 
@@ -81,13 +86,13 @@ betterlink_user_interface.createModule("Neglected", function(api, apiInternal) {
 			// Ideally we'd only watch for drag if dragend fires before the captured mouse
 			// events. Not sure what to test against.
 			//
-			// Where this fails for alternatively:
+			// Where this fails:
 			// I start dragging, enter the dropzone, then bring the element back out,
 			// dropping in unwatched territory. Then, the drawer stays open (un-neglected).
 			// It closes after my mouse enters and leaves the target.
 			//
 			// This is because we're not relying on dragleave to tell us if we're no longer
-			// outside the target.
+			// inside the target.
 			this.addDragHandlers();
 		},
 
@@ -95,6 +100,11 @@ betterlink_user_interface.createModule("Neglected", function(api, apiInternal) {
 			apiInternal.mouseboundary.remove.mouseenter(this.target, this.enterListener);
 			apiInternal.mouseboundary.remove.mouseleave(this.target, this.leaveListener);
 			this.removeDragHandlers();
+		},
+
+		stopWatching: function() {
+			this.stopped = true;
+			this.removeWatcherEvents();
 		},
 
 		// On Mouseenter, track that the user is hovering on top of our target
@@ -122,8 +132,8 @@ betterlink_user_interface.createModule("Neglected", function(api, apiInternal) {
 
 		executeNeglectedAction: function() {
 			this.neglected = true;
-			stopWatchingTarget(this.target);
-			this.action();
+			this.stopWatching();
+			this.action.call();
 		},
 
 		isNeglected: function() {
