@@ -247,7 +247,7 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 	function handleDragend(e) {
 		var formerDragItem = currentDragItem;
 		currentDragItem = null;
-		fireEvents(currentDragItem, DRAGEND, formerDragItem);
+		fireEvents(formerDragItem, DRAGEND, formerDragItem);
 	}
 
 	// ****** Drop Events ******
