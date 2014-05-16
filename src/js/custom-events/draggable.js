@@ -170,9 +170,9 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 
 		function _addHandlers(element, isDrag) {
 			if(isDrag) {
-				apiInternal.addListener(element, DRAGSTART, setDragItem, element);
+				apiInternal.addListener(element, DRAGSTART, handleDragstart, element);
 				apiInternal.addListener(element, DRAG, handleDrag);
-				apiInternal.addListener(element, DRAGEND, removeDragItem);
+				apiInternal.addListener(element, DRAGEND, handleDragend);
 			}
 			else {
 				apiInternal.addListener(element, DRAGENTER, handleDragenter, element);
@@ -228,7 +228,7 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 	}
 
 	// ****** Drag Events ******
-	function setDragItem(e) {
+	function handleDragstart(e) {
 		// currentTarget will typically refer to the element on which we placed our
 		// event handler. This is what we want (as opposed to target or srcElement),
 		// instead of attempting to store the Text Node that's a child of our link.
@@ -244,7 +244,7 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 		fireEvents(currentDragItem, DRAG, currentDragItem);
 	}
 
-	function removeDragItem(e) {
+	function handleDragend(e) {
 		var formerDragItem = currentDragItem;
 		currentDragItem = null;
 		fireEvents(currentDragItem, DRAGEND, formerDragItem);
