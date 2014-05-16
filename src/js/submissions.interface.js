@@ -104,6 +104,7 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 	// handlers are removed first as well. Specifically, ensure that any added
 	// classnames to our elements are removed first.
 	function subscribeDragHandlerRemoval(elements) {
+		apiInternal.draggable.fireRemainingDragEvents(elements);
 		apiInternal.draggable.remove(elements);
 	}
 

@@ -146,6 +146,19 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 			// into the addListener method. Internally, this creates a new function that
 			// wraps the original listener. The side effect is that we cannot easily call
 			// removeListener, because a modified version of the listener is used.
+		},
+
+		// If the provided element is currently being dragged, but for some reason
+		// cannot finish its drag events (ex: the element will be removed before
+		// dragend fires), then proactively fire the final event to alert clients
+		// that the drag event is over.
+		fireRemainingDragEvents: function(elements) {
+			for(var i = 0, len = elements.length; i < len; i++) {
+				if(elements[i] === currentDragItem) {
+					handleDragend();
+					break;
+				}
+			}
 		}
 	};
 
