@@ -126,7 +126,7 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 			// dropzone. Will not fire additional times for children of the
 			// dropzone.
 			simpledragleave: function(element, fn, thisContext) {
-				var watcher = apiInternal.singleEntryWatcher.findExisting(element);
+				var watcher = apiInternal.singleEntryWatcher.findExisting(element, fireEvents);
 				if(!watcher) {
 					apiInternal.warn("Could not find an existing watcher for", element);
 				}

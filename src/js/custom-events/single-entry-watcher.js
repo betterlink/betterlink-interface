@@ -21,10 +21,11 @@ betterlink_user_interface.createModule("SingleEntryWatcher", function(api, apiIn
 	};
 	/****************************************************************************************************/
 
-	function SingleEntryWatcher(dropTarget, fireEventsFn) {
+	function SingleEntryWatcher(dropTarget, fireEventsFn, thisContext) {
 		var watcher = this;
 		watcher.dropTarget = dropTarget;
 		watcher.fireEventsFn = fireEventsFn;
+		watcher.thisContext = thisContext;
 
 		watcher.firstEntry = false;
 		watcher.secondEntry = false;
@@ -43,7 +44,7 @@ betterlink_user_interface.createModule("SingleEntryWatcher", function(api, apiIn
 			}
 			else {
 				this.firstEntry = true;
-				this.fireEventsFn(this.dropTarget, SINGLE_ENTRY, currentDragItem, this.dropTarget);
+				this.fireEventsFn.call(this.thisContext, this.dropTarget, SINGLE_ENTRY, currentDragItem, this.dropTarget);
 			}
 		},
 
@@ -62,7 +63,7 @@ betterlink_user_interface.createModule("SingleEntryWatcher", function(api, apiIn
 			}
 
 			if(!this.firstEntry && !this.secondEntry) {
-				this.fireEventsFn(this.dropTarget, SINGLE_EXIT, currentDragItem, this.dropTarget);
+				this.fireEventsFn.call(this.thisContext, this.dropTarget, SINGLE_EXIT, currentDragItem, this.dropTarget);
 			}
 		}
 	};
@@ -70,10 +71,10 @@ betterlink_user_interface.createModule("SingleEntryWatcher", function(api, apiIn
 	// Return a SingleEntryWatcher that will be used to monitor a given DOM
 	// element. May return an existing watcher if the element is already
 	// being watched.
-	function getWatcher(dropTarget, fireEventsFn) {
-		var watcher = findExistingWatcher(dropTarget);
+	function getWatcher(dropTarget, fireEventsFn, thisContext) {
+		var watcher = findExistingWatcher(dropTarget, fireEventsFn, thisContext);
 		if(!watcher) {
-			watcher = new SingleEntryWatcher(dropTarget, fireEventsFn);
+			watcher = new SingleEntryWatcher(dropTarget, fireEventsFn, thisContext);
 			watchers.push(watcher);
 		}
 
@@ -81,10 +82,10 @@ betterlink_user_interface.createModule("SingleEntryWatcher", function(api, apiIn
 	}
 
 	// Return the SingleEntryWatcher that is in place for the provided DOM element
-	function findExistingWatcher(element) {
+	function findExistingWatcher(element, fireEventsFn, thisContext) {
 		for(var i = 0, len = watchers.length; i < len; i++) {
 			var watcher = watchers[i];
-			if(element === watcher.dropTarget) {
+			if(element === watcher.dropTarget && fireEventsFn === watcher.fireEventsFn && thisContext === watcher.thisContext) {
 				return watcher;
 			}
 		}
