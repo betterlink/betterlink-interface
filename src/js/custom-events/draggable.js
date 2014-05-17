@@ -4,7 +4,7 @@
  *
  */
 betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
-	api.requireModules( ["Util", "Util.DOM", "SingleEntryWatcher"] );
+	api.requireModules( ["Util", "Util.DOM", "Event Messaging", "SingleEntryWatcher"] );
 
 	var DRAGSTART = 'dragstart',
 		DRAG = 'drag',
@@ -14,11 +14,13 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 		DRAGOVER = 'dragover',
 		DRAGLEAVE = 'dragleave',
 		DROP = 'drop';
+	var ALL_EVENTS = [DRAGSTART, DRAG, DRAGEND, DRAGENTER, DRAGOVER, DRAGLEAVE, DROP];
 
 	var DRAG_CSS_CLASS = 'betterlink-draggable',
 		DROP_CSS_CLASS = 'betterlink-droppable';
 
 	var currentDragItem;
+	var watchedElements = [];
 	var eventSubscriptions = {};
 
 	apiInternal.draggable = {
@@ -140,12 +142,8 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 		// Turn off Drag & Drop functions on the provided elements
 		remove: function(elements) {
 			removeClassname(elements);
-			// removeHandlers(elements);
-			// The difficulty with removing the event listeners is that the listeners are
-			// scoped. In order to support 'this' handling for IE, we pass the element
-			// into the addListener method. Internally, this creates a new function that
-			// wraps the original listener. The side effect is that we cannot easily call
-			// removeListener, because a modified version of the listener is used.
+			stopFiringEvents(elements);
+			removeSubscribedListeners(elements);
 		},
 
 		// If the provided element is currently being dragged, but for some reason
@@ -163,6 +161,12 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 	};
 
 	/****************************************************************************************************/
+
+	apiInternal.events.registerObserverForRemoveBetterlink(turnOffAllEvents);
+	function turnOffAllEvents() {
+		stopFiringEvents();
+		removeSubscribedListeners();
+	}
 
 	// Executes a provided function against all members of the 'target'. This is
 	// just some shorthand that allows us to easily expose the Draggable API to
@@ -182,16 +186,101 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 		executeForOneOrMany(elements, _addHandlers, Array.prototype.slice.call(arguments, 1));
 
 		function _addHandlers(element, isDrag) {
-			if(isDrag) {
-				apiInternal.addListener(element, DRAGSTART, handleDragstart, element);
-				apiInternal.addListener(element, DRAG, handleDrag);
-				apiInternal.addListener(element, DRAGEND, handleDragend);
+			var alreadyWatched = getWatchedElement(element);
+			// Note: As written, this prevents us from assigning both drag *and* drop listeners to the
+			// same element.
+			if(!alreadyWatched) {
+				if(isDrag) {
+					var watchedElement = { element: element };
+					watchedElement[DRAGSTART] = apiInternal.addListener(element, DRAGSTART, handleDragstart, element);
+					watchedElement[DRAG] = apiInternal.addListener(element, DRAG, handleDrag);
+					watchedElement[DRAGEND] = apiInternal.addListener(element, DRAGEND, handleDragend);
+
+					watchedElements.push(watchedElement);
+				}
+				else {
+					var watchedElement = { element: element };
+					watchedElement[DRAGENTER] = apiInternal.addListener(element, DRAGENTER, handleDragenter, element);
+					watchedElement[DRAGOVER] = apiInternal.addListener(element, DRAGOVER, handleDragover, element);
+					watchedElement[DRAGLEAVE] = apiInternal.addListener(element, DRAGLEAVE, handleDragleave, element);
+					watchedElement[DROP] = apiInternal.addListener(element, DROP, handleDrop, element);
+
+					watchedElements.push(watchedElement);
+				}
 			}
-			else {
-				apiInternal.addListener(element, DRAGENTER, handleDragenter, element);
-				apiInternal.addListener(element, DRAGOVER, handleDragover, element);
-				apiInternal.addListener(element, DRAGLEAVE, handleDragleave, element);
-				apiInternal.addListener(element, DROP, handleDrop, element);
+		}
+	}
+
+	// Stop responding to drag events on the provided elements. If no elements
+	// are provided, then stop responding to all drag events. Clean up
+	// references to the watched elements to free up resources.
+	function stopFiringEvents(elements) {
+		if(elements) {
+			// Remove handlers for the provided elements
+			if(!elements.length) { elements = [elements]; }
+
+			for(var i = 0, len = elements.length; i < len; i++) {
+				var watchedElement = getWatchedElement(elements[i]);
+				if(watchedElement) {
+					removeHandlers(watchedElement);
+					removeWatchedElement(elements[i]);
+				}
+			}
+		}
+		else {
+			// Remove all handlers
+			for(var i = 0, len = watchedElements.length; i < len; i++) {
+				var watchedElement = watchedElements[i];
+				if(watchedElement) {
+					removeHandlers(watchedElement);
+					watchedElements[i] = null;
+				}
+			}
+		}
+	}
+
+	// Check the stored event listeners on the watched element and turn them off
+	function removeHandlers(watchedElement) {
+		for(var i = 0, len = ALL_EVENTS.length; i < len; i++) {
+			var evt = ALL_EVENTS[i];
+			if(watchedElement[evt]) {
+				apiInternal.removeListener(watchedElement.element, evt, watchedElement[evt]);
+			}
+		}
+	}
+
+	// Remove all listeners that have subscribed specifically to drag events on the
+	// provided elements. If no elements are provided, then remove all listeners.
+	function removeSubscribedListeners(elements) {
+		if(elements && !elements.length) { elements = [elements]; }
+
+		// for each event type
+		for(var i = 0, len = ALL_EVENTS.length; i < len; i++) {
+			var eventType = ALL_EVENTS[i];
+			if(eventSubscriptions[eventType]) {
+				var subs = eventSubscriptions[eventType];
+				// check each subscription
+				// Run in reverse order because that's where there's more likely to be
+				// events. While we *will* cover everything, this let's us address the
+				// ones that matter first.
+				for(var j = subs.length-1; j >= 0; j--) {
+					if(elements && subs[j]) {
+						var subscription = subs[j];
+						if(subscription.watchedTarget) {
+							// if the subscriptions's target matches a provided element,
+							// remove the subscription
+							for(var k = 0, kLen = elements.length; k < kLen; k++) {
+								if(elements[k] === subscription.watchedTarget) {
+									subs[j] = null;
+								}
+							}
+						}
+					}
+					// if we're not targeting specific elements, remove the subscription
+					else {
+						subs[j] = null;
+					}
+				}
 			}
 		}
 	}
@@ -233,7 +322,7 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 			var options = Array.prototype.slice.call(arguments, 2);
 			apiInternal.util.forEach(eventSubscriptions[eventType], function(subscription) {
 				// Alert all global subscribers or any subscribers for this currentTarget
-				if(!subscription.watchedTarget || subscription.watchedTarget === currentTarget) {
+				if(subscription && (!subscription.watchedTarget || subscription.watchedTarget === currentTarget)) {
 					subscription.callback.apply(subscription.context, options);
 				}
 			});
@@ -300,5 +389,28 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 	// that we set drag handlers on
 	function watchedItemIsBeingDragged() {
 		return currentDragItem && apiInternal.util.dom.elementHasClass(currentDragItem, DRAG_CSS_CLASS);
+	}
+
+	// ************ Element Administration ************
+	// Return the object that's holding references to event listeners
+	// for the provided element.
+	// The first elements will be the dropzones that are created on page load. Draggable
+	// items will continuously be pushed to the end of the array (which are likely the
+	// elements we're trying to access), so we should traverse in reverse order.
+	function getWatchedElement(element) {
+		for(var i = watchedElements.length-1; i >= 0; i--) {
+			if(watchedElements[i] && watchedElements[i].element === element) {
+				return watchedElements[i];
+			}
+		}
+	}
+
+	function removeWatchedElement(element) {
+		for(var i = watchedElements.length-1; i >= 0; i--) {
+			if(watchedElements[i] && watchedElements[i].element === element) {
+				watchedElements[i] = null;
+				break;
+			}
+		}
 	}
 });
