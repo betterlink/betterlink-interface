@@ -181,6 +181,7 @@ betterlink_user_interface.createModule("Neglected", function(api, apiInternal) {
 			var element = this.target;
 			apiInternal.removeListener(element, 'dragenter', this.dragenter);
 			apiInternal.removeListener(element, 'dragleave', this.dragleave);
+			apiInternal.singleEntryWatcher.stopWatching(element, this.dragEventFired, this);
 		},
 
 		dragEventFired: function(dropTarget, eventType) {

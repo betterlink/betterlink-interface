@@ -19,7 +19,8 @@ betterlink_user_interface.createModule("SingleEntryWatcher", function(api, apiIn
 		SINGLE_ENTRY: SINGLE_ENTRY,
 		SINGLE_EXIT: SINGLE_EXIT,
 		getOrCreate: getWatcher,
-		findExisting: findExistingWatcher
+		findExisting: findExistingWatcher,
+		stopWatching: stopWatching
 	};
 	/****************************************************************************************************/
 
@@ -87,11 +88,22 @@ betterlink_user_interface.createModule("SingleEntryWatcher", function(api, apiIn
 	function findExistingWatcher(element, fireEventsFn, thisContext) {
 		for(var i = 0, len = watchers.length; i < len; i++) {
 			var watcher = watchers[i];
-			if(element === watcher.dropTarget && fireEventsFn === watcher.fireEventsFn && thisContext === watcher.thisContext) {
+			if(watcher && element === watcher.dropTarget && fireEventsFn === watcher.fireEventsFn && thisContext === watcher.thisContext) {
 				return watcher;
 			}
 		}
 		return false;
+	}
+
+	// Removes references to held DOM elements when no longer needed and prevents
+	// the object from firing future enter/exit events
+	function stopWatching(element, fireEventsFn, thisContext) {
+		var watcher = findExistingWatcher(element, fireEventsFn, thisContext);
+		if(watcher) {
+			watcher.dropTarget = null;
+			watcher.fireEventsFn = null;
+			watcher.thisContext = null;
+		}
 	}
 
 	function removeAllWatchers() {

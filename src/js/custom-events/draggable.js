@@ -295,6 +295,12 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 							// remove the subscription
 							for(var k = 0, kLen = elements.length; k < kLen; k++) {
 								if(elements[k] === subscription.watchedTarget) {
+									// Also turn off the SingleEntryWatcher if one was used
+									// We only need to check for 'singleentry' because the same watcher
+									// is used for exit
+									if(eventType === SINGLE_ENTRY) {
+										apiInternal.singleEntryWatcher.stopWatching(elements[k], fireEvents);
+									}
 									subs[j] = null;
 								}
 							}
@@ -302,6 +308,12 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 					}
 					// if we're not targeting specific elements, remove the subscription
 					else {
+						// Also turn off the SingleEntryWatcher if one was used
+						if(eventType === SINGLE_ENTRY) {
+							if(subs[j] && subs[j].watchedTarget) {
+								apiInternal.singleEntryWatcher.stopWatching(subs[j].watchedTarget, fireEvents);
+							}
+						}
 						subs[j] = null;
 					}
 				}
