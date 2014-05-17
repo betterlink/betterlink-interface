@@ -168,24 +168,11 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 		removeSubscribedListeners();
 	}
 
-	// Executes a provided function against all members of the 'target'. This is
-	// just some shorthand that allows us to easily expose the Draggable API to
-	// operate on a single element or array of elements.
-	function executeForOneOrMany(target, fn, args) {
-		if(target.length) {
-			apiInternal.util.forEach(target, function(t) {
-				fn.apply(this, [t].concat(args));
-			});
-		}
-		else {
-			fn.apply(this, [target].concat(args));
-		}
-	}
-
 	function addHandlers(elements, isDrag) {
-		executeForOneOrMany(elements, _addHandlers, Array.prototype.slice.call(arguments, 1));
+		if(!elements.length) { elements = [elements]; }
 
-		function _addHandlers(element, isDrag) {
+		for(var i = 0, len = elements.length; i < len; i++) {
+			var element = elements[i];
 			var alreadyWatched = getWatchedElement(element);
 			// Note: As written, this prevents us from assigning both drag *and* drop listeners to the
 			// same element.
@@ -288,21 +275,21 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 	// Add a classname to the provided elements to indicate that the elements are
 	// drag & drop-able.
 	function addClassname(elements, classname) {
-		executeForOneOrMany(elements, _addClassname, Array.prototype.slice.call(arguments, 1));
+		if(!elements.length) { elements = [elements]; }
 
-		function _addClassname(element, classname) {
-			apiInternal.util.dom.applyClassToElement(element, classname);
+		for(var i = 0, len = elements.length; i < len; i++) {
+			apiInternal.util.dom.applyClassToElement(elements[i], classname);
 		}
 	}
 
 	// Remove the drag & drop classnames from the provided elements. Because it won't
 	// be obvious which need to be removed, we should just attempt to remove both.
 	function removeClassname(elements) {
-		executeForOneOrMany(elements, _removeClassname, Array.prototype.slice.call(arguments, 1));
+		if(!elements.length) { elements = [elements]; }
 
-		function _removeClassname(element) {
-			apiInternal.util.dom.removeClassFromElement(element, DRAG_CSS_CLASS);
-			apiInternal.util.dom.removeClassFromElement(element, DROP_CSS_CLASS);
+		for(var i = 0, len = elements.length; i < len; i++) {
+			apiInternal.util.dom.removeClassFromElement(elements[i], DRAG_CSS_CLASS);
+			apiInternal.util.dom.removeClassFromElement(elements[i], DROP_CSS_CLASS);
 		}
 	}
 
