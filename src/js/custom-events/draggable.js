@@ -13,8 +13,10 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 		DRAGENTER = 'dragenter',
 		DRAGOVER = 'dragover',
 		DRAGLEAVE = 'dragleave',
-		DROP = 'drop';
-	var ALL_EVENTS = [DRAGSTART, DRAG, DRAGEND, DRAGENTER, DRAGOVER, DRAGLEAVE, DROP];
+		DROP = 'drop',
+		SINGLE_ENTRY = apiInternal.singleEntryWatcher.SINGLE_ENTRY,
+		SINGLE_EXIT = apiInternal.singleEntryWatcher.SINGLE_EXIT;
+	var ALL_EVENTS = [DRAGSTART, DRAG, DRAGEND, DRAGENTER, DRAGOVER, DRAGLEAVE, DROP, SINGLE_ENTRY, SINGLE_EXIT];
 
 	var DRAG_CSS_CLASS = 'betterlink-draggable',
 		DROP_CSS_CLASS = 'betterlink-droppable';
@@ -121,7 +123,7 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 			simpledragenter: function(element, fn, thisContext) {
 				var watcher = apiInternal.singleEntryWatcher.getOrCreate(element, fireEvents);
 
-				subscribe(element, apiInternal.singleEntryWatcher.SINGLE_ENTRY, fn, thisContext);
+				subscribe(element, SINGLE_ENTRY, fn, thisContext);
 				subscribe(element, DRAGENTER, watcher.enter, watcher);
 			},
 
@@ -134,7 +136,7 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 					apiInternal.warn("Could not find an existing watcher for", element);
 				}
 
-				subscribe(element, apiInternal.singleEntryWatcher.SINGLE_EXIT, fn, thisContext);
+				subscribe(element, SINGLE_EXIT, fn, thisContext);
 				subscribe(element, DRAGLEAVE, watcher.exit, watcher);
 				subscribe(element, DROP, watcher.exit, watcher);
 			}
