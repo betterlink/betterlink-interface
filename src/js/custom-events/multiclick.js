@@ -5,6 +5,8 @@
  *
  */
 betterlink_user_interface.createModule("Multiclick", function(api, apiInternal) {
+	api.requireModules( ["Event Messaging"] );
+
 	var userClickTimeout,
 		userClickThreshold = 250;	// milliseconds between a click & double-click
 
@@ -14,10 +16,24 @@ betterlink_user_interface.createModule("Multiclick", function(api, apiInternal) 
 	var inUse = false;
 	var eventToExecute;
 
+	apiInternal.events.registerObserverForRemoveBetterlink(removeDocumentListeners);
 	apiInternal.multiclick = {
-		insertDocumentListeners: insertDocumentListeners
+		insertDocumentListeners: insertDocumentListeners,
+		reset: removeDocumentListeners
 	};
 	/****************************************************************************************************/
+
+	// Turn off the click handler
+	function removeDocumentListeners() {
+		if(userClickTimeout) {
+			clearTimeout(userClickTimeout);
+		}
+
+		apiInternal.removeListener(document, 'click', resetUserClickTimeout);
+		apiInternal.removeListener(document, 'mouseup', setUserClickTimeout);
+		eventToExecute = null;
+		inUse = false;
+	}
 
 	// Set the document event listeners to execute multiple click handling. Returns
 	// 'false' if the listener has already been initialized for another function.
