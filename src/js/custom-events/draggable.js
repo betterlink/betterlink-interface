@@ -20,6 +20,7 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 		DROP_CSS_CLASS = 'betterlink-droppable';
 
 	var currentDragItem;
+	var dragGloballyRequested = false;
 	var watchedElements = [];
 	var eventSubscriptions = {};
 
@@ -180,8 +181,8 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 				if(isDrag) {
 					var watchedElement = { element: element };
 					watchedElement[DRAGSTART] = apiInternal.addListener(element, DRAGSTART, handleDragstart, element);
-					watchedElement[DRAG] = apiInternal.addListener(element, DRAG, handleDrag);
 					watchedElement[DRAGEND] = apiInternal.addListener(element, DRAGEND, handleDragend);
+					if(dragGloballyRequested) { addDragEvent(watchedElement); }
 
 					watchedElements.push(watchedElement);
 				}
@@ -195,6 +196,40 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 					watchedElements.push(watchedElement);
 				}
 			}
+		}
+	}
+
+	// Treat 'drag' separately. It fires continuously while an item is dragging,
+	// and there is no reason for this module to constantly handle it until
+	// requested. Ideally, we'd do the same for 'dragover', but it's necessary for
+	// us to cancel the default action for that event.
+	//
+	// If an element is provided, this indicates that an event is being subscribed
+	// to the particular element. If not, this indicates the event is being
+	// subscribed globally (for any element that fires the event).
+	function ensureEventActivated(eventType, opt_element) {
+		if(eventType === DRAG && !dragGloballyRequested) {
+			if(opt_element) {
+				var watchedElement = getWatchedElement(opt_element);
+				if(watchedElement) {
+					addDragEvent(watchedElement);
+				}
+				else {
+					apiInternal.warn("Can't subscribe to", eventType, "event.", opt_element, "isn't firing events.");
+				}
+			}
+			else {
+				dragGloballyRequested = true;
+				for(var i = 0, len = watchedElements.length; i < len; i++) {
+					addDragEvent(watchedElements[i]);
+				}
+			}
+		}
+	}
+
+	function addDragEvent(watchedElement) {
+		if(!watchedElement[DRAG]) {
+			watchedElement[DRAG] = apiInternal.addListener(watchedElement.element, DRAG, handleDrag);
 		}
 	}
 
@@ -296,6 +331,8 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 	// If a client subscribes to an event, store the callback associated with the
 	// calling context and the event type that's being subscribed to.
 	function subscribe(element, eventType, fn, thisContext) {
+		ensureEventActivated(eventType, element);
+
 		if(!eventSubscriptions[eventType]) {
 			eventSubscriptions[eventType] = [];
 		}
