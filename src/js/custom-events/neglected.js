@@ -4,18 +4,31 @@
  *
  */
 betterlink_user_interface.createModule("Neglected", function(api, apiInternal) {
-	api.requireModules( ["Mouseboundary"] );
+	api.requireModules( ["Event Messaging", "Mouseboundary"] );
 
 	var MOUSE_AWAY_TIMEOUT = 300;
 
 	var watchedTargets = [];
 
+	apiInternal.events.registerObserverForRemoveBetterlink(cleanUpReferences);
 	apiInternal.neglected = {
 		watchTarget: watchTarget,
 		actOnTarget: actOnTarget,
 		stopWatchingTarget: stopWatchingTarget
 	};
 	/****************************************************************************************************/
+
+	// A cleanup funtion that lets go of any held references to DOM elements
+	// we may have been watching
+	function cleanUpReferences() {
+		for(var i = watchedTargets.length-1; i >= 0; i--) {
+			var watchedTarget = watchedTargets[i];
+			if(watchedTarget && !watchedTarget.stopped) {
+				watchedTarget.stopWatching();
+			}
+			watchedTargets[i] = null;
+		}
+	}
 
 	function getWatchedTarget(target, action) {
 		// Look in reverse order so we always check the newest events first
