@@ -7,12 +7,14 @@
  *
  */
 betterlink_user_interface.createModule("SingleEntryWatcher", function(api, apiInternal) {
+	api.requireModules( ["Event Messaging"] );
 
 	var SINGLE_ENTRY = 'singleentry';
 	var SINGLE_EXIT = 'singleexit';
 
 	var watchers = [];
 
+	apiInternal.events.registerObserverForRemoveBetterlink(removeAllWatchers);
 	apiInternal.singleEntryWatcher = {
 		SINGLE_ENTRY: SINGLE_ENTRY,
 		SINGLE_EXIT: SINGLE_EXIT,
@@ -90,6 +92,12 @@ betterlink_user_interface.createModule("SingleEntryWatcher", function(api, apiIn
 			}
 		}
 		return false;
+	}
+
+	function removeAllWatchers() {
+		for(var i = 0, len = watchers.length; i < len; i++) {
+			watchers[i] = null;
+		}
 	}
 });
 /**
