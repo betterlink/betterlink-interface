@@ -16,7 +16,7 @@ if(!betterlink){
       js=d.createElement(s);
       js.innerHTML = '\
           var dir = "http://localhost:1000/src/js/";\
-          var modules = ["stubs.js", "util.dom.js", "custom-events/mouseboundary.js", "custom-events/single-entry-watcher.js", "custom-events/neglected.js", "custom-events/draggable.js", "smooth-scroller.js", "creation-interface/anchor-reset-css.js", "custom-events/multiclick.js", "highlighter-proxy.js", "creation-interface/selection-toggle.js", "creation-interface/inplace-span-highlighter.js", "creation-interface/inplace-anchor-highlighter.js", "action-drawer/action-drawer-dropzone.js", "action-drawer/link-viewer.js", "action-drawer/action-drawer.js", "submissions.interface.js", "submissions.result.js", "submissions.viewer.js"];\
+          var modules = ["stubs.js", "util.dom.js", "custom-events/mouseboundary.js", "custom-events/single-entry-watcher.js", "custom-events/neglected.js", "custom-events/draggable.js", "smooth-scroller.js", "creation-interface/anchor-reset-css.js", "custom-events/multiclick.js", "highlighter-proxy.js", "sharing-action/facebook.js", "creation-interface/selection-toggle.js", "creation-interface/inplace-span-highlighter.js", "creation-interface/inplace-anchor-highlighter.js", "action-drawer/action-drawer-dropzone.js", "action-drawer/dropzones/facebook.js", "action-drawer/link-viewer.js", "action-drawer/action-drawer.js", "submissions.interface.js", "submissions.result.js", "submissions.viewer.js"];\
           modules = modules.map(function(f){return dir+f;});\
           $LAB.script("//code.betterlink.io/betterlink-no-interface.js").wait().script(modules).wait(function(){\
             betterlink.init({ setScriptSource: "chrome extension" });\

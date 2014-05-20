@@ -16,7 +16,9 @@ betterlink_user_interface.createModule("Drawer Dropzone", function(api, apiInter
 
 	var stylesInitialized = false;
 	apiInternal.dropzone = {
-		create: createDropzone
+		create: createDropzone,
+		CLASS: DROPZONE_CLASS,
+		HOVER_CLASS: DROPZONE_HOVER_CLASS
 	};
 	/****************************************************************************************************/
 

@@ -142,7 +142,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 	function addDropzones(element) {
 		var list = document.createElement('ul');
 		list.id = DROPZONES_LIST_ID;
-		list.appendChild(createDropzone());
+		list.appendChild(createDropzone('facebook'));
 		list.appendChild(createDropzone('Drop Two'));
 
 		element.appendChild(list);
@@ -151,10 +151,16 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 	// Create and return a generic dropzone element
 	function createDropzone(opt_text) {
 		var li = document.createElement('li');
-		var dropzone = apiInternal.dropzone.create(opt_text);
-		li.appendChild(dropzone.element);
+		var dropzone;
+		if(opt_text === 'facebook') {
+			dropzone = apiInternal.dropzone.facebook.create(submissionFunction);
+		}
+		else {
+			dropzone = apiInternal.dropzone.create(opt_text);
+			dropzone.subscribeToDrop(dropCallback);
+		}
 
-		dropzone.subscribeToDrop(dropCallback);
+		li.appendChild(dropzone.element);
 
 		return li;
 	}
