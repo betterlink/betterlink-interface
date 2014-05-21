@@ -86,6 +86,8 @@ We **do not** expect every feature to be available in every browser. However, th
 
 Within the core Betterlink library, we already handle most of the heavy-lifting to find selections and reconcile differences across browsers (using feature detection). The punchline: yes, we officially support IE6.
 
+**However**, the core interface only supports IE8 and modern browsers. Using feature detection (specifically support for the `inherit` CSS value), older browsers fall back to a simple UX.
+
 This is motivated by two primary factors:
 
 1. We want to support the 20% ([and decreasing](http://www.ie6countdown.com/)) of the Internet population in China that still use IE6
