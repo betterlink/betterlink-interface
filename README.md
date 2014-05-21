@@ -14,6 +14,27 @@ Use
   - the `betterlink` and `betterlink_user_interface` global variables will automatically load with the page
 3. Select content on the page and 'share' as you normally would
 
+Webserver + Chrome Extension
+--------
+A Chrome Extension is provided to demo the local user interface on any webpage.
+
+A webserver is required in order to host the local files for the Extension. This can be accomplished using the simple Rack (Ruby) application provided. Simply run the following command from the root directory:
+
+```
+rackup -p 1000
+```
+
+While the webserver is running, `example_site.html` can also be loaded via `http://localhost:1000/`.
+
+**Extension Setup**
+
+1. Within chrome, go to `chrome://extensions`
+2. Select 'Developer mode' checkbox
+3. Select 'Load unpacked extension...'
+4. Choose directory at `betterlink-interface/local-chrome-extension/`
+5. Navigate to any webpage to test the interface
+  - `http://` sites only because secure (`https://`) sites will not load the local files
+
 Details
 ----------
 
