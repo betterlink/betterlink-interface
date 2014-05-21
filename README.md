@@ -1,7 +1,7 @@
 betterlink-interface
 ====================
 
-Full user interaction for `betterlink.js`. Defines the user interface for:
+Full user interaction for [Betterlink](http://betterlink.io/) (`betterlink.js`). Defines the user interface for:
 - generating a new, personalized link
 - communicating the URL after a successful submission
 - highlighting the selected content after re-visiting a link
