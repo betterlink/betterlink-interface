@@ -5,7 +5,7 @@
  * You should not need to modify this file.
  *
  * This is not included in the public Betterlink build and is used specifically
- * to glue the localy-defined modules into the core library.
+ * to glue the locally-defined modules into the core library.
  */
 var betterlink_user_interface;
 betterlink_user_interface = window['betterlink_user_interface'] || (function() {
