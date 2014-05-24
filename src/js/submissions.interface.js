@@ -3,7 +3,7 @@
  *
  */
 betterlink_user_interface.createModule("Submissions.CreationInterface", function(api, apiInternal) {
-	api.requireModules( ["Submissions", "Span Highlighter", "Anchor Highlighter", "Draggable"] );
+	api.requireModules( ["Submissions", "Span Highlighter", "Anchor Highlighter", "Draggable", "Switchboard"] );
 
 	var supportsCssInherit = canUseCssInherit(document);
 	var elementHighlighter;
@@ -32,11 +32,13 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 			elementHighlighter.decorationCallback = function(element) {
 				addSubmissionClickHandlers(element);
 				addDragHandlers(element);
+				addSwitchboardHandler(element);
 			};
 			// Set events that should happen for all highlighted elements as
 			// they are about to be removed
 			elementHighlighter.decorationRemovalCallback = function(elements) {
 				subscribeDragHandlerRemoval(elements);
+				removeSwitchboardHandlers(elements);
 			};
 		}
 		else {
@@ -106,6 +108,19 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 	function subscribeDragHandlerRemoval(elements) {
 		apiInternal.draggable.fireRemainingDragEvents(elements);
 		apiInternal.draggable.remove(elements);
+	}
+
+	// When a user starts to click a submittable element, open the switchboard
+	// for future processing
+	function addSwitchboardHandler(element) {
+		apiInternal.switchboard.initializeOnElement(element);
+	}
+
+	// Stop attempting to watch the provided elements to launch the Switchboard
+	function removeSwitchboardHandlers(elements) {
+		for(var i = 0, len = elements.length; i < len; i++) {
+			apiInternal.switchboard.removeElementWatcher(elements[i]);
+		}
 	}
 
 	// Test if the browser supports the 'inherit' CSS value by creating a
