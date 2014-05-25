@@ -4,7 +4,7 @@
  *
  */
 betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "Util.Ranges", "Drawer Dropzone", "Event Messaging"] );
+	api.requireModules( ["Util.DOM", "Util.Ranges", "LastSubmission", "Drawer Dropzone"] );
 
 	var LINK_VIEWER_ID = 'betterlink-link-display';
 	var LAST_LINK_ID = 'betterlink-last-link';
@@ -41,7 +41,7 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 			selectTextOnClick(lastLinkElement);
 			triggerSubmissionOnDrop(linkDropzone, submissionFn);
 
-			apiInternal.events.registerObserverForSubmissionDisplay(displaySubmissionResult);
+			apiInternal.lastSubmission.subscribeAll(displaySubmissionResult);
 		}
 
 		return linkDropzone.element;
@@ -73,19 +73,19 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 		dropzone.subscribeToDrop(submissionFn);
 	}
 
-	// Expects an object { success: true, message: "my message here", text: "Example text...", selection: custom_obj }
-	function displaySubmissionResult(result) {
-		var success = result['success'];
-		var message = result['message'];
-		var selectedText = result['text'];
+	function displaySubmissionResult() {
+		var lastSub = apiInternal.lastSubmission;
+		var link = lastSub.link;
+		var message = lastSub.message;
+		var selectedText = lastSub.text;
 
-		if(success) {
+		if(apiInternal.lastSubmission.successful) {
 			apiInternal.util.dom.removeClassFromElement(lastLinkElement, NO_LINK);
 			apiInternal.util.dom.applyClassToElement(lastLinkElement, ELLIPSIS);
 			apiInternal.util.dom.removeClassFromElement(linkDropzone.element, ERROR);
 			apiInternal.util.dom.applyClassToElement(linkDropzone.element, SUCCESS);
 
-			apiInternal.util.dom.addOrReplaceChild(lastLinkElement, document.createTextNode(message));
+			apiInternal.util.dom.addOrReplaceChild(lastLinkElement, document.createTextNode(link));
 			if(selectedText) {
 				selectedText = '"' + collapseWhitespace(selectedText) + '"';
 				apiInternal.util.dom.addOrReplaceChild(lastTextElement, document.createTextNode(selectedText));
