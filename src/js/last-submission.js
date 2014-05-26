@@ -33,8 +33,9 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 			{ name: 'complete',  from: PROCESSING,                    to: SUCCESS },
 		],
 		callbacks: {
-			onerror:   function(evt, from, to, msg)        { storeError(lastSub.last, msg); fireEvents('all'); },
-			onsuccess: function(evt, from, to, link, text) { storeSuccess(lastSub.last, link, text); fireEvents('all'); }
+			onsubmit:   function(evt, from, to)             { lastSuccessfulSM.submit(); },
+			onerror:    function(evt, from, to, msg)        { lastSuccessfulSM.error(); storeError(lastSub.last, msg); fireEvents('all'); },
+			oncomplete: function(evt, from, to, link, text) { lastSuccessfulSM.complete(); storeSuccess(lastSub.last, link, text); fireEvents('all'); }
 		}
 	});
 
@@ -50,7 +51,7 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 			{ name: 'complete', from: [SUBMITTED, SUBMITTED_AGAIN], to: SUCCESS }
 		],
 		callbacks: {
-			onsuccess: function(evt, from, to, link, text) { storeSuccess(lastSub.lastSuccessful, link, text); fireEvents('success'); }
+			oncomplete: function(evt, from, to, link, text) { storeSuccess(lastSub.lastSuccessful, link, text); fireEvents('success'); }
 		}
 	});
 
@@ -87,7 +88,6 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 	apiInternal.events.registerObserverForSubmissionDisplay(storeSubmissionResult);
 
 	function storeNewSubmission() {
-		lastSuccessfulSM.submit();
 		lastSubmissionSM.submit();
 
 		// do some processing to store our last submission
@@ -107,7 +107,6 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 		// lastSubmissionSM.ignore();
 
 		if(success) {
-			lastSuccessfulSM.complete(message, text);
 			lastSubmissionSM.complete(message, text);
 		}
 		else {
