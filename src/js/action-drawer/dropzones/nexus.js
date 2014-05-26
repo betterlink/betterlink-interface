@@ -70,7 +70,7 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 	function revertDraggingChange() {
 		apiInternal.util.dom.removeClassFromElement(nexusDropzone.element, DRAGGING_CLASS);
 
-		if(apiInternal.lastSubmission.lastSuccessful.exists) {
+		if(apiInternal.lastSubmission.lastSuccessful.exists()) {
 			alertToChoose();
 		}
 		else {

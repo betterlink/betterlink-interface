@@ -74,12 +74,12 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 	}
 
 	function displaySubmissionResult() {
-		var lastSub = apiInternal.lastSubmission;
+		var lastSub = apiInternal.lastSubmission.last;
 		var link = lastSub.link;
 		var message = lastSub.message;
 		var selectedText = lastSub.text;
 
-		if(apiInternal.lastSubmission.successful) {
+		if(lastSub.successful()) {
 			apiInternal.util.dom.removeClassFromElement(lastLinkElement, NO_LINK);
 			apiInternal.util.dom.applyClassToElement(lastLinkElement, ELLIPSIS);
 			apiInternal.util.dom.removeClassFromElement(linkDropzone.element, ERROR);
