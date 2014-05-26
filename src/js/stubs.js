@@ -266,11 +266,15 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 		registerObserverForSubmissionDisplay: function (fn) {
 			betterlink.exports.registerObserverForSubmissionDisplay(fn);
 		},
-		
+
 		fireNewSubmission: function (rangesToSubmit) {
 			betterlink.exports.fireNewSubmission(rangesToSubmit);
 		},
-		
+
+		registerObserverForNewSubmission: function(fn) {
+			betterlink.exports.registerObserverForNewSubmission(fn);
+		},
+
 		registerObserverForReadyToDecorate: function (fn) {
 			betterlink.exports.registerObserverForReadyToDecorate(fn);
 		},
