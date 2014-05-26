@@ -6,6 +6,7 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 	api.requireModules( ["Util.DOM", "LastSubmission", "Draggable", "Drawer Dropzone"] );
 
 	var NO_SUBMISSION_TEXT = document.createTextNode("drag | drop | share"),
+		LOADING_TEXT = document.createTextNode("Loading..."),
 		ABOUT_TO_SHARE_TEXT = document.createTextNode("drop to share"),
 		LINK_SUBMITTED_TEXT = document.createTextNode("choose where");
 
@@ -36,7 +37,8 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 
 		triggerChangeOnDrag();
 		triggerSubmissionOnDrop(submissionFn);
-		triggerChooseOnSubmission();
+		triggerLoadingOnSubmission();
+		triggerChooseOnSuccess();
 
 		return nexusDropzone;
 	}
@@ -53,9 +55,14 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 		nexusDropzone.subscribeToDrop(submissionFn);
 	}
 
+	// When the user makes a new submission, display that we are processing
+	function triggerLoadingOnSubmission() {
+		apiInternal.lastSubmission.subscribeSuccess.onsubmit(alertLoading);
+	}
+
 	// When the user has a successful submission, show them options to share their
 	// submission
-	function triggerChooseOnSubmission() {
+	function triggerChooseOnSuccess() {
 		apiInternal.lastSubmission.subscribeSuccess.oncomplete(alertToChoose);
 	}
 
@@ -76,6 +83,11 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 		else {
 			apiInternal.util.dom.addOrReplaceChild(nexusDropzone.element, NO_SUBMISSION_TEXT);
 		}
+	}
+
+	// Inform the user that we're generating their link
+	function alertLoading() {
+		apiInternal.util.dom.addOrReplaceChild(nexusDropzone.element, LOADING_TEXT);
 	}
 
 	// Inform the user they should choose the service to use to copmlete their share
