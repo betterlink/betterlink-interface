@@ -5,7 +5,7 @@
  *
  */
 betterlink_user_interface.createModule("Action Drawer", function(api, apiInternal) {
-	api.requireModules( ["Util", "Util.DOM", "Neglected", "Draggable", "Drawer Dropzone", "Link Viewer"] );
+	api.requireModules( ["Util", "Util.DOM", "Neglected", "Draggable", "Drawer Dropzone", "Dropzone.Nexus", "Link Viewer"] );
 
 	var HTML5_CSS = "article, aside, footer, header, nav, section { display: block; }";
 	var DRAWER_ID = "betterlink-drawer";
@@ -142,7 +142,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 	function addDropzones(element) {
 		var list = document.createElement('ul');
 		list.id = DROPZONES_LIST_ID;
-		list.appendChild(createDropzone('facebook'));
+		list.appendChild(createDropzone('nexus'));
 		list.appendChild(createDropzone('Drop Two'));
 
 		element.appendChild(list);
@@ -152,8 +152,8 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 	function createDropzone(opt_text) {
 		var li = document.createElement('li');
 		var dropzone;
-		if(opt_text === 'facebook') {
-			dropzone = apiInternal.dropzone.facebook.create(submissionFunction);
+		if(opt_text === 'nexus') {
+			dropzone = apiInternal.dropzone.sharingNexus.create(submissionFunction);
 		}
 		else {
 			dropzone = apiInternal.dropzone.create(opt_text);
