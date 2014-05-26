@@ -41,7 +41,8 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 			selectTextOnClick(lastLinkElement);
 			triggerSubmissionOnDrop(linkDropzone, submissionFn);
 
-			apiInternal.lastSubmission.subscribeAll(displaySubmissionResult);
+			apiInternal.lastSubmission.subscribeAll.oncomplete(displaySubmissionResult);
+			apiInternal.lastSubmission.subscribeAll.onfail(displaySubmissionError);
 		}
 
 		return linkDropzone.element;
@@ -73,31 +74,32 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 		dropzone.subscribeToDrop(submissionFn);
 	}
 
+	function displaySubmissionError() {
+		var lastSub = apiInternal.lastSubmission.last;
+		var message = lastSub.message;
+
+		apiInternal.util.dom.removeClassFromElement(linkDropzone.element, SUCCESS);
+		apiInternal.util.dom.applyClassToElement(linkDropzone.element, ERROR);
+		apiInternal.util.dom.removeClassFromElement(lastLinkElement, ELLIPSIS);
+		apiInternal.util.dom.applyClassToElement(lastLinkElement, NO_LINK);
+
+		apiInternal.util.dom.addOrReplaceChild(lastLinkElement, document.createTextNode(message));
+	}
+
 	function displaySubmissionResult() {
 		var lastSub = apiInternal.lastSubmission.last;
 		var link = lastSub.link;
-		var message = lastSub.message;
 		var selectedText = lastSub.text;
 
-		if(lastSub.successful()) {
-			apiInternal.util.dom.removeClassFromElement(lastLinkElement, NO_LINK);
-			apiInternal.util.dom.applyClassToElement(lastLinkElement, ELLIPSIS);
-			apiInternal.util.dom.removeClassFromElement(linkDropzone.element, ERROR);
-			apiInternal.util.dom.applyClassToElement(linkDropzone.element, SUCCESS);
+		apiInternal.util.dom.removeClassFromElement(lastLinkElement, NO_LINK);
+		apiInternal.util.dom.applyClassToElement(lastLinkElement, ELLIPSIS);
+		apiInternal.util.dom.removeClassFromElement(linkDropzone.element, ERROR);
+		apiInternal.util.dom.applyClassToElement(linkDropzone.element, SUCCESS);
 
-			apiInternal.util.dom.addOrReplaceChild(lastLinkElement, document.createTextNode(link));
-			if(selectedText) {
-				selectedText = '"' + collapseWhitespace(selectedText) + '"';
-				apiInternal.util.dom.addOrReplaceChild(lastTextElement, document.createTextNode(selectedText));
-			}
-		}
-		else {
-			apiInternal.util.dom.removeClassFromElement(linkDropzone.element, SUCCESS);
-			apiInternal.util.dom.applyClassToElement(linkDropzone.element, ERROR);
-			apiInternal.util.dom.removeClassFromElement(lastLinkElement, ELLIPSIS);
-			apiInternal.util.dom.applyClassToElement(lastLinkElement, NO_LINK);
-
-			apiInternal.util.dom.addOrReplaceChild(lastLinkElement, document.createTextNode(message));
+		apiInternal.util.dom.addOrReplaceChild(lastLinkElement, document.createTextNode(link));
+		if(selectedText) {
+			selectedText = '"' + collapseWhitespace(selectedText) + '"';
+			apiInternal.util.dom.addOrReplaceChild(lastTextElement, document.createTextNode(selectedText));
 		}
 	}
 

@@ -29,13 +29,13 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 			{ name: 'responded', from: FAILED,                        to: FAILED },
 			{ name: 'responded', from: SUCCESS,                       to: SUCCESS },
 			{ name: 'ignore',    from: PROCESSING,                    to: SENT },
-			{ name: 'error',     from: PROCESSING,                    to: FAILED },
+			{ name: 'fail',      from: PROCESSING,                    to: FAILED },
 			{ name: 'complete',  from: PROCESSING,                    to: SUCCESS },
 		],
 		callbacks: {
-			onsubmit:   function(evt, from, to)             { lastSuccessfulSM.submit(); },
-			onerror:    function(evt, from, to, msg)        { lastSuccessfulSM.error(); storeError(lastSub.last, msg); fireEvents('all'); },
-			oncomplete: function(evt, from, to, link, text) { lastSuccessfulSM.complete(); storeSuccess(lastSub.last, link, text); fireEvents('all'); }
+			onsubmit:   function(evt, from, to)             { lastSuccessfulSM.submit(); fireEvents('all-submit'); },
+			onfail:     function(evt, from, to, msg)        { lastSuccessfulSM.fail(); storeError(lastSub.last, msg); fireEvents('all-fail'); },
+			oncomplete: function(evt, from, to, link, text) { lastSuccessfulSM.complete(link, text); storeSuccess(lastSub.last, link, text); fireEvents('all-complete'); }
 		}
 	});
 
@@ -46,12 +46,14 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 		events: [
 			{ name: 'submit',   from: [INITIAL,FAILED],             to: SUBMITTED },
 			{ name: 'submit',   from: SUCCESS,                      to: SUBMITTED_AGAIN },
-			{ name: 'error',    from: SUBMITTED,                    to: FAILED },
-			{ name: 'error',    from: SUBMITTED_AGAIN,              to: SUCCESS },
+			{ name: 'fail',     from: SUBMITTED,                    to: FAILED },
+			{ name: 'fail',     from: SUBMITTED_AGAIN,              to: SUCCESS },
 			{ name: 'complete', from: [SUBMITTED, SUBMITTED_AGAIN], to: SUCCESS }
 		],
 		callbacks: {
-			oncomplete: function(evt, from, to, link, text) { storeSuccess(lastSub.lastSuccessful, link, text); fireEvents('success'); }
+			onsubmit:   function(eft, from, to)             { fireEvents('success-submit'); },
+			onfail:     function(eft, from, to)             { fireEvents('success-fail'); },
+			oncomplete: function(evt, from, to, link, text) { storeSuccess(lastSub.lastSuccessful, link, text); fireEvents('success-complete'); }
 		}
 	});
 
@@ -71,12 +73,16 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 			link: '',
 		},
 
-		subscribeAll: function(fn, thisContext) {
-			subscribe('all', fn, thisContext);
+		subscribeAll: {
+			onsubmit: function(fn, thisContext) { subscribe('all-submit', fn, thisContext); },
+			onfail: function(fn, thisContext) { subscribe('all-fail', fn, thisContext); },
+			oncomplete: function(fn, thisContext) { subscribe('all-complete', fn, thisContext); },
 		},
 
-		subscribeSuccess: function(fn, thisContext) {
-			subscribe('success', fn, thisContext);
+		subscribeSuccess: {
+			onsubmit: function(fn, thisContext) { subscribe('success-submit', fn, thisContext); },
+			onfail: function(fn, thisContext) { subscribe('success-fail', fn, thisContext); },
+			oncomplete: function(fn, thisContext) { subscribe('success-complete', fn, thisContext); },
 		}
 	};
 	var lastSub = apiInternal.lastSubmission;
@@ -110,7 +116,7 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 			lastSubmissionSM.complete(message, text);
 		}
 		else {
-			lastSubmissionSM.error(message);
+			lastSubmissionSM.fail(message);
 		}
 	}
 

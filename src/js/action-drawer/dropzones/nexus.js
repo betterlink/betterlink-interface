@@ -56,7 +56,7 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 	// When the user has a successful submission, show them options to share their
 	// submission
 	function triggerChooseOnSubmission() {
-		apiInternal.lastSubmission.subscribeSuccess(alertToChoose);
+		apiInternal.lastSubmission.subscribeSuccess.oncomplete(alertToChoose);
 	}
 
 	// Inform the user that they should drop their submission in this dropzone to
