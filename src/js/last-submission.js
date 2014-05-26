@@ -68,7 +68,7 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 			message: '',
 		},
 		lastSuccessful: {
-			exists: function() { return !lastSuccessfulSM.is(INITIAL); },
+			exists: function() { return !lastSuccessfulSM.is(INITIAL) && !lastSuccessfulSM.is(FAILED); },
 			text: '',
 			link: '',
 		},
