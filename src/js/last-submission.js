@@ -10,9 +10,11 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 	// NOTE: Do not name events and states the same
 	//   Otherwise, the onEVENT and onSTATE callbacks will both fire
 	var INITIAL = 'none',
-		SUBMITTED = 'submitted',
-		FAILED = 'failed',
-		SUCCESS = 'success';
+		SUBMITTED = 'submitted',   // when submit first hits us; allows us to store submission for later matching
+		SENT = 'sent',             // immediately after submit; means we're waiting on server
+		PROCESSING = 'processing', // got response from server; figuring out what to do
+		FAILED = 'failed',         // terminal state; we matched last submission with a response
+		SUCCESS = 'success';       // terminal state; we matched last submission with a response
 
 	// States for 'success' state machine
 	var SUBMITTED_AGAIN = 'submittedAgain';
@@ -21,9 +23,14 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 	var lastSubmissionSM = apiInternal.stateMachine.create({
 		initial: INITIAL,
 		events: [
-			{ name: 'submit',   from: [INITIAL,FAILED,SUCCESS], to: SUBMITTED },
-			{ name: 'error',    from: SUBMITTED,                to: FAILED },
-			{ name: 'complete', from: SUBMITTED,                to: SUCCESS }
+			{ name: 'submit',    from: [INITIAL,SENT,FAILED,SUCCESS], to: SUBMITTED },
+			{ name: 'ready',     from: SUBMITTED,                     to: SENT },
+			{ name: 'responded', from: SENT,                          to: PROCESSING },
+			{ name: 'responded', from: FAILED,                        to: FAILED },
+			{ name: 'responded', from: SUCCESS,                       to: SUCCESS },
+			{ name: 'ignore',    from: PROCESSING,                    to: SENT },
+			{ name: 'error',     from: PROCESSING,                    to: FAILED },
+			{ name: 'complete',  from: PROCESSING,                    to: SUCCESS },
 		],
 		callbacks: {
 			onerror:   function(evt, from, to, msg)        { storeError(lastSub.last, msg); fireEvents('all'); },
@@ -82,13 +89,22 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 	function storeNewSubmission() {
 		lastSuccessfulSM.submit();
 		lastSubmissionSM.submit();
+
+		// do some processing to store our last submission
+
+		lastSubmissionSM.ready();
 	}
 
 	// Expects an object { success: true, message: "my message here", text: "Example text...", selection: custom_obj }
 	function storeSubmissionResult(result) {
+		lastSubmissionSM.responded();
+
 		var success = result['success'];
 		var text = result['text'] || '';
 		var message = result['message'];
+
+		// if this isn't the last submission
+		// lastSubmissionSM.ignore();
 
 		if(success) {
 			lastSuccessfulSM.complete(message, text);
