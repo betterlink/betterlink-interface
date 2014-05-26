@@ -14,6 +14,9 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 		FAILED = 'failed',
 		SUCCESS = 'success';
 
+	// States for 'success' state machine
+	var SUBMITTED_AGAIN = 'submittedAgain';
+
 	// The 'all' state machine tracks the progress of each successive submission
 	var lastSubmissionSM = apiInternal.stateMachine.create({
 		initial: INITIAL,
@@ -33,9 +36,11 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 	var lastSuccessfulSM = apiInternal.stateMachine.create({
 		initial: INITIAL,
 		events: [
-			{ name: 'submit',   from: [INITIAL,FAILED,SUCCESS], to: SUBMITTED },
-			{ name: 'error',    from: SUBMITTED,                to: FAILED },
-			{ name: 'complete', from: SUBMITTED,                to: SUCCESS }
+			{ name: 'submit',   from: [INITIAL,FAILED],             to: SUBMITTED },
+			{ name: 'submit',   from: SUCCESS,                      to: SUBMITTED_AGAIN },
+			{ name: 'error',    from: SUBMITTED,                    to: FAILED },
+			{ name: 'error',    from: SUBMITTED_AGAIN,              to: SUCCESS },
+			{ name: 'complete', from: [SUBMITTED, SUBMITTED_AGAIN], to: SUCCESS }
 		],
 		callbacks: {
 			onsuccess: function(evt, from, to, link, text) { storeSuccess(lastSub.lastSuccessful, link, text); fireEvents('success'); }
@@ -72,7 +77,7 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 	// ============== Manage Event Listeners to trigger State Machine Transitions ==============
 
 	apiInternal.events.registerObserverForNewSubmission(storeNewSubmission);
-	apiInternal.events.registerObserverForSubmissionDisplay(storeAndAlert);
+	apiInternal.events.registerObserverForSubmissionDisplay(storeSubmissionResult);
 
 	function storeNewSubmission() {
 		lastSuccessfulSM.submit();
@@ -80,7 +85,7 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 	}
 
 	// Expects an object { success: true, message: "my message here", text: "Example text...", selection: custom_obj }
-	function storeAndAlert(result) {
+	function storeSubmissionResult(result) {
 		var success = result['success'];
 		var text = result['text'] || '';
 		var message = result['message'];
