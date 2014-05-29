@@ -16,7 +16,8 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 		HAS_ERROR_CLASS = "has-error";
 	var NEXUS_CSS = 
 		[   "." + apiInternal.dropzone.HOVER_CLASS + "." + NEXUS_CLASS + " { background-color: #1CD3A2; color: #333; }",
-			"." + apiInternal.dropzone.CLASS + "." + NEXUS_CLASS + "." + DRAGGING_CLASS + " { padding-top: 50px; padding-bottom: 50px }",
+			"." + apiInternal.dropzone.CLASS + "." + NEXUS_CLASS + "." + DRAGGING_CLASS + " { padding-top: 50px; padding-bottom: 50px; }",
+			"." + apiInternal.dropzone.CLASS + "." + NEXUS_CLASS + "." + HAS_ERROR_CLASS + " { background-color: #F32E2E; color: #eee; }",
 			"." + apiInternal.dropzone.CLASS + "." + NEXUS_CLASS + " { -webkit-transition: padding 0.3s ease; transition: padding 0.3s ease; }"].join(' ');
 
 	var stylesInitialized = false;
@@ -39,6 +40,7 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 		triggerSubmissionOnDrop(submissionFn);
 		triggerLoadingOnSubmission();
 		triggerChooseOnSuccess();
+		triggerFailureDisplay();
 
 		return nexusDropzone;
 	}
@@ -66,6 +68,12 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 		apiInternal.lastSubmission.subscribeSuccess.onsuccess(alertToChoose);
 	}
 
+	// When the user's last attemped submission failed and there is no prior
+	// submission to use, display an error state
+	function triggerFailureDisplay() {
+		apiInternal.lastSubmission.subscribeSuccess.onfailed(alertNoLastSubmission);
+	}
+
 	// Inform the user that they should drop their submission in this dropzone to
 	// start their share action.
 	function alertToDrop() {
@@ -87,14 +95,23 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 
 	// Inform the user that we're generating their link
 	function alertLoading() {
+		apiInternal.util.dom.removeClassFromElement(nexusDropzone.element, HAS_ERROR_CLASS);
+		apiInternal.util.dom.removeClassFromElement(nexusDropzone.element, HAS_SUBMISSION_CLASS);
+
 		apiInternal.util.dom.addOrReplaceChild(nexusDropzone.element, LOADING_TEXT);
 	}
 
 	// Inform the user they should choose the service to use to copmlete their share
 	// action.
 	function alertToChoose() {
+		apiInternal.util.dom.removeClassFromElement(nexusDropzone.element, HAS_ERROR_CLASS);
 		apiInternal.util.dom.applyClassToElement(nexusDropzone.element, HAS_SUBMISSION_CLASS);
 		apiInternal.util.dom.addOrReplaceChild(nexusDropzone.element, LINK_SUBMITTED_TEXT);
+	}
+
+	function alertNoLastSubmission() {
+		apiInternal.util.dom.removeClassFromElement(nexusDropzone.element, HAS_SUBMISSION_CLASS);
+		apiInternal.util.dom.applyClassToElement(nexusDropzone.element, HAS_ERROR_CLASS);
 	}
 
 	function insertStyles() {
