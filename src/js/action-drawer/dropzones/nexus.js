@@ -57,13 +57,13 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 
 	// When the user makes a new submission, display that we are processing
 	function triggerLoadingOnSubmission() {
-		apiInternal.lastSubmission.subscribeSuccess.onsubmit(alertLoading);
+		apiInternal.lastSubmission.subscribeSuccess.onsubmitted(alertLoading);
 	}
 
 	// When the user has a successful submission, show them options to share their
 	// submission
 	function triggerChooseOnSuccess() {
-		apiInternal.lastSubmission.subscribeSuccess.oncomplete(alertToChoose);
+		apiInternal.lastSubmission.subscribeSuccess.onsuccess(alertToChoose);
 	}
 
 	// Inform the user that they should drop their submission in this dropzone to

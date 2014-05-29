@@ -41,8 +41,8 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 			selectTextOnClick(lastLinkElement);
 			triggerSubmissionOnDrop(linkDropzone, submissionFn);
 
-			apiInternal.lastSubmission.subscribeAll.oncomplete(displaySubmissionResult);
-			apiInternal.lastSubmission.subscribeAll.onfail(displaySubmissionError);
+			apiInternal.lastSubmission.subscribeAll.onsuccess(displaySubmissionResult);
+			apiInternal.lastSubmission.subscribeAll.onfailed(displaySubmissionError);
 		}
 
 		return linkDropzone.element;
