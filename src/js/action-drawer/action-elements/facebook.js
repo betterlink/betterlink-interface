@@ -23,7 +23,7 @@ betterlink_user_interface.createModule("Facebook Element", function(api, apiInte
 
 		var element = document.createElement('div');
 		element.appendChild(document.createTextNode('facebook'));
-		element.className = "betterlink-action-element betterlink-reset " + FB_CLASS;
+		element.className = "betterlink-action-element " + FB_CLASS;
 		triggerSubmissionOnClick(element);
 
 		return element;

@@ -3,7 +3,7 @@
  *
  */
 betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "LastSubmission", "Draggable", "Drawer Dropzone"] );
+	api.requireModules( ["Util.DOM", "LastSubmission", "Draggable", "Drawer Dropzone", "Action Pen"] );
 
 	var NO_SUBMISSION_TEXT = document.createTextNode("drag | drop | share"),
 		LOADING_TEXT = document.createTextNode("Loading..."),
@@ -22,13 +22,14 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 
 	var stylesInitialized = false;
 	var nexusDropzone;
+	var actionPen;
 
 	apiInternal.dropzone.sharingNexus = {
 		create: createDropzone
 	};
 	/****************************************************************************************************/
 
-	function createDropzone(submissionFn) {
+	function createDropzone(submissionFn, pen) {
 		if(!stylesInitialized) {
 			insertStyles();
 		}
@@ -36,13 +37,15 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 		nexusDropzone = apiInternal.dropzone.create(NO_SUBMISSION_TEXT.nodeValue);
 		apiInternal.util.dom.applyClassToElement(nexusDropzone.element, NEXUS_CLASS);
 
+		actionPen = pen;
+
 		triggerChangeOnDrag();
 		triggerSubmissionOnDrop(submissionFn);
 		triggerLoadingOnSubmission();
 		triggerChooseOnSuccess();
 		triggerFailureDisplay();
 
-		return nexusDropzone;
+		return nexusDropzone.element;
 	}
 
 	// When the user is dragging a potential submission, alter the dislplay of
