@@ -4,7 +4,7 @@
  *
  */
 betterlink_user_interface.createModule("Action Pen", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "Facebook Element"] );
+	api.requireModules( ["Util.DOM", "Facebook Element", "Twitter Element"] );
 
 	var PEN_ID = 'betterlink-pen';
 	var ACTION_ELEMENT_CLASS = 'betterlink-action-element';
@@ -15,7 +15,7 @@ betterlink_user_interface.createModule("Action Pen", function(api, apiInternal) 
 		"." + ACTION_ELEMENT_CLASS + ' { cursor: pointer; padding: 5px; margin: 0; width: auto; border: none; background: inherit; border-radius: 0; }'
 	].join(' ');
 
-	var sharers = [apiInternal.facebookElement];
+	var sharers = [apiInternal.facebookElement, apiInternal.twitterElement];
 	var pen;
 
 	apiInternal.actionPen = {
