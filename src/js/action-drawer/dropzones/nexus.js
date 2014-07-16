@@ -38,6 +38,7 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 		apiInternal.util.dom.applyClassToElement(nexusDropzone.element, NEXUS_CLASS);
 
 		actionPen = pen;
+		actionPen.style.display = 'none';
 
 		triggerChangeOnDrag();
 		triggerSubmissionOnDrop(submissionFn);
@@ -48,7 +49,11 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 		return nexusDropzone.element;
 	}
 
-	// When the user is dragging a potential submission, alter the dislplay of
+	// **************************
+	// Event Triggers
+	// **************************
+
+	// When the user is dragging a potential submission, alter the display of
 	// the div to highlight where to drop the content
 	function triggerChangeOnDrag() {
 		apiInternal.draggable.subscribeGlobal.dragstart(alertToDrop);
@@ -77,9 +82,15 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 		apiInternal.lastSubmission.subscribeSuccess.onfailed(alertNoLastSubmission);
 	}
 
+	// **************************
+	// Event Actions
+	// **************************
+
 	// Inform the user that they should drop their submission in this dropzone to
 	// start their share action.
 	function alertToDrop() {
+		actionPen.style.display = 'none';
+
 		apiInternal.util.dom.applyClassToElement(nexusDropzone.element, DRAGGING_CLASS);
 		apiInternal.util.dom.addOrReplaceChild(nexusDropzone.element, ABOUT_TO_SHARE_TEXT);
 	}
@@ -98,6 +109,8 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 
 	// Inform the user that we're generating their link
 	function alertLoading() {
+		actionPen.style.display = 'none';
+
 		apiInternal.util.dom.removeClassFromElement(nexusDropzone.element, HAS_ERROR_CLASS);
 		apiInternal.util.dom.removeClassFromElement(nexusDropzone.element, HAS_SUBMISSION_CLASS);
 
@@ -110,9 +123,13 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 		apiInternal.util.dom.removeClassFromElement(nexusDropzone.element, HAS_ERROR_CLASS);
 		apiInternal.util.dom.applyClassToElement(nexusDropzone.element, HAS_SUBMISSION_CLASS);
 		apiInternal.util.dom.addOrReplaceChild(nexusDropzone.element, LINK_SUBMITTED_TEXT);
+
+		actionPen.style.display = '';
 	}
 
 	function alertNoLastSubmission() {
+		actionPen.style.display = 'none';
+
 		apiInternal.util.dom.removeClassFromElement(nexusDropzone.element, HAS_SUBMISSION_CLASS);
 		apiInternal.util.dom.applyClassToElement(nexusDropzone.element, HAS_ERROR_CLASS);
 	}
