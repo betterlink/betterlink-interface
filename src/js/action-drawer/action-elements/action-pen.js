@@ -12,7 +12,7 @@ betterlink_user_interface.createModule("Action Pen", function(api, apiInternal) 
 	var CSS = [
 		"#" + PEN_ID + " { list-style: none; padding: 5px; margin: 0; }",
 		"#" + PEN_ID + ">li { display: inline-block; padding: 0; margin: 0; }",
-		"." + ACTION_ELEMENT_CLASS + ' { cursor: pointer; padding: 5px; margin: 0; width: auto; border: none; background: inherit; border-radius: 0; }'
+		"." + ACTION_ELEMENT_CLASS + ' { cursor: pointer; padding: 5px; margin: 2px 3px; width: auto; border: none; background: inherit; border-radius: 0; }'
 	].join(' ');
 
 	var sharers = [apiInternal.facebookElement, apiInternal.twitterElement];
