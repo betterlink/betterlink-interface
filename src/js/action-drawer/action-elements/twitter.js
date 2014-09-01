@@ -3,7 +3,7 @@
  *
  */
 betterlink_user_interface.createModule("Twitter Element", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "LastSubmission", "Share.Twitter"] );
+	api.requireModules( ["Util.DOM", "SVG", "LastSubmission", "Share.Twitter"] );
 
 	var TW_CLASS = "tw";
 	var CSS = ".betterlink-action-element" + "." + TW_CLASS + " { background-color: #55acee; color: #fff; }";
@@ -21,8 +21,7 @@ betterlink_user_interface.createModule("Twitter Element", function(api, apiInter
 			insertStyles();
 		}
 
-		var element = document.createElement('div');
-		element.appendChild(document.createTextNode('twitter'));
+		var element = apiInternal.svg.createElement('twitter');
 		element.className = "betterlink-action-element " + TW_CLASS;
 		triggerSubmissionOnClick(element);
 
