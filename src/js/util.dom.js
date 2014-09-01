@@ -114,7 +114,7 @@ betterlink_user_interface.createModule("Util.DOM", function(api, apiInternal) {
 		// if the class name is already applied.
 		applyClassToElement: function(element, className) {
 			if(!apiInternal.util.dom.elementHasClass(element, className)) {
-				element.className = element.className + ' ' + className;
+				element.className = element.className + (element.className ? ' ' : '') + className;
 			}
 		},
 
