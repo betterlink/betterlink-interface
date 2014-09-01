@@ -104,9 +104,10 @@ betterlink_user_interface.createModule("Util.DOM", function(api, apiInternal) {
 			// regular expressions.
 			var cache = {};
 			return function(element, className) {
+				var elementClass = apiInternal.util.dom.isSvg(element) ? element.className.baseVal : element.className;
 				var hasClass = cache[className] || 
 					(cache[className] = new RegExp('\\b' + className + '\\b'));
-				return hasClass.test(element.className)
+				return hasClass.test(elementClass);
 			};
 		})(),
 
@@ -114,7 +115,12 @@ betterlink_user_interface.createModule("Util.DOM", function(api, apiInternal) {
 		// if the class name is already applied.
 		applyClassToElement: function(element, className) {
 			if(!apiInternal.util.dom.elementHasClass(element, className)) {
-				element.className = element.className + (element.className ? ' ' : '') + className;
+				if(!apiInternal.util.dom.isSvg(element)) {
+					element.className = element.className + (element.className ? ' ' : '') + className;
+				}
+				else {
+					element.className.baseVal = element.className.baseVal + (element.className.baseVal ? ' ' : '') + className;
+				}
 			}
 		},
 
@@ -127,10 +133,21 @@ betterlink_user_interface.createModule("Util.DOM", function(api, apiInternal) {
 				if(element.className) {
 					var hasClass = cache[className] || 
 						(cache[className] = new RegExp('\\s*' + className + '\\b'));
-					element.className = element.className.replace(hasClass, '');
+					if(!apiInternal.util.dom.isSvg(element)) {
+						element.className = element.className.replace(hasClass, '');
+					}
+					else {
+						element.className.baseVal = element.className.baseVal.replace(hasClass, '');
+					}
 				}
 			};
 		})(),
+
+		// Return if the provided element is an SVG element
+		isSvg: function(element) {
+			var svgNamespace = "http://www.w3.org/2000/svg";
+			return element.namespaceURI && element.namespaceURI === svgNamespace;
+		},
 
 		// Private function for getElementsByClassName for IE8- compatibility
 		// Derived from Eike Send, MIT License
