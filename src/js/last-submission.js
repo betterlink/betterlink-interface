@@ -30,7 +30,7 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 			{ name: 'responded', from: SUCCESS,                       to: SUCCESS },
 			{ name: 'ignore',    from: PROCESSING,                    to: SENT },
 			{ name: 'fail',      from: PROCESSING,                    to: FAILED },
-			{ name: 'complete',  from: PROCESSING,                    to: SUCCESS },
+			{ name: 'complete',  from: PROCESSING,                    to: SUCCESS }
 		],
 		callbacks: {
 			// Link events to the 'success' state machine
@@ -71,24 +71,24 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 			successful: function() { return lastSubmissionSM.is(SUCCESS); },
 			text: '',
 			link: '',
-			message: '',
+			message: ''
 		},
 		lastSuccessful: {
 			exists: function() { return !lastSuccessfulSM.is(INITIAL) && !lastSuccessfulSM.is(FAILED); },
 			text: '',
-			link: '',
+			link: ''
 		},
 
 		subscribeAll: {
 			onsubmitted: function(fn, thisContext) { subscribe('all-submitted', fn, thisContext); },
 			onfailed: function(fn, thisContext) { subscribe('all-failed', fn, thisContext); },
-			onsuccess: function(fn, thisContext) { subscribe('all-success', fn, thisContext); },
+			onsuccess: function(fn, thisContext) { subscribe('all-success', fn, thisContext); }
 		},
 
 		subscribeSuccess: {
 			onsubmitted: function(fn, thisContext) { subscribe('success-submitted', fn, thisContext); },
 			onfailed: function(fn, thisContext) { subscribe('success-failed', fn, thisContext); },
-			onsuccess: function(fn, thisContext) { subscribe('success-success', fn, thisContext); },
+			onsuccess: function(fn, thisContext) { subscribe('success-success', fn, thisContext); }
 		}
 	};
 	var lastSub = apiInternal.lastSubmission;
