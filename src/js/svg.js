@@ -64,6 +64,7 @@ betterlink_user_interface.createModule("SVG", function(api, apiInternal) {
 		var element = document.createElement('img');
 		element.src = SVG_FOLDER + imageId + ".svg";
 		element.setAttribute('alt', opt_fallbackText || imageId);
+		element.setAttribute('title', opt_fallbackText || imageId);
 
 		return element;
 	}
