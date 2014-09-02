@@ -6,7 +6,7 @@ betterlink_user_interface.createModule("Twitter Element", function(api, apiInter
 	api.requireModules( ["Util.DOM", "SVG", "LastSubmission", "Share.Twitter"] );
 
 	var TW_CLASS = "tw";
-	var CSS = ".betterlink-action-element" + "." + TW_CLASS + " { background-color: #55acee; color: #fff; }";
+	var CSS = "div.betterlink-action-element" + "." + TW_CLASS + " { background-color: #55acee; color: #fff; }";
 
 	var stylesInitialized = false;
 	var lastSuccessful = apiInternal.lastSubmission.lastSuccessful;
