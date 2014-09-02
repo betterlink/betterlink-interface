@@ -4,7 +4,7 @@
  */
 betterlink_user_interface.createModule("SVG", function(api, apiInternal) {
 
-	var SVG_FOLDER = "src/img/",
+	var SVG_FOLDER = getSvgDirectoryLocation(),
 		DEFS_FILE = SVG_FOLDER + "defs.svg",
 
 		SVG_NAMESPACE = "http://www.w3.org/2000/svg",
@@ -18,6 +18,17 @@ betterlink_user_interface.createModule("SVG", function(api, apiInternal) {
 		createElement: createElement
 	};
 	/****************************************************************************************************/
+
+	function getSvgDirectoryLocation() {
+		// check if we're running locally or via production
+		// most sure-fire method is whether the location contains a period (ex: example.org)
+		if(/\./.test("%%build:svg_directory%%")) {
+			return ("https:" == window.document.location.protocol ? "https://" : "http://") + "%%build:svg_directory%%";
+		}
+		else {
+			return "src/img/";
+		}
+	}
 
 	function createElement(imageId, opt_fallbackText) {
 		if(supportsSvg) {
