@@ -22,7 +22,7 @@ betterlink_user_interface.createModule("Facebook Element", function(api, apiInte
 		}
 
 		var element = apiInternal.svg.createElement('facebook');
-		element.className = "betterlink-action-element " + FB_CLASS;
+		apiInternal.util.dom.applyClassToElement(element, "betterlink-action-element " + FB_CLASS);
 		triggerSubmissionOnClick(element);
 
 		return element;

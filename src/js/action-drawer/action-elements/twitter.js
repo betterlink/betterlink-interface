@@ -22,7 +22,7 @@ betterlink_user_interface.createModule("Twitter Element", function(api, apiInter
 		}
 
 		var element = apiInternal.svg.createElement('twitter');
-		element.className = "betterlink-action-element " + TW_CLASS;
+		apiInternal.util.dom.applyClassToElement(element, "betterlink-action-element " + TW_CLASS);
 		triggerSubmissionOnClick(element);
 
 		return element;
