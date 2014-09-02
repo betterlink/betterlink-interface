@@ -418,6 +418,8 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 
 	function handleDrop(e) {
 		if(watchedItemIsBeingDragged()) {
+			e.preventDefault ? e.preventDefault() : window.event.returnValue = false;
+
 			var dropTarget = e.currentTarget || this;
 			fireEvents(dropTarget, DROP, currentDragItem, dropTarget);
 		}
