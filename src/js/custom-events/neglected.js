@@ -134,7 +134,7 @@ betterlink_user_interface.createModule("Neglected", function(api, apiInternal) {
 		// allowed to take action, set a timer to determine if the target is
 		// neglected.
 		trackMouseleave: function() {
-			target = this;
+			var target = this;
 			this.mouseOnTop = false;
 			if(this.takeAction) {
 				this.neglectedTimer = setTimeout(function() {
