@@ -180,8 +180,8 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 			// Note: As written, this prevents us from assigning both drag *and* drop listeners to the
 			// same element.
 			if(!alreadyWatched) {
+				var watchedElement = { element: element };
 				if(isDrag) {
-					var watchedElement = { element: element };
 					watchedElement[DRAGSTART] = apiInternal.addListener(element, DRAGSTART, handleDragstart, element);
 					watchedElement[DRAGEND] = apiInternal.addListener(element, DRAGEND, handleDragend);
 					if(dragGloballyRequested) { addDragEvent(watchedElement); }
@@ -189,7 +189,6 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 					watchedElements.push(watchedElement);
 				}
 				else {
-					var watchedElement = { element: element };
 					watchedElement[DRAGENTER] = apiInternal.addListener(element, DRAGENTER, handleDragenter, element);
 					watchedElement[DRAGOVER] = apiInternal.addListener(element, DRAGOVER, handleDragover, element);
 					watchedElement[DRAGLEAVE] = apiInternal.addListener(element, DRAGLEAVE, handleDragleave, element);
@@ -239,12 +238,13 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 	// are provided, then stop responding to all drag events. Clean up
 	// references to the watched elements to free up resources.
 	function stopFiringEvents(elements) {
+		var i, len, watchedElement;
 		if(elements) {
 			// Remove handlers for the provided elements
 			if(!elements.length) { elements = [elements]; }
 
-			for(var i = 0, len = elements.length; i < len; i++) {
-				var watchedElement = getWatchedElement(elements[i]);
+			for(i = 0, len = elements.length; i < len; i++) {
+				watchedElement = getWatchedElement(elements[i]);
 				if(watchedElement) {
 					removeHandlers(watchedElement);
 					removeWatchedElement(elements[i]);
@@ -253,8 +253,8 @@ betterlink_user_interface.createModule("Draggable", function(api, apiInternal) {
 		}
 		else {
 			// Remove all handlers
-			for(var i = 0, len = watchedElements.length; i < len; i++) {
-				var watchedElement = watchedElements[i];
+			for(i = 0, len = watchedElements.length; i < len; i++) {
+				watchedElement = watchedElements[i];
 				if(watchedElement) {
 					removeHandlers(watchedElement);
 					watchedElements[i] = null;

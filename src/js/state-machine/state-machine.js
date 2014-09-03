@@ -63,14 +63,14 @@ betterlink_user_interface.createModule("State Machine", function(api, apiInterna
           fsm[name] = StateMachine.buildEvent(name, map[name]);
       }
 
-      for(var name in callbacks) {
-        if (callbacks.hasOwnProperty(name))
-          fsm[name] = callbacks[name]
+      for(var fnName in callbacks) {
+        if (callbacks.hasOwnProperty(fnName))
+          fsm[fnName] = callbacks[fnName];
       }
 
       fsm.current = 'none';
       fsm.is      = function(state) { return (state instanceof Array) ? (indexOf(state, this.current) >= 0) : (this.current === state); };
-      fsm.can     = function(event) { return !this.transition && (map[event].hasOwnProperty(this.current) || map[event].hasOwnProperty(StateMachine.WILDCARD)); }
+      fsm.can     = function(event) { return !this.transition && (map[event].hasOwnProperty(this.current) || map[event].hasOwnProperty(StateMachine.WILDCARD)); };
       fsm.cannot  = function(event) { return !this.can(event); };
       fsm.error   = cfg.error || function(name, from, to, args, error, msg, e) { throw e || msg; }; // default behavior when something unexpected happens is to throw an exception, but caller can override this behavior if desired (see github issue #3 and #17)
 
@@ -168,7 +168,7 @@ betterlink_user_interface.createModule("State Machine", function(api, apiInterna
         this.transition.cancel = function() { // provide a way for caller to cancel async transition if desired (issue #22)
           fsm.transition = null;
           StateMachine.afterEvent(fsm, name, from, to, args);
-        }
+        };
 
         var leave = StateMachine.leaveState(this, name, from, to, args);
         if (false === leave) {

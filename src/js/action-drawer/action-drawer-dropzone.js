@@ -81,7 +81,7 @@ betterlink_user_interface.createModule("Drawer Dropzone", function(api, apiInter
 		subscribeToDrop: function(fn, thisContext) {
 			apiInternal.draggable.subscribeToElement.drop(this.element, fn, thisContext);
 		}
-	}
+	};
 
 	function insertDropzoneStyles() {
 		stylesInitialized = true;

@@ -79,13 +79,13 @@ betterlink_user_interface.createModule("Share.Twitter", function(api, apiInterna
 	}
 
 	function openPopup (destination, height, width) {
-	    var screenX = typeof window.screenX != 'undefined' ? window.screenX : window.screenLeft,
-	        screenY = typeof window.screenY != 'undefined' ? window.screenY : window.screenTop,
-	        outerWidth = typeof window.outerWidth != 'undefined' ? window.outerWidth : document.body.clientWidth,
-	        outerHeight = typeof window.outerHeight != 'undefined' ? window.outerHeight : (document.body.clientHeight - 22),
-	        left = parseInt(screenX + ((outerWidth - width) / 2), 10),
-	        top = parseInt(screenY + ((outerHeight - height) / 2.5), 10),
-	        windowFeatures = ('width=' + width + ',height=' + height + ',left=' + left + ',top=' + top);
-	    return window.open(destination, '_blank', windowFeatures);
+		var screenX = typeof window.screenX != 'undefined' ? window.screenX : window.screenLeft,
+			screenY = typeof window.screenY != 'undefined' ? window.screenY : window.screenTop,
+			outerWidth = typeof window.outerWidth != 'undefined' ? window.outerWidth : document.body.clientWidth,
+			outerHeight = typeof window.outerHeight != 'undefined' ? window.outerHeight : (document.body.clientHeight - 22),
+			left = parseInt(screenX + ((outerWidth - width) / 2), 10),
+			top = parseInt(screenY + ((outerHeight - height) / 2.5), 10),
+			windowFeatures = ('width=' + width + ',height=' + height + ',left=' + left + ',top=' + top);
+		return window.open(destination, '_blank', windowFeatures);
 	}
 });
