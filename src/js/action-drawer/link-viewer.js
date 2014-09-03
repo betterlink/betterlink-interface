@@ -84,6 +84,7 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 		apiInternal.util.dom.applyClassToElement(lastLinkElement, NO_LINK);
 
 		apiInternal.util.dom.addOrReplaceChild(lastLinkElement, document.createTextNode(message));
+		apiInternal.util.dom.removeAllChildren(lastTextElement);
 	}
 
 	function displaySubmissionResult() {

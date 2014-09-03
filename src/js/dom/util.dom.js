@@ -52,6 +52,13 @@ betterlink_user_interface.createModule("Util.DOM", function(api, apiInternal) {
 			}
 		},
 
+		// Remove all nodes that are children of the provided element
+		removeAllChildren: function(parent) {
+			while(parent.hasChildNodes()) {
+				parent.removeChild(parent.lastChild);
+			}
+		},
+
 		// Return a new anchor element (not yet appended to the DOM)
 		createAnchorElement: function(link_text, href, opt_target) {
 			var a = window.document.createElement("a");
