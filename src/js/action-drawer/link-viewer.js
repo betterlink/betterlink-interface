@@ -19,7 +19,7 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 		[   "#" + LINK_VIEWER_ID + " { width: auto; }",
 			"#" + LAST_LINK_ID + " { font-size: 13px; }",
 			"#" + LAST_TEXT_ID + " { color: #333; font-style: italic; font-size: 70%; }",
-			"." + NO_LINK + " { font-style: italic; }",
+			"." + NO_LINK + " { font-style: italic; width: auto; }",
 			"." + ELLIPSIS + " { width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; -o-text-overflow: ellipsis; }"].join(' ');
 
 	var linkDropzone;
