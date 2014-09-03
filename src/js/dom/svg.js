@@ -19,17 +19,6 @@ betterlink_user_interface.createModule("SVG", function(api, apiInternal) {
 	};
 	/****************************************************************************************************/
 
-	function getSvgDirectoryLocation() {
-		// check if we're running locally or via production
-		// most sure-fire method is whether the location contains a period (ex: example.org)
-		if(/\./.test("%%build:svg_directory%%")) {
-			return ("https:" == window.document.location.protocol ? "https://" : "http://") + "%%build:svg_directory%%";
-		}
-		else {
-			return "src/img/";
-		}
-	}
-
 	function createElement(imageId, opt_fallbackText) {
 		if(supportsSvg) {
 			return createSvgFileElement(imageId, opt_fallbackText);
@@ -86,5 +75,22 @@ betterlink_user_interface.createModule("SVG", function(api, apiInternal) {
 		element.appendChild(document.createTextNode(fallbackText));
 
 		return element;
+	}
+
+	// *****************************************************************************
+
+	// Return the location that should be used to access SVG files
+	function getSvgDirectoryLocation() {
+		if(isRunningLocally()) {
+			return "src/img/";
+		}
+		else {
+			return ("https:" == window.document.location.protocol ? "https://" : "http://") + "%%build:svg_directory%%";
+		}
+	}
+
+	// Specifically checks if our build variable has been replaced with anything
+	function isRunningLocally() {
+		return /(%%build:([^%]+)%%|^undefined$)/.test("%%build:svg_directory%%");
 	}
 });
