@@ -188,7 +188,7 @@ betterlink_user_interface.createModule("Neglected", function(api, apiInternal) {
 			if(eventType === apiInternal.singleEntryWatcher.SINGLE_ENTRY) {
 				this.trackMouseenter();
 			}
-			else if(eventType === apiInternal.singleEntryWatcher.SINGLE_EXIT){
+			// else if(eventType === apiInternal.singleEntryWatcher.SINGLE_EXIT){
 				// Don't do anything. The dragleave event also fires on dragend, and we
 				// have no way of knowing if that's the situation. However, on dragend
 				// we also get our mouse events back, so we should end up in the correct
@@ -196,7 +196,7 @@ betterlink_user_interface.createModule("Neglected", function(api, apiInternal) {
 				// events in order to properly seed the SingleEntryWatcher.
 
 				// this.trackMouseleave();
-			}
+			// }
 		}
 	};
 });
