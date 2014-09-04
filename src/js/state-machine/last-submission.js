@@ -36,18 +36,24 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 		// beforeEVENT --> leaveSTATE --> enterSTATE (onSTATE) --> afterEVENT (onEVENT)
 		callbacks: {
 			// Store event information
-			onbeforefail:      function(evt, from, to, msg)        { storeError(lastSub.last, msg); },
-			onbeforecomplete:  function(evt, from, to, link, text) { storeSuccess(lastSub.last, link, text); },
+			'onbeforefail':      function(evt, from, to, msg)        { storeError(lastSub.last, msg); },
+			'onbeforecomplete':  function(evt, from, to, link, text) { storeSuccess(lastSub.last, link, text); },
 
 			// Trigger state alerts
-			onsubmitted:       function(evt, from, to)             { fireEvents('all-submitted'); },
-			onfailed:          function(evt, from, to)             { fireEvents('all-failed'); },
-			onsuccess:         function(evt, from, to)             { fireEvents('all-success'); },
+			'onsubmitted':       function(evt, from, to)             { fireEvents('all-submitted'); },
+			'onfailed':          function(evt, from, to)             { fireEvents('all-failed'); },
+			'onsuccess':         function(evt, from, to)             { fireEvents('all-success'); },
 
 			// Link events to the 'success' state machine
-			onaftersubmit:     function(evt, from, to)             { lastSuccessfulSM.submit(); },
-			onafterfail:       function(evt, from, to, msg)        { lastSuccessfulSM.fail(); },
-			onaftercomplete:   function(evt, from, to, link, text) { lastSuccessfulSM.complete(link, text); }
+			'onaftersubmit':     function(evt, from, to)             { lastSuccessfulSM['submit'](); },
+			'onafterfail':       function(evt, from, to, msg)        { lastSuccessfulSM['fail'](); },
+			'onaftercomplete':   function(evt, from, to, link, text) { lastSuccessfulSM['complete'](link, text); }
+
+			// NOTE: Calls to dynamically-generated functions on the State Machine
+			//       *must* be referenced via index-notation. This is a result of
+			//       the way Google Closure Compiler minifies the code. Similarly,
+			//       the callback event names must be quoted so the names are not
+			//       mangled.
 
 		}
 	});
@@ -64,11 +70,11 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 			{ name: 'complete', from: [SUBMITTED, SUBMITTED_AGAIN], to: SUCCESS }
 		],
 		callbacks: {
-			onbeforecomplete:  function(evt, from, to, link, text) { storeSuccess(lastSub.lastSuccessful, link, text); },
+			'onbeforecomplete':  function(evt, from, to, link, text) { storeSuccess(lastSub.lastSuccessful, link, text); },
 
-			onsubmitted:       function(evt, from, to)             { fireEvents('success-submitted'); },
-			onfailed:          function(evt, from, to)             { fireEvents('success-failed'); },
-			onsuccess:         function(evt, from, to)             { fireEvents('success-success'); }
+			'onsubmitted':       function(evt, from, to)             { fireEvents('success-submitted'); },
+			'onfailed':          function(evt, from, to)             { fireEvents('success-failed'); },
+			'onsuccess':         function(evt, from, to)             { fireEvents('success-success'); }
 		}
 	});
 
@@ -109,29 +115,29 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 	apiInternal.events.registerObserverForSubmissionDisplay(storeSubmissionResult);
 
 	function storeNewSubmission() {
-		lastSubmissionSM.submit();
+		lastSubmissionSM['submit']();
 
 		// do some processing to store our last submission
 
-		lastSubmissionSM.ready();
+		lastSubmissionSM['ready']();
 	}
 
 	// Expects an object { success: true, message: "my message here", text: "Example text...", selection: custom_obj }
 	function storeSubmissionResult(result) {
-		lastSubmissionSM.responded();
+		lastSubmissionSM['responded']();
 
 		var success = result['success'];
 		var text = result['text'] || '';
 		var message = result['message'];
 
 		// if this isn't the last submission
-		// lastSubmissionSM.ignore();
+		// lastSubmissionSM['ignore']();
 
 		if(success) {
-			lastSubmissionSM.complete(message, text);
+			lastSubmissionSM['complete'](message, text);
 		}
 		else {
-			lastSubmissionSM.fail(message);
+			lastSubmissionSM['fail'](message);
 		}
 	}
 
