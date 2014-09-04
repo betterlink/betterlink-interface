@@ -69,7 +69,7 @@ betterlink_user_interface.createModule("Share.Twitter", function(api, apiInterna
 		var extraChars = 2; // for quotes
 
 		// TODO: Break preview at last full word
-		if(shareText.length > charLimit - extraChars) {
+		if(shareText && shareText.length > charLimit - extraChars) {
 			extraChars += 3; // for elipsis
 			return '"' + shareText.substring(0, charLimit - extraChars) + '..."';
 		}
