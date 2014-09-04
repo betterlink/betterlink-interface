@@ -32,20 +32,27 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 			{ name: 'fail',      from: PROCESSING,                    to: FAILED },
 			{ name: 'complete',  from: PROCESSING,                    to: SUCCESS }
 		],
+		// State Machine events get fired in the following order:
+		// beforeEVENT --> leaveSTATE --> enterSTATE (onSTATE) --> afterEVENT (onEVENT)
 		callbacks: {
-			// Link events to the 'success' state machine
-			onsubmit:    function(evt, from, to)             { lastSuccessfulSM.submit(); },
-			onfail:      function(evt, from, to, msg)        { lastSuccessfulSM.fail(); },
-			oncomplete:  function(evt, from, to, link, text) { lastSuccessfulSM.complete(link, text); },
+			// Store event information
+			onbeforefail:      function(evt, from, to, msg)        { storeError(lastSub.last, msg); },
+			onbeforecomplete:  function(evt, from, to, link, text) { storeSuccess(lastSub.last, link, text); },
 
 			// Trigger state alerts
-			onsubmitted: function(evt, from, to)             { fireEvents('all-submitted'); },
-			onfailed:    function(evt, from, to, msg)        { storeError(lastSub.last, msg); fireEvents('all-failed'); },
-			onsuccess:   function(evt, from, to, link, text) { storeSuccess(lastSub.last, link, text); fireEvents('all-success'); }
+			onsubmitted:       function(evt, from, to)             { fireEvents('all-submitted'); },
+			onfailed:          function(evt, from, to)             { fireEvents('all-failed'); },
+			onsuccess:         function(evt, from, to)             { fireEvents('all-success'); },
+
+			// Link events to the 'success' state machine
+			onaftersubmit:     function(evt, from, to)             { lastSuccessfulSM.submit(); },
+			onafterfail:       function(evt, from, to, msg)        { lastSuccessfulSM.fail(); },
+			onaftercomplete:   function(evt, from, to, link, text) { lastSuccessfulSM.complete(link, text); }
+
 		}
 	});
 
-	// The 'success' state machine stays never moves to a failure state once it's hit
+	// The 'success' state machine never moves to a failure state once it's hit
 	// success
 	var lastSuccessfulSM = apiInternal.stateMachine.create({
 		initial: INITIAL,
@@ -57,9 +64,11 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 			{ name: 'complete', from: [SUBMITTED, SUBMITTED_AGAIN], to: SUCCESS }
 		],
 		callbacks: {
-			onsubmit:   function(eft, from, to)             { fireEvents('success-submitted'); },
-			onfail:     function(eft, from, to)             { fireEvents('success-failed'); },
-			oncomplete: function(evt, from, to, link, text) { storeSuccess(lastSub.lastSuccessful, link, text); fireEvents('success-success'); }
+			onbeforecomplete:  function(evt, from, to, link, text) { storeSuccess(lastSub.lastSuccessful, link, text); },
+
+			onsubmitted:       function(evt, from, to)             { fireEvents('success-submitted'); },
+			onfailed:          function(evt, from, to)             { fireEvents('success-failed'); },
+			onsuccess:         function(evt, from, to)             { fireEvents('success-success'); }
 		}
 	});
 
