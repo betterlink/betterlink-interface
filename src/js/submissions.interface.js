@@ -51,7 +51,9 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 	}
 
 	function initializeActionDrawer() {
-		apiInternal.drawer.create(submitSelectionFromElement);
+		if("%%build:highlighter_override%%" !== "true") {
+			apiInternal.drawer.create(submitSelectionFromElement);
+		}
 	}
 
 	// Execute sendSubmission() when the provided element is clicked
