@@ -63,7 +63,7 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 	var lastSuccessfulSM = apiInternal.stateMachine.create({
 		initial: INITIAL,
 		events: [
-			{ name: 'submit',   from: [INITIAL,FAILED],             to: SUBMITTED },
+			{ name: 'submit',   from: [INITIAL,FAILED,SUBMITTED],   to: SUBMITTED },
 			{ name: 'submit',   from: SUCCESS,                      to: SUBMITTED_AGAIN },
 			{ name: 'fail',     from: SUBMITTED,                    to: FAILED },
 			{ name: 'fail',     from: SUBMITTED_AGAIN,              to: SUCCESS },
