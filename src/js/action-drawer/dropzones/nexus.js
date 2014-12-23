@@ -46,7 +46,7 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 		triggerChooseOnSuccess();
 		triggerFailureDisplay();
 
-		nexusDropzone.element.appendChild(apiInternal.linkViewer.create(submissionFn));
+		nexusDropzone.element.appendChild(apiInternal.linkViewer.create());
 		nexusDropzone.element.appendChild(actionPen);
 
 		return nexusDropzone.element;

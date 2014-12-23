@@ -4,7 +4,7 @@
  *
  */
 betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "Util.Ranges", "LastSubmission", "Drawer Dropzone"] );
+	api.requireModules( ["Util.DOM", "Util.Ranges", "LastSubmission"] );
 
 	var LAST_VIEWER_CLASS = 'betterlink-link-display';
 	var LAST_LINK_CLASS = 'betterlink-last-link';
@@ -22,7 +22,7 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 			"." + NO_LINK + " { font-style: italic; width: auto; }",
 			"." + ELLIPSIS + " { width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; -o-text-overflow: ellipsis; }"].join(' ');
 
-	var linkDropzone;
+	var linkViewer;
 	var lastLinkElement;
 	var lastTextElement;
 
@@ -34,7 +34,7 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 	};
 	/****************************************************************************************************/
 
-	function initializeLinkViewer(submissionFn) {
+	function initializeLinkViewer() {
 		if(!stylesInitialized) {
 			insertStyles();
 		}
@@ -47,13 +47,12 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 
 			createLinkViewer();
 			selectTextOnClick(lastLinkElement);
-			triggerSubmissionOnDrop(linkDropzone, submissionFn);
 
 			apiInternal.lastSubmission.subscribeAll.onsuccess(displaySubmissionResult);
 			apiInternal.lastSubmission.subscribeAll.onfailed(displaySubmissionError);
 		}
 
-		return linkDropzone.element;
+		return linkViewer;
 	}
 
 	function insertStyles() {
@@ -63,8 +62,8 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 
 	// Create the HTML elements that will serve to display the user's last link
 	function createLinkViewer() {
-		linkDropzone = apiInternal.dropzone.create('Last Link');
-		apiInternal.util.dom.applyClassToElement(linkDropzone.element, LAST_VIEWER_CLASS);
+		linkViewer = document.createElement('div');
+		linkViewer.className = "betterlink-reset " + LAST_VIEWER_CLASS;
 
 		lastTextElement = document.createElement('div');
 		lastTextElement.className = "betterlink-reset " + LAST_TEXT_CLASS + " " + ELLIPSIS;
@@ -73,20 +72,16 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 		lastLinkElement.className = "betterlink-reset " + LAST_LINK_CLASS + " " + NO_LINK;
 		lastLinkElement.appendChild(document.createTextNode('no recent submissions'));
 
-		linkDropzone.element.appendChild(lastTextElement);
-		linkDropzone.element.appendChild(lastLinkElement);
-	}
-
-	function triggerSubmissionOnDrop(dropzone, submissionFn) {
-		dropzone.subscribeToDrop(submissionFn);
+		linkViewer.appendChild(lastTextElement);
+		linkViewer.appendChild(lastLinkElement);
 	}
 
 	function displaySubmissionError() {
 		var lastSub = apiInternal.lastSubmission.last;
 		var message = lastSub.message;
 
-		apiInternal.util.dom.removeClassFromElement(linkDropzone.element, SUCCESS);
-		apiInternal.util.dom.applyClassToElement(linkDropzone.element, ERROR);
+		apiInternal.util.dom.removeClassFromElement(linkViewer, SUCCESS);
+		apiInternal.util.dom.applyClassToElement(linkViewer, ERROR);
 		apiInternal.util.dom.removeClassFromElement(lastLinkElement, ELLIPSIS);
 		apiInternal.util.dom.applyClassToElement(lastLinkElement, NO_LINK);
 
@@ -101,8 +96,8 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 
 		apiInternal.util.dom.removeClassFromElement(lastLinkElement, NO_LINK);
 		apiInternal.util.dom.applyClassToElement(lastLinkElement, ELLIPSIS);
-		apiInternal.util.dom.removeClassFromElement(linkDropzone.element, ERROR);
-		apiInternal.util.dom.applyClassToElement(linkDropzone.element, SUCCESS);
+		apiInternal.util.dom.removeClassFromElement(linkViewer, ERROR);
+		apiInternal.util.dom.applyClassToElement(linkViewer, SUCCESS);
 
 		apiInternal.util.dom.addOrReplaceChild(lastLinkElement, document.createTextNode(link));
 		if(selectedText) {
