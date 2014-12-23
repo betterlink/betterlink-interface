@@ -6,12 +6,12 @@
 betterlink_user_interface.createModule("Action Pen", function(api, apiInternal) {
 	api.requireModules( ["Util.DOM", "Facebook Element", "Twitter Element"] );
 
-	var PEN_ID = 'betterlink-pen';
+	var PEN_CLASS = 'betterlink-pen';
 	var ACTION_ELEMENT_CLASS = 'betterlink-action-element';
 
 	var CSS = [
-		"#" + PEN_ID + " { list-style: none; padding: 5px; margin: 0; }",
-		"#" + PEN_ID + ">li { display: inline-block; padding: 0; margin: 0; }",
+		"." + PEN_CLASS + " { list-style: none; padding: 5px; margin: 0; }",
+		"." + PEN_CLASS + ">li { display: inline-block; padding: 0; margin: 0; }",
 		"." + ACTION_ELEMENT_CLASS + ' { cursor: pointer; padding: 5px; margin: 2px 3px; width: auto; border: none; background: inherit; border-radius: 0; }',
 		"img." + ACTION_ELEMENT_CLASS + ',svg.' + ACTION_ELEMENT_CLASS + ' { width: 57px; height: 57px; }'
 	].join(' ');
@@ -28,7 +28,7 @@ betterlink_user_interface.createModule("Action Pen", function(api, apiInternal) 
 		insertStyles();
 
 		pen = document.createElement('ul');
-		pen.id = PEN_ID;
+		apiInternal.util.dom.applyClassToElement(pen, PEN_CLASS);
 
 		addElements(pen);
 
