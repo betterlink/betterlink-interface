@@ -4,7 +4,7 @@
  *
  */
 betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "Util.Ranges", "LastSubmission"] );
+	api.requireModules( ["Util.DOM", "LastSubmission"] );
 
 	var LAST_VIEWER_CLASS = 'betterlink-link-display';
 	var LAST_LINK_CLASS = 'betterlink-last-link';
@@ -30,7 +30,6 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 
 	apiInternal.linkViewer = {
 		create: initializeLinkViewer,
-		selectLastLink: selectLastLink
 	};
 	/****************************************************************************************************/
 
@@ -46,7 +45,6 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 			apiInternal.linkViewer.initialized = true;
 
 			createLinkViewer();
-			selectTextOnClick(lastLinkElement);
 
 			apiInternal.lastSubmission.subscribeAll.onsuccess(displaySubmissionResult);
 			apiInternal.lastSubmission.subscribeAll.onfailed(displaySubmissionError);
@@ -104,22 +102,6 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 			selectedText = '"' + collapseWhitespace(selectedText) + '"';
 			apiInternal.util.dom.addOrReplaceChild(lastTextElement, document.createTextNode(selectedText));
 		}
-	}
-
-	// When the user selects the area where the last link is displayed, select
-	// the text content
-	function selectTextOnClick(element) {
-		apiInternal.addListener(element, 'click', _selectText);
-
-		function _selectText(e) {
-			e.preventDefault ? e.preventDefault() : window.event.returnValue = false;
-
-			selectLastLink();
-		}
-	}
-
-	function selectLastLink() {
-		apiInternal.util.ranges.selectNodeContents(lastLinkElement);
 	}
 
 	function collapseWhitespace(text) {
