@@ -6,9 +6,9 @@
 betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal) {
 	api.requireModules( ["Util.DOM", "Util.Ranges", "LastSubmission", "Drawer Dropzone"] );
 
-	var LINK_VIEWER_ID = 'betterlink-link-display';
-	var LAST_LINK_ID = 'betterlink-last-link';
-	var LAST_TEXT_ID = 'betterlink-last-link-text';
+	var LAST_VIEWER_CLASS = 'betterlink-link-display';
+	var LAST_LINK_CLASS = 'betterlink-last-link';
+	var LAST_TEXT_CLASS = 'betterlink-last-link-text';
 
 	var NO_LINK = "betterlink-no-link";
 	var SUCCESS = "betterlink-link-success";
@@ -16,15 +16,17 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 	var ELLIPSIS = "betterlink-ellipsis";
 
 	var LINK_DISPLAYER_CSS = 
-		[   "#" + LINK_VIEWER_ID + " { width: auto; }",
-			"#" + LAST_LINK_ID + " { font-size: 13px; }",
-			"#" + LAST_TEXT_ID + " { color: #333; font-style: italic; font-size: 70%; }",
+		[   "." + LAST_VIEWER_CLASS + " { width: auto; }",
+			"." + LAST_LINK_CLASS + " { font-size: 13px; }",
+			"." + LAST_TEXT_CLASS + " { color: #333; font-style: italic; font-size: 70%; }",
 			"." + NO_LINK + " { font-style: italic; width: auto; }",
 			"." + ELLIPSIS + " { width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; -o-text-overflow: ellipsis; }"].join(' ');
 
 	var linkDropzone;
 	var lastLinkElement;
 	var lastTextElement;
+
+	var stylesInitialized = false;
 
 	apiInternal.linkViewer = {
 		create: initializeLinkViewer,
@@ -33,10 +35,16 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 	/****************************************************************************************************/
 
 	function initializeLinkViewer(submissionFn) {
+		if(!stylesInitialized) {
+			insertStyles();
+		}
+
+		// Currently only a single instance of Link Viewer is supported. In order
+		// to support multiple Link Viewers, we would need to change the way we
+		// reference the element divs when making updates.
 		if(!apiInternal.linkViewer.initialized) {
 			apiInternal.linkViewer.initialized = true;
 
-			insertStyles();
 			createLinkViewer();
 			selectTextOnClick(lastLinkElement);
 			triggerSubmissionOnDrop(linkDropzone, submissionFn);
@@ -49,21 +57,20 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 	}
 
 	function insertStyles() {
+		stylesInitialized = true;
 		apiInternal.util.dom.createAndAppendStyleElement(LINK_DISPLAYER_CSS);
 	}
 
 	// Create the HTML elements that will serve to display the user's last link
 	function createLinkViewer() {
 		linkDropzone = apiInternal.dropzone.create('Last Link');
-		linkDropzone.element.id = LINK_VIEWER_ID;
+		apiInternal.util.dom.applyClassToElement(linkDropzone.element, LAST_VIEWER_CLASS);
 
 		lastTextElement = document.createElement('div');
-		lastTextElement.id = LAST_TEXT_ID;
-		lastTextElement.className = "betterlink-reset " + ELLIPSIS;
+		lastTextElement.className = "betterlink-reset " + LAST_TEXT_CLASS + " " + ELLIPSIS;
 
 		lastLinkElement = document.createElement('div');
-		lastLinkElement.id = LAST_LINK_ID;
-		lastLinkElement.className = "betterlink-reset " + NO_LINK;
+		lastLinkElement.className = "betterlink-reset " + LAST_LINK_CLASS + " " + NO_LINK;
 		lastLinkElement.appendChild(document.createTextNode('no recent submissions'));
 
 		linkDropzone.element.appendChild(lastTextElement);
