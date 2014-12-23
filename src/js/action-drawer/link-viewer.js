@@ -7,23 +7,25 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 	api.requireModules( ["Util.DOM", "LastSubmission"] );
 
 	var LAST_VIEWER_CLASS = 'betterlink-link-display';
-	var LAST_LINK_CLASS = 'betterlink-last-link';
 	var LAST_TEXT_CLASS = 'betterlink-last-link-text';
+	var LAST_ERROR_CLASS = 'betterlink-last-error';
 
-	var NO_LINK = "betterlink-no-link";
 	var SUCCESS = "betterlink-link-success";
 	var ERROR = "betterlink-link-error";
 	var ELLIPSIS = "betterlink-ellipsis";
+	// For multiline ellipsis: http://codepen.io/romanrudenko/pen/ymHFh
+	// via http://www.mobify.com/blog/multiline-ellipsis-in-pure-css/
+	// Will need to address gradiant (and image) for a different background color
+	// (especially for changing background colors for errors, etc.)
 
 	var LINK_DISPLAYER_CSS = 
 		[   "." + LAST_VIEWER_CLASS + " { width: auto; }",
-			"." + LAST_LINK_CLASS + " { font-size: 13px; }",
 			"." + LAST_TEXT_CLASS + " { color: #333; font-style: italic; font-size: 70%; }",
-			"." + NO_LINK + " { font-style: italic; width: auto; }",
+			"." + LAST_ERROR_CLASS + " { font-size: 13px; margin-top: 10px; width: auto; }",
 			"." + ELLIPSIS + " { width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; -o-text-overflow: ellipsis; }"].join(' ');
 
 	var linkViewer;
-	var lastLinkElement;
+	var lastErrorElement;
 	var lastTextElement;
 
 	var stylesInitialized = false;
@@ -64,40 +66,39 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 		linkViewer.className = "betterlink-reset " + LAST_VIEWER_CLASS;
 
 		lastTextElement = document.createElement('div');
-		lastTextElement.className = "betterlink-reset " + LAST_TEXT_CLASS + " " + ELLIPSIS;
+		lastTextElement.className = "betterlink-reset " + LAST_TEXT_CLASS + " " + ELLIPSIS
+		lastTextElement.appendChild(document.createTextNode('no recent submissions'));
 
-		lastLinkElement = document.createElement('div');
-		lastLinkElement.className = "betterlink-reset " + LAST_LINK_CLASS + " " + NO_LINK;
-		lastLinkElement.appendChild(document.createTextNode('no recent submissions'));
+		lastErrorElement = document.createElement('div');
+		lastErrorElement.className = "betterlink-reset " + LAST_ERROR_CLASS;
 
 		linkViewer.appendChild(lastTextElement);
-		linkViewer.appendChild(lastLinkElement);
+		linkViewer.appendChild(lastErrorElement);
 	}
 
 	function displaySubmissionError() {
 		var lastSub = apiInternal.lastSubmission.last;
 		var message = lastSub.message;
+		var selectedText = lastSub.text;
 
 		apiInternal.util.dom.removeClassFromElement(linkViewer, SUCCESS);
 		apiInternal.util.dom.applyClassToElement(linkViewer, ERROR);
-		apiInternal.util.dom.removeClassFromElement(lastLinkElement, ELLIPSIS);
-		apiInternal.util.dom.applyClassToElement(lastLinkElement, NO_LINK);
 
-		apiInternal.util.dom.addOrReplaceChild(lastLinkElement, document.createTextNode(message));
-		apiInternal.util.dom.removeAllChildren(lastTextElement);
+		apiInternal.util.dom.addOrReplaceChild(lastErrorElement, document.createTextNode(message));
+		if(selectedText) {
+			selectedText = '"' + collapseWhitespace(selectedText) + '"';
+			apiInternal.util.dom.addOrReplaceChild(lastTextElement, document.createTextNode(selectedText));
+		}
 	}
 
 	function displaySubmissionResult() {
 		var lastSub = apiInternal.lastSubmission.last;
-		var link = lastSub.link;
 		var selectedText = lastSub.text;
 
-		apiInternal.util.dom.removeClassFromElement(lastLinkElement, NO_LINK);
-		apiInternal.util.dom.applyClassToElement(lastLinkElement, ELLIPSIS);
 		apiInternal.util.dom.removeClassFromElement(linkViewer, ERROR);
 		apiInternal.util.dom.applyClassToElement(linkViewer, SUCCESS);
 
-		apiInternal.util.dom.addOrReplaceChild(lastLinkElement, document.createTextNode(link));
+		apiInternal.util.dom.removeAllChildren(lastErrorElement);
 		if(selectedText) {
 			selectedText = '"' + collapseWhitespace(selectedText) + '"';
 			apiInternal.util.dom.addOrReplaceChild(lastTextElement, document.createTextNode(selectedText));
