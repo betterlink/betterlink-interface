@@ -3,7 +3,7 @@
  *
  */
 betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "LastSubmission", "Draggable", "Drawer Dropzone", "Action Pen"] );
+	api.requireModules( ["Util.DOM", "LastSubmission", "Link Viewer", "Draggable", "Drawer Dropzone", "Action Pen"] );
 
 	var NO_SUBMISSION_TEXT = document.createTextNode("drag | drop | share"),
 		LOADING_TEXT = document.createTextNode("Loading..."),
@@ -29,15 +29,15 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 	};
 	/****************************************************************************************************/
 
-	function createDropzone(submissionFn, pen) {
+	function createDropzone(submissionFn) {
 		if(!stylesInitialized) {
 			insertStyles();
 		}
 
-		nexusDropzone = apiInternal.dropzone.create(NO_SUBMISSION_TEXT.nodeValue);
+		nexusDropzone = apiInternal.dropzone.create();
 		apiInternal.util.dom.applyClassToElement(nexusDropzone.element, NEXUS_CLASS);
 
-		actionPen = pen;
+		actionPen = apiInternal.actionPen.create();
 		actionPen.style.display = 'none';
 
 		triggerChangeOnDrag();
@@ -45,6 +45,9 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 		triggerLoadingOnSubmission();
 		triggerChooseOnSuccess();
 		triggerFailureDisplay();
+
+		nexusDropzone.element.appendChild(apiInternal.linkViewer.create(submissionFn));
+		nexusDropzone.element.appendChild(actionPen);
 
 		return nexusDropzone.element;
 	}
@@ -92,7 +95,7 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 		actionPen.style.display = 'none';
 
 		apiInternal.util.dom.applyClassToElement(nexusDropzone.element, DRAGGING_CLASS);
-		apiInternal.util.dom.addOrReplaceChild(nexusDropzone.element, ABOUT_TO_SHARE_TEXT);
+		//apiInternal.util.dom.addOrReplaceChild(nexusDropzone.element, ABOUT_TO_SHARE_TEXT);
 	}
 
 	// Set the content of the dropzone back to where it was before dragging
@@ -103,7 +106,7 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 			alertToChoose();
 		}
 		else {
-			apiInternal.util.dom.addOrReplaceChild(nexusDropzone.element, NO_SUBMISSION_TEXT);
+			//apiInternal.util.dom.addOrReplaceChild(nexusDropzone.element, NO_SUBMISSION_TEXT);
 		}
 	}
 
@@ -114,7 +117,7 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 		apiInternal.util.dom.removeClassFromElement(nexusDropzone.element, HAS_ERROR_CLASS);
 		apiInternal.util.dom.removeClassFromElement(nexusDropzone.element, HAS_SUBMISSION_CLASS);
 
-		apiInternal.util.dom.addOrReplaceChild(nexusDropzone.element, LOADING_TEXT);
+		//apiInternal.util.dom.addOrReplaceChild(nexusDropzone.element, LOADING_TEXT);
 	}
 
 	// Inform the user they should choose the service to use to copmlete their share
@@ -122,7 +125,7 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 	function alertToChoose() {
 		apiInternal.util.dom.removeClassFromElement(nexusDropzone.element, HAS_ERROR_CLASS);
 		apiInternal.util.dom.applyClassToElement(nexusDropzone.element, HAS_SUBMISSION_CLASS);
-		apiInternal.util.dom.addOrReplaceChild(nexusDropzone.element, LINK_SUBMITTED_TEXT);
+		//apiInternal.util.dom.addOrReplaceChild(nexusDropzone.element, LINK_SUBMITTED_TEXT);
 
 		actionPen.style.display = '';
 	}
