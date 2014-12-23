@@ -24,7 +24,7 @@ betterlink_user_interface.createModule("Drawer Dropzone", function(api, apiInter
 
 	// Creates a new Dropzone object that will be returned to the client
 	function createDropzone(opt_text) {
-		var dropzone = new Dropzone(opt_text);
+		var dropzone = new Dropzone(opt_text || '');
 		dropzone.initialize();
 		return dropzone;
 	}
@@ -92,7 +92,7 @@ betterlink_user_interface.createModule("Drawer Dropzone", function(api, apiInter
 	function createDropzoneElement(dropzone) {
 		var element = document.createElement('div');
 		apiInternal.util.dom.applyClassToElement(element, DROPZONE_CLASS);
-		element.appendChild(document.createTextNode(dropzone.text || 'Drop Here'));
+		if(dropzone.text) { element.appendChild(document.createTextNode(dropzone.text)) };
 		return element;
 	}
 
