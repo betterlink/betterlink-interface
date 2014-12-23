@@ -14,7 +14,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 	var DRAWER_FOOTER_ID = DRAWER_ID + "-footer";
 
 	var DRAWER_HIDDEN_CLASS = "betterlink-drawer-hidden";
-	var DROPZONES_LIST_ID = "betterlink-dropzones";
+	var TOP_LIST_ID = "betterlink-top-list";
 
 	// Drawer Animation
 	// http://www.berriart.com/sidr/
@@ -42,8 +42,8 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 			"#" + DRAWER_HEADER_ID + " { text-align: center; border-bottom: 1px solid black; }",
 			"#" + DRAWER_FOOTER_ID + " { text-align: center; border-top: 1px solid black; }",
 
-			"#" + DROPZONES_LIST_ID + " { margin: 0; padding: 0; }",
-			"#" + DROPZONES_LIST_ID + ">li { list-style: none; }",
+			"#" + TOP_LIST_ID + " { margin: 0; padding: 0; }",
+			"#" + TOP_LIST_ID + ">li { list-style: none; }",
 
 			"#" + DRAWER_ID + " { background: lightcoral; position: fixed; }",
 			"." + DRAWER_HIDDEN_CLASS + " { display: none; }"].join(' ');
@@ -120,7 +120,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		center_top.className = 'betterlink-top-to-bottom betterlink-reset';
 		center_bottom.className = 'betterlink-bottom-to-top betterlink-reset';
 
-		addDropzones(center_top);
+		addTopList(center_top);
 		// center_bottom.appendChild();
 		center.appendChild(center_top);
 		center.appendChild(center_bottom);
@@ -138,10 +138,10 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		apiInternal.util.dom.registerAndAppend(document.body, drawer);
 	}
 
-	// Add a list of Dropzone elements to the provide parent element
-	function addDropzones(element) {
+	// Add a list of elements to the provided parent element
+	function addTopList(element) {
 		var list = document.createElement('ul');
-		list.id = DROPZONES_LIST_ID;
+		list.id = TOP_LIST_ID;
 		list.appendChild(createNexus());
 
 		element.appendChild(list);
