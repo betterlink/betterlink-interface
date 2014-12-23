@@ -36,7 +36,7 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 		// beforeEVENT --> leaveSTATE --> enterSTATE (onSTATE) --> afterEVENT (onEVENT)
 		callbacks: {
 			// Store event information
-			'onbeforefail':      function(evt, from, to, msg)        { storeError(lastSub.last, msg); },
+			'onbeforefail':      function(evt, from, to, msg, text)  { storeError(lastSub.last, msg, text); },
 			'onbeforecomplete':  function(evt, from, to, link, text) { storeSuccess(lastSub.last, link, text); },
 
 			// Trigger state alerts
@@ -137,16 +137,16 @@ betterlink_user_interface.createModule("LastSubmission", function(api, apiIntern
 			lastSubmissionSM['complete'](message, text);
 		}
 		else {
-			lastSubmissionSM['fail'](message);
+			lastSubmissionSM['fail'](message, text);
 		}
 	}
 
 	// =========================================================================================
 	// ============== Handle State Transitions ==============
 
-	function storeError(obj, message) {
+	function storeError(obj, message, text) {
 		obj.link = '';
-		obj.text = '';
+		obj.text = text;
 		obj.message = message;
 	}
 
