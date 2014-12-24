@@ -16,9 +16,10 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 		HAS_ERROR_CLASS = "has-error";
 	var NEXUS_CSS = apiInternal.drawerSelector +
 		[   "." + apiInternal.dropzone.HOVER_CLASS + "." + NEXUS_CLASS + " { background-color: #1CD3A2; color: #333; }",
-			"." + apiInternal.dropzone.CLASS + "." + NEXUS_CLASS + "." + DRAGGING_CLASS + " { padding-top: 50px; padding-bottom: 50px; }",
+			"." + apiInternal.dropzone.CLASS + "." + NEXUS_CLASS + "." + HAS_SUBMISSION_CLASS + " { border-color: #FF9900; }",
 			"." + apiInternal.dropzone.CLASS + "." + NEXUS_CLASS + "." + HAS_ERROR_CLASS + " { background-color: #F32E2E; color: #eee; }",
-			"." + apiInternal.dropzone.CLASS + "." + NEXUS_CLASS + " { -webkit-transition: padding 0.3s ease; transition: padding 0.3s ease; }"].join(' ' + apiInternal.drawerSelector);
+			"." + apiInternal.dropzone.CLASS + "." + NEXUS_CLASS + "." + DRAGGING_CLASS + " { border-color: inherit; padding-top: 50px; padding-bottom: 50px; }",
+			"." + apiInternal.dropzone.CLASS + "." + NEXUS_CLASS + " { margin: 20px 7px 10px 7px; border-radius: 1em; -webkit-transition: padding 0.3s ease; transition: padding 0.3s ease; }"].join(' ' + apiInternal.drawerSelector);
 
 	var stylesInitialized = false;
 	var nexusDropzone;

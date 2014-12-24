@@ -20,7 +20,7 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 
 	var LINK_DISPLAYER_CSS = apiInternal.drawerSelector +
 		[   "." + LAST_VIEWER_CLASS + " { width: auto; }",
-			"." + LAST_TEXT_CLASS + " { color: #333; font-style: italic; font-size: 70%; }",
+			"." + LAST_TEXT_CLASS + " { font-style: italic; font-size: 70%; }",
 			"." + LAST_ERROR_CLASS + " { font-size: 13px; margin-top: 10px; width: auto; }",
 			"." + ELLIPSIS + " { width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; -o-text-overflow: ellipsis; }"].join(' ' + apiInternal.drawerSelector);
 

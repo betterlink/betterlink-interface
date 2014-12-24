@@ -15,6 +15,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 
 	var DRAWER_HIDDEN_CLASS = "betterlink-drawer-hidden";
 	var TOP_LIST_ID = "betterlink-top-list";
+	var HEADER_PROP_ID = 'betterlink-header-prop';
 
 	// Drawer Animation
 	// http://www.berriart.com/sidr/
@@ -40,17 +41,18 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 			apiInternal.drawerSelector + ".betterlink-top-to-bottom { width: 100%; }",
 			apiInternal.drawerSelector + ".betterlink-bottom-to-top { bottom: 0; position: absolute; width: 100%; }",
 
-			apiInternal.drawerSelector + "#" + DRAWER_FOOTER_ID + " { text-align: center; border-top: 1px solid black; }",
+			apiInternal.drawerSelector + "#" + DRAWER_FOOTER_ID + " { text-align: center; border-top-width: 1px; border-top-style: solid; }",
 
 			apiInternal.drawerSelector + "#" + TOP_LIST_ID + " { margin: 0; padding: 0; }",
 			apiInternal.drawerSelector + "#" + TOP_LIST_ID + ">li { list-style: none; }",
 
-			"#" + DRAWER_ID + " { background: lightcoral; position: fixed; }",
+			"#" + DRAWER_ID + " { background: #E9E9E9; position: fixed; border-left: 1px solid #ddd; }",
 			"." + DRAWER_HIDDEN_CLASS + " { display: none; }"].join(' ');
 
 	var HEADER_CSS =
 		[   apiInternal.drawerSelector + "#" + DRAWER_HEADER_ID + ">h1 { margin: 10px 0 3px 10px; }",
-			apiInternal.drawerSelector + "#" + DRAWER_HEADER_ID + ">p { margin: 0 0 5px 10px; font-size: 80%; }"].join(' ');
+			apiInternal.drawerSelector + "#" + DRAWER_HEADER_ID + ">p { margin: 0 0 5px 10px; font-size: 80%; }",
+			apiInternal.drawerSelector + "#" + HEADER_PROP_ID + " { height: 100%; float: left; width: 5px; background: #3299BB; }"].join(' ');
 
 	var drawer;
 	var submissionFunction;
@@ -164,11 +166,14 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		header.id = DRAWER_HEADER_ID;
 		header.className = 'betterlink-header betterlink-row';
 
+		var prop = document.createElement('div');
+		prop.id = HEADER_PROP_ID;
 		var h1 = document.createElement('h1');
 		h1.appendChild(document.createTextNode("Betterlink"));
 		var subtitle = document.createElement('p');
 		subtitle.appendChild(document.createTextNode("drag & drop to share content"));
 
+		header.appendChild(prop);
 		header.appendChild(h1);
 		header.appendChild(subtitle);
 

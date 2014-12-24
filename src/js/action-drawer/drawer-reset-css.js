@@ -29,6 +29,9 @@ betterlink_user_interface.createModule("Drawer Reset CSS", function(api, apiInte
 						"margin: 0;",
 						"padding: 0;",
 						"vertical-align: baseline;",
+
+						"color: #424242;",
+						"border-color: #BCBCBC;",
 						"font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; }",
 
 			drawerSelector + "div { background: inherit; }"].join(' ');
