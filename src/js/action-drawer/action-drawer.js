@@ -46,7 +46,8 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 			apiInternal.drawerSelector + "#" + TOP_LIST_ID + " { margin: 0; padding: 0; }",
 			apiInternal.drawerSelector + "#" + TOP_LIST_ID + ">li { list-style: none; }",
 
-			"#" + DRAWER_ID + " { background: #E9E9E9; position: fixed; border-left: 1px solid #ddd; }",
+			"#" + DRAWER_ID + " { background: #E9E9E9; position: fixed; }",
+			"#" + DRAWER_ID + ":after { content: ''; position: absolute; width: 1px; height: 100%; top: 75px; background: #DDD; }",
 			"." + DRAWER_HIDDEN_CLASS + " { display: none; }"].join(' ');
 
 	var HEADER_CSS =
