@@ -22,12 +22,16 @@
  */
 betterlink_user_interface.createModule("Drawer Reset CSS", function(api, apiInternal) {
 	var drawerSelector = "#betterlink-drawer ";
+	var elements = drawerSelector + ["div","span","h1","h2","p","article","aside","footer","header","nav","section"].join(',' + drawerSelector);
 	apiInternal.drawerResetCss =
-		[drawerSelector + "div { background: inherit;",
-								"border: none;",
-								"border-radius: 0;",
-								"margin: 0;",
-								"padding: 0; }"].join(' ');
+		[   elements +"{ border: none;",
+						"border-radius: 0;",
+						"margin: 0;",
+						"padding: 0;",
+						"vertical-align: baseline;",
+						"font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; }",
+
+			drawerSelector + "div { background: inherit; }"].join(' ');
 
 	apiInternal.drawerSelector = drawerSelector;
 });
