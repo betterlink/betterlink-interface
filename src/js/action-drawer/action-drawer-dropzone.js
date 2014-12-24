@@ -5,14 +5,14 @@
  *
  */
 betterlink_user_interface.createModule("Drawer Dropzone", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "Draggable"] );
+	api.requireModules( ["Util.DOM", "Drawer Reset CSS", "Draggable"] );
 
 	var DROPZONE_CLASS = "betterlink-dropzone";
 	var DROPZONE_HOVER_CLASS = "betterlink-dropzone-hover";
 
-	var DROPZONE_CSS = 
+	var DROPZONE_CSS = apiInternal.drawerSelector +
 		[   "." + DROPZONE_CLASS + " { padding: 10px; width: initial; border: 1px solid black; background: inherit; border-radius: 0; margin: 0; }",
-			"." + DROPZONE_HOVER_CLASS + " { background-color: darkgray; }"].join(' ');
+			"." + DROPZONE_HOVER_CLASS + " { background-color: darkgray; }"].join(' ' + apiInternal.drawerSelector);
 
 	var stylesInitialized = false;
 	apiInternal.dropzone = {

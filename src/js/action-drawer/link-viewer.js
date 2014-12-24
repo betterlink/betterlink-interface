@@ -4,7 +4,7 @@
  *
  */
 betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "LastSubmission"] );
+	api.requireModules( ["Util.DOM", "Drawer Reset CSS", "LastSubmission"] );
 
 	var LAST_VIEWER_CLASS = 'betterlink-link-display';
 	var LAST_TEXT_CLASS = 'betterlink-last-link-text';
@@ -18,11 +18,11 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 	// Will need to address gradiant (and image) for a different background color
 	// (especially for changing background colors for errors, etc.)
 
-	var LINK_DISPLAYER_CSS = 
+	var LINK_DISPLAYER_CSS = apiInternal.drawerSelector +
 		[   "." + LAST_VIEWER_CLASS + " { width: auto; }",
 			"." + LAST_TEXT_CLASS + " { color: #333; font-style: italic; font-size: 70%; }",
 			"." + LAST_ERROR_CLASS + " { font-size: 13px; margin-top: 10px; width: auto; }",
-			"." + ELLIPSIS + " { width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; -o-text-overflow: ellipsis; }"].join(' ');
+			"." + ELLIPSIS + " { width: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; -o-text-overflow: ellipsis; }"].join(' ' + apiInternal.drawerSelector);
 
 	var linkViewer;
 	var lastErrorElement;
@@ -63,14 +63,14 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 	// Create the HTML elements that will serve to display the user's last link
 	function createLinkViewer() {
 		linkViewer = document.createElement('div');
-		linkViewer.className = "betterlink-reset " + LAST_VIEWER_CLASS;
+		linkViewer.className = LAST_VIEWER_CLASS;
 
 		lastTextElement = document.createElement('div');
-		lastTextElement.className = "betterlink-reset " + LAST_TEXT_CLASS + " " + ELLIPSIS
+		lastTextElement.className = LAST_TEXT_CLASS + " " + ELLIPSIS
 		lastTextElement.appendChild(document.createTextNode('no recent submissions'));
 
 		lastErrorElement = document.createElement('div');
-		lastErrorElement.className = "betterlink-reset " + LAST_ERROR_CLASS;
+		lastErrorElement.className = LAST_ERROR_CLASS;
 
 		linkViewer.appendChild(lastTextElement);
 		linkViewer.appendChild(lastErrorElement);

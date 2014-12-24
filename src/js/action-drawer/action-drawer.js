@@ -5,10 +5,10 @@
  *
  */
 betterlink_user_interface.createModule("Action Drawer", function(api, apiInternal) {
-	api.requireModules( ["Util", "Util.DOM", "Neglected", "Draggable", "Drawer Dropzone", "Dropzone.Nexus"] );
+	api.requireModules( ["Util", "Util.DOM", "Drawer Reset CSS", "Neglected", "Draggable", "Drawer Dropzone", "Dropzone.Nexus"] );
 
 	var HTML5_CSS = "article, aside, footer, header, nav, section { display: block; }";
-	var DRAWER_ID = "betterlink-drawer";
+	var DRAWER_ID = extractId(apiInternal.drawerSelector);
 	var DRAWER_HEADER_ID = DRAWER_ID + "-header";
 	var DRAWER_CENTER_ID = DRAWER_ID + "-center";
 	var DRAWER_FOOTER_ID = DRAWER_ID + "-footer";
@@ -21,7 +21,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 	// http://jpanelmenu.com/
 
 	// Drawer CSS
-	var DRAWER_CSS = 
+	var DRAWER_CSS =
 		[   ".betterlink-row, .betterlink-col { overflow: hidden; position: absolute; }",
 			".betterlink-row { width: 100%; }",
 			".betterlink-col { top: 0; bottom: 0; }",
@@ -31,19 +31,18 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 			".betterlink-left.betterlink-col { width: 230px; }",
 			".betterlink-right.betterlink-col { width: 230px; right: 0; }",
 
-			".betterlink-header.betterlink-row { height: 75px; line-height: 75px; }",
-			".betterlink-center.betterlink-row { top: 75px; bottom: 50px; }",
-			".betterlink-footer.betterlink-row { height: 50px; bottom: 0; line-height: 50px; }",
+			apiInternal.drawerSelector + ".betterlink-header.betterlink-row { height: 75px; line-height: 75px; }",
+			apiInternal.drawerSelector + ".betterlink-center.betterlink-row { top: 75px; bottom: 50px; }",
+			apiInternal.drawerSelector + ".betterlink-footer.betterlink-row { height: 50px; bottom: 0; line-height: 50px; }",
 
-			".betterlink-top-to-bottom { width: 100%; }",
-			".betterlink-bottom-to-top { bottom: 0; position: absolute; width: 100%; }",
-			"div.betterlink-reset { padding: 0; margin: 0; border: none; background: inherit; border-radius: 0; }",
+			apiInternal.drawerSelector + ".betterlink-top-to-bottom { width: 100%; }",
+			apiInternal.drawerSelector + ".betterlink-bottom-to-top { bottom: 0; position: absolute; width: 100%; }",
 
-			"#" + DRAWER_HEADER_ID + " { text-align: center; border-bottom: 1px solid black; }",
-			"#" + DRAWER_FOOTER_ID + " { text-align: center; border-top: 1px solid black; }",
+			apiInternal.drawerSelector + "#" + DRAWER_HEADER_ID + " { text-align: center; border-bottom: 1px solid black; }",
+			apiInternal.drawerSelector + "#" + DRAWER_FOOTER_ID + " { text-align: center; border-top: 1px solid black; }",
 
-			"#" + TOP_LIST_ID + " { margin: 0; padding: 0; }",
-			"#" + TOP_LIST_ID + ">li { list-style: none; }",
+			apiInternal.drawerSelector + "#" + TOP_LIST_ID + " { margin: 0; padding: 0; }",
+			apiInternal.drawerSelector + "#" + TOP_LIST_ID + ">li { list-style: none; }",
 
 			"#" + DRAWER_ID + " { background: lightcoral; position: fixed; }",
 			"." + DRAWER_HIDDEN_CLASS + " { display: none; }"].join(' ');
@@ -72,8 +71,10 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 	}
 
 	function insertDrawerStyles() {
+		var fullCss = apiInternal.drawerResetCss + ' ' + DRAWER_CSS;
+
 		apiInternal.util.dom.createAndAppendStyleElement(HTML5_CSS);
-		apiInternal.util.dom.createAndAppendStyleElement(DRAWER_CSS);
+		apiInternal.util.dom.createAndAppendStyleElement(fullCss);
 	}
 
 	// Use the Neglected event to indicate when the user has stopped interacting
@@ -117,8 +118,8 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		center.className = 'betterlink-center betterlink-row';
 		var center_top = document.createElement('div');
 		var center_bottom = document.createElement('div');
-		center_top.className = 'betterlink-top-to-bottom betterlink-reset';
-		center_bottom.className = 'betterlink-bottom-to-top betterlink-reset';
+		center_top.className = 'betterlink-top-to-bottom';
+		center_bottom.className = 'betterlink-bottom-to-top';
 
 		addTopList(center_top);
 		// center_bottom.appendChild();
@@ -154,5 +155,11 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		li.appendChild(nexus);
 
 		return li;
+	}
+
+	// selector is assumed to be a simple CSS ID selector
+	// ex: "#betterlink-drawer "
+	function extractId(selector) {
+		return selector.replace(/[#\s]/g, '');
 	}
 });

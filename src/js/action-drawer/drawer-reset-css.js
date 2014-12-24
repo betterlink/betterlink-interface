@@ -1,0 +1,33 @@
+/**
+ * Defines a Reset CSS for Action Drawer elements. Webpages may have
+ * specialized styling for <div>, <p>, or other types of elements.
+ * This set will essentially reset the styles that are applied to
+ * elements underneath the root Action Drawer.
+ *
+ * If there were more adoption, this would be the same as applying a
+ * scoped <style> element. That would also allow us to avoid prefixing
+ * all selectors with the drawer ID to have higher specificity.
+ *
+ * The convention in the related modules will be to start the CSS
+ * declaration with the drawerSelector, and to join each subsequent
+ * line with a space and the drawerSelector.
+ *
+ * This assumes that each line holds a single selector, and that
+ * selectors are not split between lines. Exceptions to this format
+ * should be handled individually.
+ *
+ * (Formatting the CSS this way reduces the clutter of having the
+ *  same text repeated constantly)
+ *
+ */
+betterlink_user_interface.createModule("Drawer Reset CSS", function(api, apiInternal) {
+	var drawerSelector = "#betterlink-drawer ";
+	apiInternal.drawerResetCss =
+		[drawerSelector + "div { background: inherit;",
+								"border: none;",
+								"border-radius: 0;",
+								"margin: 0;",
+								"padding: 0; }"].join(' ');
+
+	apiInternal.drawerSelector = drawerSelector;
+});

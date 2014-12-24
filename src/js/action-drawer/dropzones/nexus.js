@@ -3,7 +3,7 @@
  *
  */
 betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "LastSubmission", "Link Viewer", "Draggable", "Drawer Dropzone", "Action Pen"] );
+	api.requireModules( ["Util.DOM", "LastSubmission", "Drawer Reset CSS", "Link Viewer", "Draggable", "Drawer Dropzone", "Action Pen"] );
 
 	var NO_SUBMISSION_TEXT = document.createTextNode("drag | drop | share"),
 		LOADING_TEXT = document.createTextNode("Loading..."),
@@ -14,11 +14,11 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 		DRAGGING_CLASS = "dragging",
 		HAS_SUBMISSION_CLASS = "has-submission",
 		HAS_ERROR_CLASS = "has-error";
-	var NEXUS_CSS = 
+	var NEXUS_CSS = apiInternal.drawerSelector +
 		[   "." + apiInternal.dropzone.HOVER_CLASS + "." + NEXUS_CLASS + " { background-color: #1CD3A2; color: #333; }",
 			"." + apiInternal.dropzone.CLASS + "." + NEXUS_CLASS + "." + DRAGGING_CLASS + " { padding-top: 50px; padding-bottom: 50px; }",
 			"." + apiInternal.dropzone.CLASS + "." + NEXUS_CLASS + "." + HAS_ERROR_CLASS + " { background-color: #F32E2E; color: #eee; }",
-			"." + apiInternal.dropzone.CLASS + "." + NEXUS_CLASS + " { -webkit-transition: padding 0.3s ease; transition: padding 0.3s ease; }"].join(' ');
+			"." + apiInternal.dropzone.CLASS + "." + NEXUS_CLASS + " { -webkit-transition: padding 0.3s ease; transition: padding 0.3s ease; }"].join(' ' + apiInternal.drawerSelector);
 
 	var stylesInitialized = false;
 	var nexusDropzone;
