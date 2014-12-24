@@ -21,6 +21,8 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 	// http://jpanelmenu.com/
 
 	// Drawer CSS
+	// Full-height layout dervied from Steven Sanderson
+	// http://blog.stevensanderson.com/2011/10/05/full-height-app-layouts-a-css-trick-to-make-it-easier/
 	var DRAWER_CSS =
 		[   ".betterlink-row, .betterlink-col { overflow: hidden; position: absolute; }",
 			".betterlink-row { width: 100%; }",
@@ -31,14 +33,13 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 			".betterlink-left.betterlink-col { width: 230px; }",
 			".betterlink-right.betterlink-col { width: 230px; right: 0; }",
 
-			apiInternal.drawerSelector + ".betterlink-header.betterlink-row { height: 75px; line-height: 75px; }",
+			apiInternal.drawerSelector + ".betterlink-header.betterlink-row { height: 75px; }",
 			apiInternal.drawerSelector + ".betterlink-center.betterlink-row { top: 75px; bottom: 50px; }",
 			apiInternal.drawerSelector + ".betterlink-footer.betterlink-row { height: 50px; bottom: 0; line-height: 50px; }",
 
 			apiInternal.drawerSelector + ".betterlink-top-to-bottom { width: 100%; }",
 			apiInternal.drawerSelector + ".betterlink-bottom-to-top { bottom: 0; position: absolute; width: 100%; }",
 
-			apiInternal.drawerSelector + "#" + DRAWER_HEADER_ID + " { text-align: center; border-bottom: 1px solid black; }",
 			apiInternal.drawerSelector + "#" + DRAWER_FOOTER_ID + " { text-align: center; border-top: 1px solid black; }",
 
 			apiInternal.drawerSelector + "#" + TOP_LIST_ID + " { margin: 0; padding: 0; }",
@@ -46,6 +47,10 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 
 			"#" + DRAWER_ID + " { background: lightcoral; position: fixed; }",
 			"." + DRAWER_HIDDEN_CLASS + " { display: none; }"].join(' ');
+
+	var HEADER_CSS =
+		[   apiInternal.drawerSelector + "#" + DRAWER_HEADER_ID + ">h1 { margin: 10px 0 3px 10px; }",
+			apiInternal.drawerSelector + "#" + DRAWER_HEADER_ID + ">p { margin: 0 0 5px 10px; font-size: 80%; }"].join(' ');
 
 	var drawer;
 	var submissionFunction;
@@ -71,7 +76,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 	}
 
 	function insertDrawerStyles() {
-		var fullCss = apiInternal.drawerResetCss + ' ' + DRAWER_CSS;
+		var fullCss = apiInternal.drawerResetCss + ' ' + DRAWER_CSS + ' ' + HEADER_CSS;
 
 		apiInternal.util.dom.createAndAppendStyleElement(HTML5_CSS);
 		apiInternal.util.dom.createAndAppendStyleElement(fullCss);
@@ -108,10 +113,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		drawer.id = DRAWER_ID;
 		drawer.className = 'betterlink-right betterlink-col';
 
-		var header = document.createElement('section');
-		header.id = DRAWER_HEADER_ID;
-		header.className = 'betterlink-header betterlink-row';
-		header.appendChild(document.createTextNode('My Header'));
+		var header = createHeader();
 
 		var center = document.createElement('section');
 		center.id = DRAWER_CENTER_ID;
@@ -155,6 +157,22 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		li.appendChild(nexus);
 
 		return li;
+	}
+
+	function createHeader() {
+		var header = document.createElement('section');
+		header.id = DRAWER_HEADER_ID;
+		header.className = 'betterlink-header betterlink-row';
+
+		var h1 = document.createElement('h1');
+		h1.appendChild(document.createTextNode("Betterlink"));
+		var subtitle = document.createElement('p');
+		subtitle.appendChild(document.createTextNode("drag & drop to share content"));
+
+		header.appendChild(h1);
+		header.appendChild(subtitle);
+
+		return header;
 	}
 
 	// selector is assumed to be a simple CSS ID selector
