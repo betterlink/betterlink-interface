@@ -100,6 +100,8 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 		hide(linkViewer);
 
 		apiInternal.util.dom.applyClassToElement(nexusDropzone.element, DRAGGING_CLASS);
+		apiInternal.util.dom.removeClassFromElement(nexusDropzone.element, HAS_ERROR_CLASS);
+		apiInternal.util.dom.removeClassFromElement(nexusDropzone.element, HAS_SUBMISSION_CLASS);
 		//apiInternal.util.dom.addOrReplaceChild(nexusDropzone.element, ABOUT_TO_SHARE_TEXT);
 	}
 
@@ -109,6 +111,9 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 
 		if(apiInternal.lastSubmission.lastSuccessful.exists()) {
 			alertToChoose();
+		}
+		else if(apiInternal.lastSubmission.last.exists()) {
+			alertNoLastSubmission();
 		}
 		else {
 			//apiInternal.util.dom.addOrReplaceChild(nexusDropzone.element, NO_SUBMISSION_TEXT);
