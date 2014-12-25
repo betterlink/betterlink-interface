@@ -6,7 +6,8 @@ betterlink_user_interface.createModule("Facebook Element", function(api, apiInte
 	api.requireModules( ["Util.DOM", "SVG", "Drawer Reset CSS", "LastSubmission", "Share.Facebook"] );
 
 	var FB_CLASS = "betterlink-fb";
-	var CSS = apiInternal.drawerSelector + "div." + FB_CLASS + " { background-color: #3B5999; color: white; }";
+	var CSS  =  apiInternal.drawerSelector + "div." + FB_CLASS + " { background-color: #3B5999; color: white; }" +
+				apiInternal.drawerSelector + "img." + FB_CLASS + ":hover { background-color: #3B5999; border-radius: 1em; background-clip: content-box; }";
 
 	var stylesInitialized = false;
 	var lastSuccessful = apiInternal.lastSubmission.lastSuccessful;

@@ -6,7 +6,8 @@ betterlink_user_interface.createModule("Twitter Element", function(api, apiInter
 	api.requireModules( ["Util.DOM", "SVG", "Drawer Reset CSS", "LastSubmission", "Share.Twitter"] );
 
 	var TW_CLASS = "betterlink-tw";
-	var CSS = apiInternal.drawerSelector + "div." + TW_CLASS + " { background-color: #55acee; color: #fff; }";
+	var CSS  =  apiInternal.drawerSelector + "div." + TW_CLASS + " { background-color: #55acee; color: #fff; } " +
+				apiInternal.drawerSelector + "img." + TW_CLASS + ":hover { background-color: #55acee; border-radius: 1em; background-clip: content-box; }";
 
 	var stylesInitialized = false;
 	var lastSuccessful = apiInternal.lastSubmission.lastSuccessful;
