@@ -43,7 +43,7 @@ betterlink_user_interface.createModule("Tinybox", function(api, apiInternal) {
 	Register cleanup function
 	*/
 
-	apiInternal.tinybox = function() {
+	var tinybox = apiInternal.tinybox = function() {
 		var j,m,b,g,v,p=0;
 		return {
 			show:function(o){
@@ -56,7 +56,7 @@ betterlink_user_interface.createModule("Tinybox", function(api, apiInternal) {
 					m=document.createElement('div'); m.className='tmask';
 					g=document.createElement('div'); g.className='tclose'; g.v=0;
 					document.body.appendChild(m); document.body.appendChild(j); j.appendChild(p); p.appendChild(b);
-					m.onclick=g.onclick=TINY.box.hide; window.onresize=TINY.box.resize
+					m.onclick=g.onclick=tinybox.hide; window.onresize=tinybox.resize
 				}else{
 					j.style.display='none'; clearTimeout(p.ah); if(g.v){p.removeChild(g); g.v=0}
 				}
@@ -73,18 +73,18 @@ betterlink_user_interface.createModule("Tinybox", function(api, apiInternal) {
 					}
 				}
 				if(v.mask){this.mask(); this.alpha(m,1,v.opacity)}else{this.alpha(j,1,100)}
-				if(v.autohide){p.ah=setTimeout(TINY.box.hide,1000*v.autohide)}else{document.onkeyup=TINY.box.esc}
+				if(v.autohide){p.ah=setTimeout(tinybox.hide,1000*v.autohide)}else{document.onkeyup=tinybox.esc}
 			},
 			fill:function(c,u,k,a,w,h){
 				if(u){
 					if(v.image){
-						var i=new Image(); i.onload=function(){w=w||i.width; h=h||i.height; TINY.box.psh(i,a,w,h)}; i.src=v.image
+						var i=new Image(); i.onload=function(){w=w||i.width; h=h||i.height; tinybox.psh(i,a,w,h)}; i.src=v.image
 					}else if(v.iframe){
 						this.psh('<iframe src="'+v.iframe+'" width="'+v.width+'" frameborder="0" height="'+v.height+'"></iframe>',a,w,h)
 					}else{
 						var x=window.XMLHttpRequest?new XMLHttpRequest():new ActiveXObject('Microsoft.XMLHTTP');
 						x.onreadystatechange=function(){
-							if(x.readyState==4&&x.status==200){p.style.backgroundImage=''; TINY.box.psh(x.responseText,a,w,h)}
+							if(x.readyState==4&&x.status==200){p.style.backgroundImage=''; tinybox.psh(x.responseText,a,w,h)}
 						};
 						if(k){
 	    	            	x.open('POST',c,true); x.setRequestHeader('Content-type','application/x-www-form-urlencoded'); x.send(k)
@@ -108,9 +108,9 @@ betterlink_user_interface.createModule("Tinybox", function(api, apiInternal) {
 				p.style.width=x; p.style.height=y;
 				this.size(w,h,a)
 			},
-			esc:function(e){e=e||window.event; if(e.keyCode==27){TINY.box.hide()}},
-			hide:function(){TINY.box.alpha(j,-1,0,3); document.onkeypress=null; if(v.closejs){v.closejs()}},
-			resize:function(){TINY.box.pos(); TINY.box.mask()},
+			esc:function(e){e=e||window.event; if(e.keyCode==27){tinybox.hide()}},
+			hide:function(){tinybox.alpha(j,-1,0,3); document.onkeypress=null; if(v.closejs){v.closejs()}},
+			resize:function(){tinybox.pos(); tinybox.mask()},
 			mask:function(){m.style.height=this.total(1)+'px'; m.style.width=this.total(0)+'px'},
 			pos:function(){
 				var t;
@@ -121,8 +121,8 @@ betterlink_user_interface.createModule("Tinybox", function(api, apiInternal) {
 			},
 			alpha:function(e,d,a){
 				clearInterval(e.ai);
-				if(d){e.style.opacity=0; e.style.filter='alpha(opacity=0)'; e.style.display='block'; TINY.box.pos()}
-				e.ai=setInterval(function(){TINY.box.ta(e,a,d)},20)
+				if(d){e.style.opacity=0; e.style.filter='alpha(opacity=0)'; e.style.display='block'; tinybox.pos()}
+				e.ai=setInterval(function(){tinybox.ta(e,a,d)},20)
 			},
 			ta:function(e,a,d){
 				var o=Math.round(e.style.opacity*100);
@@ -130,13 +130,13 @@ betterlink_user_interface.createModule("Tinybox", function(api, apiInternal) {
 					clearInterval(e.ai);
 					if(d==-1){
 						e.style.display='none';
-						e==j?TINY.box.alpha(m,-1,0,2):b.innerHTML=p.style.backgroundImage=''
+						e==j?tinybox.alpha(m,-1,0,2):b.innerHTML=p.style.backgroundImage=''
 					}else{
 						if(e==m){
 							this.alpha(j,1,100)
 						}else{
 							j.style.filter='';
-							TINY.box.fill(v.html||v.url,v.url||v.iframe||v.image,v.post,v.animate,v.width,v.height)
+							tinybox.fill(v.html||v.url,v.url||v.iframe||v.image,v.post,v.animate,v.width,v.height)
 						}
 					}
 				}else{
@@ -147,7 +147,7 @@ betterlink_user_interface.createModule("Tinybox", function(api, apiInternal) {
 			size:function(w,h,a){
 				if(a){
 					clearInterval(p.si); var wd=parseInt(p.style.width)>w?-1:1, hd=parseInt(p.style.height)>h?-1:1;
-					p.si=setInterval(function(){TINY.box.ts(w,wd,h,hd)},20)
+					p.si=setInterval(function(){tinybox.ts(w,wd,h,hd)},20)
 				}else{
 					p.style.backgroundImage='none'; if(v.close){p.appendChild(g); g.v=1}
 					p.style.width=w+'px'; p.style.height=h+'px'; b.style.display=''; this.pos();
