@@ -5,15 +5,15 @@
 betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiInternal) {
 	api.requireModules( ["Util.DOM", "LastSubmission", "Drawer Reset CSS", "Link Viewer", "Draggable", "Drawer Dropzone", "Action Pen"] );
 
-	var NO_SUBMISSION_TEXT = document.createTextNode("drag | drop | share"),
-		LOADING_TEXT = document.createTextNode("Loading..."),
-		ABOUT_TO_SHARE_TEXT = document.createTextNode("drop to share"),
-		LINK_SUBMITTED_TEXT = document.createTextNode("choose where");
+	var LABEL_TEXT = document.createTextNode("dropzone"),
+		LOADING_TEXT = document.createTextNode("Loading...");
 
-	var NEXUS_CLASS = "nexus",
-		DRAGGING_CLASS = "dragging",
-		HAS_SUBMISSION_CLASS = "has-submission",
-		HAS_ERROR_CLASS = "has-error";
+	var NEXUS_CLASS = "betterlink-nexus",
+		DRAGGING_CLASS = "betterlink-nexus-dragging",
+		HAS_SUBMISSION_CLASS = "betterlink-nexus-has-submission",
+		HAS_ERROR_CLASS = "betterlink-nexus-has-error",
+		LABEL_CLASS = "betterlink-nexus-label",
+		LOADING_CLASS = "betterlink-nexus-loading";
 
 	// Nexus selectors need at least two classes to beat the default
 	// dropzone specificity. Prefixing the dropzone class is an easy
@@ -23,11 +23,14 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 			"." + apiInternal.dropzone.CLASS + "." + NEXUS_CLASS + " { margin: 20px 7px 10px 7px; border-radius: 1em; -webkit-transition: padding 0.3s ease; transition: padding 0.3s ease; }",
 			"." + NEXUS_CLASS + "." + HAS_SUBMISSION_CLASS + " { border-color: #FF9900; }",
 			"." + NEXUS_CLASS + "." + HAS_ERROR_CLASS + " { background-color: #F32E2E; color: #eee; }",
-			"." + NEXUS_CLASS + "." + DRAGGING_CLASS + " { border-color: inherit; padding-top: 100px; padding-bottom: 100px; -webkit-animation: pulse 2s infinite; animation: pulse 2s infinite; }",
-			"." + apiInternal.dropzone.HOVER_CLASS + "." + NEXUS_CLASS + " { background-color: #ccc; -webkit-animation: none; animation: none; }"].join(' ' + apiInternal.drawerSelector);
+			"." + NEXUS_CLASS + "." + DRAGGING_CLASS + " { border-color: inherit; padding-bottom: 200px; -webkit-animation: pulse 2s infinite; animation: pulse 2s infinite; }",
+			"." + apiInternal.dropzone.HOVER_CLASS + "." + NEXUS_CLASS + " { background-color: #ccc; -webkit-animation: none; animation: none; }",
+			"." + LABEL_CLASS + " { font-size: 80%; color: #BCBCBC; text-align: right; width: auto; background-color: transparent; }"].join(' ' + apiInternal.drawerSelector);
 
 	var stylesInitialized = false;
 	var nexusDropzone;
+	var dropzoneLabel;
+	var loadingLabel;
 	var linkViewer;
 	var actionPen;
 
@@ -44,10 +47,13 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 		nexusDropzone = apiInternal.dropzone.create();
 		apiInternal.util.dom.applyClassToElement(nexusDropzone.element, NEXUS_CLASS);
 
+		dropzoneLabel = document.createElement('div');
+		loadingLabel = document.createElement('div');
 		actionPen = apiInternal.actionPen.create();
 		linkViewer = apiInternal.linkViewer.create();
 		hide(actionPen);
 		hide(linkViewer);
+		hide(loadingLabel);
 
 		triggerChangeOnDrag();
 		triggerSubmissionOnDrop(submissionFn);
@@ -55,6 +61,14 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 		triggerChooseOnSuccess();
 		triggerFailureDisplay();
 
+		dropzoneLabel.appendChild(LABEL_TEXT);
+		dropzoneLabel.className = LABEL_CLASS;
+
+		loadingLabel.appendChild(LOADING_TEXT);
+		loadingLabel.className = LABEL_CLASS;
+
+		nexusDropzone.element.appendChild(dropzoneLabel);
+		nexusDropzone.element.appendChild(loadingLabel);
 		nexusDropzone.element.appendChild(linkViewer);
 		nexusDropzone.element.appendChild(actionPen);
 
@@ -103,11 +117,13 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 	function alertToDrop() {
 		hide(actionPen);
 		hide(linkViewer);
+		hide(loadingLabel);
 
 		apiInternal.util.dom.applyClassToElement(nexusDropzone.element, DRAGGING_CLASS);
 		apiInternal.util.dom.removeClassFromElement(nexusDropzone.element, HAS_ERROR_CLASS);
 		apiInternal.util.dom.removeClassFromElement(nexusDropzone.element, HAS_SUBMISSION_CLASS);
-		//apiInternal.util.dom.addOrReplaceChild(nexusDropzone.element, ABOUT_TO_SHARE_TEXT);
+
+		show(dropzoneLabel);
 	}
 
 	// Set the content of the dropzone back to where it was before dragging
@@ -121,7 +137,7 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 			alertNoLastSubmission();
 		}
 		else {
-			//apiInternal.util.dom.addOrReplaceChild(nexusDropzone.element, NO_SUBMISSION_TEXT);
+			show(dropzoneLabel);
 		}
 	}
 
@@ -129,19 +145,22 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 	function alertLoading() {
 		hide(actionPen);
 		hide(linkViewer);
+		hide(dropzoneLabel);
 
 		apiInternal.util.dom.removeClassFromElement(nexusDropzone.element, HAS_ERROR_CLASS);
 		apiInternal.util.dom.removeClassFromElement(nexusDropzone.element, HAS_SUBMISSION_CLASS);
 
-		//apiInternal.util.dom.addOrReplaceChild(nexusDropzone.element, LOADING_TEXT);
+		show(loadingLabel);
 	}
 
 	// Inform the user they should choose the service to use to copmlete their share
 	// action.
 	function alertToChoose() {
+		hide(dropzoneLabel);
+		hide(loadingLabel);
+
 		apiInternal.util.dom.removeClassFromElement(nexusDropzone.element, HAS_ERROR_CLASS);
 		apiInternal.util.dom.applyClassToElement(nexusDropzone.element, HAS_SUBMISSION_CLASS);
-		//apiInternal.util.dom.addOrReplaceChild(nexusDropzone.element, LINK_SUBMITTED_TEXT);
 
 		show(actionPen);
 		show(linkViewer);
@@ -149,6 +168,8 @@ betterlink_user_interface.createModule("Dropzone.Nexus", function(api, apiIntern
 
 	function alertNoLastSubmission() {
 		hide(actionPen);
+		hide(dropzoneLabel);
+		hide(loadingLabel);
 
 		apiInternal.util.dom.removeClassFromElement(nexusDropzone.element, HAS_SUBMISSION_CLASS);
 		apiInternal.util.dom.applyClassToElement(nexusDropzone.element, HAS_ERROR_CLASS);
