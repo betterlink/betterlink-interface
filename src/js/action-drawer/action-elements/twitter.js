@@ -5,7 +5,7 @@
 betterlink_user_interface.createModule("Twitter Element", function(api, apiInternal) {
 	api.requireModules( ["Util.DOM", "SVG", "Drawer Reset CSS", "LastSubmission", "Share.Twitter"] );
 
-	var TW_CLASS = "tw";
+	var TW_CLASS = "betterlink-tw";
 	var CSS = apiInternal.drawerSelector + "div." + TW_CLASS + " { background-color: #55acee; color: #fff; }";
 
 	var stylesInitialized = false;

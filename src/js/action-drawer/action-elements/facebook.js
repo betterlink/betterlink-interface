@@ -5,7 +5,7 @@
 betterlink_user_interface.createModule("Facebook Element", function(api, apiInternal) {
 	api.requireModules( ["Util.DOM", "SVG", "Drawer Reset CSS", "LastSubmission", "Share.Facebook"] );
 
-	var FB_CLASS = "fb";
+	var FB_CLASS = "betterlink-fb";
 	var CSS = apiInternal.drawerSelector + "div." + FB_CLASS + " { background-color: #3B5999; color: white; }";
 
 	var stylesInitialized = false;
