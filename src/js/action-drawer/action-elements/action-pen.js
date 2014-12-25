@@ -16,7 +16,7 @@ betterlink_user_interface.createModule("Action Pen", function(api, apiInternal) 
 		"img." + ACTION_ELEMENT_CLASS + ',' + apiInternal.drawerSelector + 'svg.' + ACTION_ELEMENT_CLASS + ' { width: 75px; height: 75px; }'
 	].join(' ' + apiInternal.drawerSelector);
 
-	var sharers = [apiInternal.facebookElement, apiInternal.twitterElement];
+	var sharers = [apiInternal.facebookElement, apiInternal.twitterElement, apiInternal.copyLinkElement];
 	var pen;
 
 	apiInternal.actionPen = {
