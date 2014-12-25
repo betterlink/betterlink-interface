@@ -6,7 +6,9 @@ betterlink_user_interface.createModule("Copy Element", function(api, apiInternal
 	api.requireModules( ["Util.DOM", "SVG", "Drawer Reset CSS", "LastSubmission"] );
 
 	var COPY_CLASS = "betterlink-copy";
-	var CSS = apiInternal.drawerSelector + "div." + COPY_CLASS + " { background-color: #999; color: white; }";
+	var LABEL_CLASS = "betterlink-copy-label";
+	var CSS  =  apiInternal.drawerSelector + "div." + COPY_CLASS + " { background-color: #999; color: white; } " +
+				apiInternal.drawerSelector + "." + LABEL_CLASS + " { cursor: pointer; display: block; font-style: italic; font-size: 75%; margin-top: -8px; }";
 
 	var stylesInitialized = false;
 	var lastSuccessful = apiInternal.lastSubmission.lastSuccessful;
@@ -25,7 +27,14 @@ betterlink_user_interface.createModule("Copy Element", function(api, apiInternal
 		apiInternal.util.dom.applyClassToElement(element, "betterlink-action-element " + COPY_CLASS);
 		triggerSubmissionOnClick(element);
 
-		return element;
+		// Provides a caption to annotate the icon. (would be easier
+		// to implement if <img> tags support pseudo ::after elements)
+		var label = document.createElement('span');
+		apiInternal.util.dom.applyClassToElement(label, LABEL_CLASS);
+		label.appendChild(document.createTextNode('copy link'));
+		triggerSubmissionOnClick(label);
+
+		return [element, label];
 	}
 
 	function triggerSubmissionOnClick(element) {
