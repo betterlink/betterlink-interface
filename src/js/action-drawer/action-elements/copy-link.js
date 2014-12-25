@@ -33,13 +33,17 @@ betterlink_user_interface.createModule("Copy Element", function(api, apiInternal
 		var copyElement = apiInternal.svg.createElement('copy', 'copy link');
 		apiInternal.util.dom.applyClassToElement(copyElement, "betterlink-action-element " + COPY_CLASS);
 		triggerSubmissionOnClick(copyElement);
+		var ret = [copyElement];
 
 		// Provides a caption to annotate the icon. (would be easier
 		// to implement if <img> tags support pseudo ::after elements)
-		var label = document.createElement('span');
-		apiInternal.util.dom.applyClassToElement(label, LABEL_CLASS);
-		label.appendChild(document.createTextNode('copy link'));
-		triggerSubmissionOnClick(label, copyElement);
+		if(isImgTag(copyElement)) {
+			var label = document.createElement('span');
+			apiInternal.util.dom.applyClassToElement(label, LABEL_CLASS);
+			label.appendChild(document.createTextNode('copy link'));
+			triggerSubmissionOnClick(label, copyElement);
+			ret.push(label);
+		}
 
 		// Provides an input field that can be used to communicate the
 		// link
@@ -49,8 +53,9 @@ betterlink_user_interface.createModule("Copy Element", function(api, apiInternal
 		linkInput.setAttribute('type', 'text');
 		linkInput.setAttribute('readonly', 'readonly');
 		triggerTextSelectionOnClick(linkInput);
+		ret.push(linkInput);
 
-		return [copyElement, label, linkInput];
+		return ret;
 	}
 
 	function triggerSubmissionOnClick(element, opt_target) {
@@ -93,6 +98,10 @@ betterlink_user_interface.createModule("Copy Element", function(api, apiInternal
 		else {
 			// display there was an error
 		}
+	}
+
+	function isImgTag(element) {
+		return element.nodeName.toLowerCase() === 'img' || element.nodeName.toLowerCase() === 'svg';
 	}
 
 	// Traverse the siblings of the clicked Action Element to find
