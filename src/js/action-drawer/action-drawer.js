@@ -5,7 +5,7 @@
  *
  */
 betterlink_user_interface.createModule("Action Drawer", function(api, apiInternal) {
-	api.requireModules( ["Util", "Util.DOM", "Drawer Reset CSS", "Neglected", "Draggable", "Drawer Dropzone", "Dropzone.Nexus"] );
+	api.requireModules( ["Util", "Util.DOM", "Drawer Reset CSS", "Mouseboundary", "Neglected", "Draggable", "Drawer Dropzone", "Dropzone.Nexus"] );
 
 	var HTML5_CSS = "article, aside, footer, header, nav, section { display: block; }";
 	var DRAWER_ID = extractId(apiInternal.drawerSelector);
@@ -16,6 +16,8 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 	var DRAWER_HIDDEN_CLASS = "betterlink-drawer-hidden";
 	var TOP_LIST_ID = "betterlink-top-list";
 	var HEADER_PROP_ID = 'betterlink-header-prop';
+	var FOOTER_LINKS_ID = 'betterlink-footer-links';
+	var FOOTER_ACTIVE_CLASS = 'betterlink-footer-active';
 
 	// Drawer Animation
 	// http://www.berriart.com/sidr/
@@ -36,12 +38,10 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 
 			apiInternal.drawerSelector + ".betterlink-header.betterlink-row { height: 75px; }",
 			apiInternal.drawerSelector + ".betterlink-center.betterlink-row { top: 75px; bottom: 50px; }",
-			apiInternal.drawerSelector + ".betterlink-footer.betterlink-row { height: 50px; bottom: 0; line-height: 50px; }",
+			apiInternal.drawerSelector + ".betterlink-footer.betterlink-row { height: 50px; bottom: 0; }",
 
 			apiInternal.drawerSelector + ".betterlink-top-to-bottom { width: 100%; }",
 			apiInternal.drawerSelector + ".betterlink-bottom-to-top { bottom: 0; position: absolute; width: 100%; }",
-
-			apiInternal.drawerSelector + "#" + DRAWER_FOOTER_ID + " { text-align: center; border-top-width: 1px; border-top-style: solid; }",
 
 			apiInternal.drawerSelector + "#" + TOP_LIST_ID + " { margin: 0; padding: 0; }",
 			apiInternal.drawerSelector + "#" + TOP_LIST_ID + ">li { list-style: none; }",
@@ -54,6 +54,13 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		[   apiInternal.drawerSelector + "#" + DRAWER_HEADER_ID + ">h1 { margin: 10px 0 3px 10px; }",
 			apiInternal.drawerSelector + "#" + DRAWER_HEADER_ID + ">p { margin: 0 0 5px 10px; font-size: 80%; }",
 			apiInternal.drawerSelector + "#" + HEADER_PROP_ID + " { height: 100%; float: left; width: 5px; background: #3299BB; }"].join(' ');
+
+	var FOOTER_CSS =
+		[	apiInternal.drawerSelector + "#" + DRAWER_FOOTER_ID + " { font-size: 70%; }",
+			apiInternal.drawerSelector + "#" + FOOTER_LINKS_ID + " { position: absolute; margin-top: 5px; margin-right: 5px; right: 0; text-align: right; width: auto; }",
+			apiInternal.drawerSelector + "#" + FOOTER_LINKS_ID + ">a { display: block; color: #424242; opacity: .5; text-decoration: none; -webkit-transition: opacity 0.3s ease; transition: opacity 0.3s ease; }",
+			apiInternal.drawerSelector + "#" + FOOTER_LINKS_ID + ">a:hover { text-decoration: underline; }",
+			apiInternal.drawerSelector + "#" + FOOTER_LINKS_ID + "." + FOOTER_ACTIVE_CLASS + ">a { opacity: 1; }"].join(' ');
 
 	var drawer;
 	var submissionFunction;
@@ -79,7 +86,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 	}
 
 	function insertDrawerStyles() {
-		var fullCss = apiInternal.drawerResetCss + ' ' + DRAWER_CSS + ' ' + HEADER_CSS;
+		var fullCss = apiInternal.drawerResetCss + ' ' + DRAWER_CSS + ' ' + HEADER_CSS + ' ' + FOOTER_CSS;
 
 		apiInternal.util.dom.createAndAppendStyleElement(HTML5_CSS);
 		apiInternal.util.dom.createAndAppendStyleElement(fullCss);
@@ -131,10 +138,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		center.appendChild(center_top);
 		center.appendChild(center_bottom);
 
-		var footer = document.createElement('section');
-		footer.id = DRAWER_FOOTER_ID;
-		footer.className = 'betterlink-footer betterlink-row';
-		footer.appendChild(document.createTextNode('My Footer'));
+		var footer = createFooter();
 
 		drawer.appendChild(header);
 		drawer.appendChild(center);
@@ -179,6 +183,36 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		header.appendChild(subtitle);
 
 		return header;
+	}
+
+	function createFooter() {
+		var footer = document.createElement('section');
+		footer.id = DRAWER_FOOTER_ID;
+		footer.className = 'betterlink-footer betterlink-row';
+
+		var links = document.createElement('div');
+		links.id = FOOTER_LINKS_ID;
+
+		var homeLink = apiInternal.util.dom.createAnchorElement('http://betterlink.io', 'http://betterlink.io', '_blank');
+		var contributeLink = apiInternal.util.dom.createAnchorElement('Open Source on GitHub', 'https://github.com/betterlink/betterlink-interface', '_blank');
+		links.appendChild(homeLink);
+		links.appendChild(contributeLink);
+
+		footer.appendChild(links);
+		apiInternal.mouseboundary.subscribe.mouseenter(footer, activateFooter);
+		apiInternal.mouseboundary.subscribe.mouseleave(footer, deactivateFooter);
+
+		return footer;
+	}
+
+	function activateFooter() {
+		var links = document.getElementById(FOOTER_LINKS_ID);
+		apiInternal.util.dom.applyClassToElement(links, FOOTER_ACTIVE_CLASS);
+	}
+
+	function deactivateFooter() {
+		var links = document.getElementById(FOOTER_LINKS_ID);
+		apiInternal.util.dom.removeClassFromElement(links, FOOTER_ACTIVE_CLASS);
 	}
 
 	// selector is assumed to be a simple CSS ID selector
