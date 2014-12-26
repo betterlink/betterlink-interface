@@ -26,7 +26,7 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 			"." + ELLIPSIS + ":before { content: ''; float: left; width: 5px; height: 3.9em; }",
 			"." + ELLIPSIS + "> *:first-child { float: right; width: 100%; margin-left: -5px; }",
 			// This is the ellipsis itself. It contains a 512x1 image gradient for IE9 (transparent at 0% -> #E9E9E9 at 50% -> #E9E9E9 at 100%).
-			"." + ELLIPSIS + ":after { content: '\u2026\"'; box-sizing: content-box; float: right; position: relative; top: -1.3em; left: 100%; width: 3em; margin-left: -3em; padding-right: 5px; text-align: right; background-size: 100% 100%; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAABCAYAAACouxZ2AAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABRSURBVHjaYnz58iUjAwMDCDPgoAmJMZIoh0+MFHlaYiYK5JlIUM9Ehl5a6KE2n1w1pIQVKfFFrBpqYHLTNQMJfEJsfGLI9CgYBaNgBAOAAAMA5VsDvF6uSQQAAAAASUVORK5CYII='); background: linear-gradient(to right, rgba(255, 255, 255, 0), #E9E9E9 50%, #E9E9E9); }"
+			"." + ELLIPSIS + ":after { content: '\u2026\"'; box-sizing: content-box; float: right; position: relative; top: -1.3em; left: 100%; width: 3em; margin-left: -3em; padding-right: 5px; text-align: right; background-size: 100% 100%; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAABCAYAAACouxZ2AAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABRSURBVHjaYnz58iUjAwMDCDPgoAmJMZIoh0+MFHlaYiYK5JlIUM9Ehl5a6KE2n1w1pIQVKfFFrBpqYHLTNQMJfEJsfGLI9CgYBaNgBAOAAAMA5VsDvF6uSQQAAAAASUVORK5CYII='); background: linear-gradient(to right, rgba(233, 233, 233, 0), #E9E9E9 50%, #E9E9E9); }"
 		].join(' ' + apiInternal.drawerSelector);
 
 	var linkViewer;
