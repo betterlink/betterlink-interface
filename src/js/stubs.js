@@ -19,7 +19,10 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 			}
 		},
 
+		initialized: false,
+
 		initializeModules: function () {
+			ret.initialized = true;
 			for(var moduleName in modules) {
 				modules[moduleName](api, apiInternal, {});
 			}
