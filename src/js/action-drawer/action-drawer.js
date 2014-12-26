@@ -62,7 +62,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 			apiInternal.drawerSelector + "#" + FOOTER_LINKS_ID + ">a { display: block; color: #424242; opacity: .5; text-decoration: none; -webkit-transition: opacity 0.3s ease; transition: opacity 0.3s ease; }",
 			apiInternal.drawerSelector + "#" + FOOTER_LINKS_ID + ">a:hover { text-decoration: underline; }",
 			apiInternal.drawerSelector + "#" + FOOTER_LINKS_ID + "." + FOOTER_ACTIVE_CLASS + ">a { opacity: 1; }",
-			apiInternal.drawerSelector + "." + GITHUB_CLASS + " { width: 14px; height: 14px; margin-left: 3px; vertical-align: text-bottom; }"].join(' ');
+			apiInternal.drawerSelector + "." + GITHUB_CLASS + " { width: 14px; height: 14px; margin-left: 3px; vertical-align: text-bottom; border: none; }"].join(' ');
 
 	var drawer;
 	var submissionFunction;

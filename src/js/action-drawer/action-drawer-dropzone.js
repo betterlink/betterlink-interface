@@ -11,7 +11,7 @@ betterlink_user_interface.createModule("Drawer Dropzone", function(api, apiInter
 	var DROPZONE_HOVER_CLASS = "betterlink-dropzone-hover";
 
 	var DROPZONE_CSS = apiInternal.drawerSelector +
-		[   "." + DROPZONE_CLASS + " { padding: 10px; width: initial; border-width: 1px; border-style: solid; border-radius: 0; margin: 0; }",
+		[   "." + DROPZONE_CLASS + " { padding: 10px; width: auto; border-width: 1px; border-style: solid; border-radius: 0; margin: 0; }",
 			"." + DROPZONE_HOVER_CLASS + " { background-color: darkgray; }"].join(' ' + apiInternal.drawerSelector);
 
 	var stylesInitialized = false;
