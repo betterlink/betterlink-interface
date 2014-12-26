@@ -10,7 +10,6 @@ betterlink_user_interface.createModule("Anchor CSS", function(api, apiInternal) 
 	apiInternal.anchorResetCss =
 		[ "{ background: inherit;",
 			"color: inherit;",
-			"cursor: inherit;",
 			"direction: inherit;",
 			"font: inherit;",
 			"letter-spacing: inherit;",
@@ -26,6 +25,7 @@ betterlink_user_interface.createModule("Anchor CSS", function(api, apiInternal) 
 			"-moz-opacity: inherit;",
 			"-moz-outline: inherit;",
 
+			"cursor: pointer;",
 			"display: inline !important;",
 			"font-size: inherit !important;",
 			"padding: 0 !important;",
