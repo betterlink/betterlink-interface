@@ -37,7 +37,7 @@ betterlink_user_interface.createModule("Copy Element", function(api, apiInternal
 
 		// Provides a caption to annotate the icon. (would be easier
 		// to implement if <img> tags support pseudo ::after elements)
-		if(isImgTag(copyElement)) {
+		if(apiInternal.svg.supported) {
 			var label = document.createElement('span');
 			apiInternal.util.dom.applyClassToElement(label, LABEL_CLASS);
 			label.appendChild(document.createTextNode('copy link'));
@@ -98,10 +98,6 @@ betterlink_user_interface.createModule("Copy Element", function(api, apiInternal
 		else {
 			// display there was an error
 		}
-	}
-
-	function isImgTag(element) {
-		return element.nodeName.toLowerCase() === 'img' || element.nodeName.toLowerCase() === 'svg';
 	}
 
 	// Traverse the siblings of the clicked Action Element to find

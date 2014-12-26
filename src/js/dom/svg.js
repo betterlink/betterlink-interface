@@ -15,7 +15,8 @@ betterlink_user_interface.createModule("SVG", function(api, apiInternal) {
 		supportsExternalDefs = false;
 
 	apiInternal.svg = {
-		createElement: createElement
+		createElement: createElement,
+		supported: supportsSvg
 	};
 	/****************************************************************************************************/
 
