@@ -18,6 +18,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 	var HEADER_PROP_ID = 'betterlink-header-prop';
 	var FOOTER_LINKS_ID = 'betterlink-footer-links';
 	var FOOTER_ACTIVE_CLASS = 'betterlink-footer-active';
+	var GITHUB_CLASS = 'betterlink-footer-github';
 
 	// Drawer Animation
 	// http://www.berriart.com/sidr/
@@ -60,7 +61,8 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 			apiInternal.drawerSelector + "#" + FOOTER_LINKS_ID + " { position: absolute; margin-top: 5px; margin-right: 5px; right: 0; text-align: right; width: auto; }",
 			apiInternal.drawerSelector + "#" + FOOTER_LINKS_ID + ">a { display: block; color: #424242; opacity: .5; text-decoration: none; -webkit-transition: opacity 0.3s ease; transition: opacity 0.3s ease; }",
 			apiInternal.drawerSelector + "#" + FOOTER_LINKS_ID + ">a:hover { text-decoration: underline; }",
-			apiInternal.drawerSelector + "#" + FOOTER_LINKS_ID + "." + FOOTER_ACTIVE_CLASS + ">a { opacity: 1; }"].join(' ');
+			apiInternal.drawerSelector + "#" + FOOTER_LINKS_ID + "." + FOOTER_ACTIVE_CLASS + ">a { opacity: 1; }",
+			apiInternal.drawerSelector + "." + GITHUB_CLASS + " { width: 14px; height: 14px; margin-left: 3px; vertical-align: text-bottom; }"].join(' ');
 
 	var drawer;
 	var submissionFunction;
@@ -195,14 +197,24 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 
 		var homeLink = apiInternal.util.dom.createAnchorElement('http://betterlink.io', 'http://betterlink.io', '_blank');
 		var contributeLink = apiInternal.util.dom.createAnchorElement('Open Source on GitHub', 'https://github.com/betterlink/betterlink-interface', '_blank');
+		appendGithubLogo(contributeLink);
+
 		links.appendChild(homeLink);
 		links.appendChild(contributeLink);
-
 		footer.appendChild(links);
+
 		apiInternal.mouseboundary.subscribe.mouseenter(footer, activateFooter);
 		apiInternal.mouseboundary.subscribe.mouseleave(footer, deactivateFooter);
 
 		return footer;
+	}
+
+	function appendGithubLogo(element) {
+		if(apiInternal.svg.supported) {
+			var githubImg = apiInternal.svg.createElement('github');
+			apiInternal.util.dom.applyClassToElement(githubImg, GITHUB_CLASS);
+			element.appendChild(githubImg);
+		}
 	}
 
 	function activateFooter() {
