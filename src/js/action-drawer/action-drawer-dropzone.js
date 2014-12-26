@@ -92,7 +92,7 @@ betterlink_user_interface.createModule("Drawer Dropzone", function(api, apiInter
 	function createDropzoneElement(dropzone) {
 		var element = document.createElement('div');
 		apiInternal.util.dom.applyClassToElement(element, DROPZONE_CLASS);
-		if(dropzone.text) { element.appendChild(document.createTextNode(dropzone.text)) };
+		if(dropzone.text) { element.appendChild(document.createTextNode(dropzone.text)); }
 		return element;
 	}
 

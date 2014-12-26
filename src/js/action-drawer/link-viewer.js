@@ -36,7 +36,7 @@ betterlink_user_interface.createModule("Link Viewer", function(api, apiInternal)
 	var stylesInitialized = false;
 
 	apiInternal.linkViewer = {
-		create: initializeLinkViewer,
+		create: initializeLinkViewer
 	};
 	/****************************************************************************************************/
 
