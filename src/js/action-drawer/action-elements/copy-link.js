@@ -14,7 +14,7 @@ betterlink_user_interface.createModule("Copy Element", function(api, apiInternal
 		"div." + COPY_CLASS + " { background-color: #999; color: white; }",
 		"img." + LINK_OPEN_CLASS + ", " + apiInternal.drawerSelector + "img." + COPY_CLASS + ":hover { background-color: goldenrod; border-radius: 1em; }",
 		"." + LABEL_CLASS + " { cursor: pointer; display: block; font-style: italic; font-size: 75%; margin-top: -8px; }",
-		"." + LINK_CLASS + " { width: 81px; text-overflow: ellipsis; background-color: #f5f5f5; border: 2px solid goldenrod; padding: 3px; margin-top: 3px; }"
+		"input." + LINK_CLASS + " { width: 81px; text-overflow: ellipsis; background-color: #f5f5f5; border: 2px solid goldenrod; padding: 3px; margin-top: 3px; font-size: 12px; }"
 	].join(' ' + apiInternal.drawerSelector);
 
 	var stylesInitialized = false;

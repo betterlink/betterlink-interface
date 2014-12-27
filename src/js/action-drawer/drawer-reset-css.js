@@ -64,7 +64,17 @@ betterlink_user_interface.createModule("Drawer Reset CSS", function(api, apiInte
 			// candidates depending on the property (because you wouldn't embed
 			// an <h1> inside of another one).
 			drawerSelector  +  "h1 { font-size: 119%;",
-									"font-weight: bold; }"
+									"font-weight: bold; }",
+
+			drawerSelector  +  "input[type='text']",
+								"  { cursor: auto;",
+									"margin: 0;",
+									"padding: 1px 0;",
+									"font-family: inherit;",
+									"letter-spacing: inherit;",
+									"line-height: inherit;",
+									"text-align: inherit;",
+									"text-indent: inherit; }"
 
 		].join(' ');
 
