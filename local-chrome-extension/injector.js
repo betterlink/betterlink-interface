@@ -17,15 +17,23 @@ if(!betterlink){
       js.innerHTML = '\
           var dir = "http://localhost:1000/src/js/";\
           var modules = ["stubs.js", "dom/util.dom.js", "dom/svg.js", "state-machine/state-machine.js", "state-machine/last-submission.js", "custom-events/mouseboundary.js", "custom-events/single-entry-watcher.js", "custom-events/neglected.js", "custom-events/draggable.js", "dom/smooth-scroller.js", "creation-interface/anchor-reset-css.js", "action-drawer/drawer-reset-css.js", "custom-events/multiclick.js", "highlighter-proxy.js", "sharing-action/facebook.js", "sharing-action/twitter.js", "creation-interface/selection-toggle.js", "creation-interface/inplace-span-highlighter.js", "creation-interface/inplace-anchor-highlighter.js", "action-drawer/action-drawer-dropzone.js", "action-drawer/action-elements/facebook.js", "action-drawer/action-elements/twitter.js", "action-drawer/action-elements/copy-link.js", "action-drawer/action-elements/action-pen.js", "action-drawer/dropzones/nexus.js", "action-drawer/link-viewer.js", "action-drawer/action-drawer.js", "submissions.interface.js", "submissions.result.js", "submissions.viewer.js"];\
+          var counter = 0;\
           modules = modules.map(function(f){return dir+f;});\
           $LAB.script("//code.betterlink.io/betterlink-no-interface.js").wait().script(modules).wait(function(){\
             betterlink.init({ setScriptSource: "chrome extension" });\
-            document.readyState === "complete" && betterlink_user_interface.initializeModules();\
-            setTimeout(betterlink_user_interface.executeInitListeners, 100);\
+            if(document.readyState === "complete") { betterlink_user_interface.initializeModules(); }\
+            setTimeout(checkToExecuteListeners, 100);\
           });\
+          function checkToExecuteListeners() {\
+            if(betterlink_user_interface.initialized) {\
+              betterlink_user_interface.executeInitListeners();\
+            }\
+            else if(counter <= 120) {\
+              counter++;\
+              setTimeout(checkToExecuteListeners, 100);\
+            }\
+          }\
       ';
-      // For some reason I *cannot* understand, executeInitListeners always runs before initializeModules.
-      // So, we just wait 100 miliseconds to run it.
       fjs.parentNode.insertBefore(js,fjs);
     }
 
