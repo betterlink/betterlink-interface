@@ -37,6 +37,7 @@ betterlink_user_interface.createModule("Drawer Reset CSS", function(api, apiInte
 			// Reset: Inherited properties
 			elements  +  " { color: inherit;",
 							"font-family: inherit;",
+							"font-size: inherit;",
 							"letter-spacing: inherit;",
 							"line-height: inherit;",
 							"text-align: inherit;",
@@ -45,24 +46,27 @@ betterlink_user_interface.createModule("Drawer Reset CSS", function(api, apiInte
 			// New Defaults: Inherited properties
 			drawerSelector + " { color: #424242;",
 								"font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;",
+								"font-size: medium;",
 								"letter-spacing: normal;",
 								"line-height: normal;",
 								"text-align: left;",
-								"text-indent: 0; }"
-		].join(' ');
+								"text-indent: 0; }",
 
 			// New Defaults: Inherited properties (tag overrides)
-			// ....can't happen here. If we wanted to make all <div> elements
+			// ....should not be used. If we wanted to make all <div> elements
 			// center-align their text, we would break the ability to have
-			// children inherit overrides from a closer parent. This is because
+			// child divs inherit overrides from a closer parent. This is because
 			// the {text-align:center;} would match the element exactly, and
 			// the CSS engine would not look up the tree to its parents.
 			//
 			// *However*, this trade-off can be made for elements that are not
 			// expected to have children inheriting styles. <p> and <h1> may be
-			// candidates depending on the property (because child <span>
-			// elements would not inherit that property from their closest
-			// parent).
+			// candidates depending on the property (because you wouldn't embed
+			// an <h1> inside of another one).
+			drawerSelector  +  "h1 { font-size: 119%;",
+									"font-weight: bold; }"
+
+		].join(' ');
 
 	apiInternal.drawerSelector = drawerSelector;
 });
