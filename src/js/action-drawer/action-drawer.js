@@ -57,7 +57,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 			apiInternal.drawerSelector + "#" + HEADER_PROP_ID + " { height: 100%; float: left; width: 5px; background: #3299BB; }"].join(' ');
 
 	var FOOTER_CSS =
-		[	apiInternal.drawerSelector + "#" + DRAWER_FOOTER_ID + " { font-size: 70%; }",
+		[	apiInternal.drawerSelector + "#" + DRAWER_FOOTER_ID + " { font-size: 70%; font-family: 'Open Sans', Arial, sans-serif; }",
 			apiInternal.drawerSelector + "#" + FOOTER_LINKS_ID + " { position: absolute; margin-top: 5px; margin-right: 5px; right: 0; text-align: right; width: auto; }",
 			apiInternal.drawerSelector + "#" + FOOTER_LINKS_ID + ">a { display: block; color: #424242; opacity: .5; text-decoration: none; -webkit-transition: opacity 0.3s ease; transition: opacity 0.3s ease; }",
 			apiInternal.drawerSelector + "#" + FOOTER_LINKS_ID + ">a:hover { text-decoration: underline; }",

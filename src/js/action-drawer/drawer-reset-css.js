@@ -45,7 +45,7 @@ betterlink_user_interface.createModule("Drawer Reset CSS", function(api, apiInte
 
 			// New Defaults: Inherited properties
 			drawerSelector + " { color: #424242;",
-								"font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;",
+								"font-family: Arial, sans-serif;",
 								"font-size: medium;",
 								"letter-spacing: normal;",
 								"line-height: normal;",
