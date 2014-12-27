@@ -15,10 +15,12 @@ if(!betterlink){
       var js,fjs = d.getElementsByTagName(s)[0];
       js=d.createElement(s);
       js.innerHTML = '\
-          var dir = "http://localhost:1000/src/js/";\
+          var host = "http://localhost:1000/";\
+          var jsDir = host + "src/js/";\
+          var imgDir = host + "src/img/";\
           var modules = ["stubs.js", "dom/util.dom.js", "dom/svg.js", "state-machine/state-machine.js", "state-machine/last-submission.js", "custom-events/mouseboundary.js", "custom-events/single-entry-watcher.js", "custom-events/neglected.js", "custom-events/draggable.js", "dom/smooth-scroller.js", "creation-interface/anchor-reset-css.js", "action-drawer/drawer-reset-css.js", "custom-events/multiclick.js", "highlighter-proxy.js", "sharing-action/facebook.js", "sharing-action/twitter.js", "creation-interface/selection-toggle.js", "creation-interface/inplace-span-highlighter.js", "creation-interface/inplace-anchor-highlighter.js", "action-drawer/action-drawer-dropzone.js", "action-drawer/action-elements/facebook.js", "action-drawer/action-elements/twitter.js", "action-drawer/action-elements/copy-link.js", "action-drawer/action-elements/action-pen.js", "action-drawer/dropzones/nexus.js", "action-drawer/link-viewer.js", "action-drawer/action-drawer.js", "submissions.interface.js", "submissions.result.js", "submissions.viewer.js"];\
           var counter = 0;\
-          modules = modules.map(function(f){return dir+f;});\
+          modules = modules.map(function(f){return jsDir+f;});\
           $LAB.script("//code.betterlink.io/betterlink-no-interface.js").wait().script(modules).wait(function(){\
             betterlink.init({ setScriptSource: "chrome extension" });\
             if(document.readyState === "complete") { betterlink_user_interface.initializeModules(); }\
@@ -26,6 +28,7 @@ if(!betterlink){
           });\
           function checkToExecuteListeners() {\
             if(betterlink_user_interface.initialized) {\
+              betterlink_user_interface.updateSvgLocation(imgDir);\
               betterlink_user_interface.executeInitListeners();\
             }\
             else if(counter <= 120) {\
