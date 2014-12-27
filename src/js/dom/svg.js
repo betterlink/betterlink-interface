@@ -4,19 +4,19 @@
  */
 betterlink_user_interface.createModule("SVG", function(api, apiInternal) {
 
-	var SVG_FOLDER = getSvgDirectoryLocation(),
-		DEFS_FILE = SVG_FOLDER + "defs.svg",
-
-		SVG_NAMESPACE = "http://www.w3.org/2000/svg",
+	var SVG_NAMESPACE = "http://www.w3.org/2000/svg",
 		XLINK_NAMESPACE = "http://www.w3.org/1999/xlink";
 
-	// test outlined by Chris Coyer: http://css-tricks.com/test-support-svg-img/
+		// test outlined by Chris Coyer: http://css-tricks.com/test-support-svg-img/
 	var supportsSvg = document.implementation.hasFeature('http://www.w3.org/TR/SVG11/feature#Image', '1.1'),
-		supportsExternalDefs = false;
+		supportsExternalDefs = false,
+		svgDirectory = getSvgDirectoryLocation(),
+		svgDefsFile = svgDirectory + "defs.svg";
 
 	apiInternal.svg = {
 		createElement: createElement,
-		supported: supportsSvg
+		supported: supportsSvg,
+		updateSvgLocation: updateSvgLocation
 	};
 	/****************************************************************************************************/
 
@@ -49,7 +49,7 @@ betterlink_user_interface.createModule("SVG", function(api, apiInternal) {
 		svg.setAttribute('xmlns:xlink', XLINK_NAMESPACE);
 
 		var svgUse = document.createElementNS(SVG_NAMESPACE, 'use');
-		svgUse.setAttributeNS(XLINK_NAMESPACE, 'xlink:href', DEFS_FILE + '#' + imageId);
+		svgUse.setAttributeNS(XLINK_NAMESPACE, 'xlink:href', svgDefsFile + '#' + imageId);
 
 		svg.appendChild(svgUse);
 
@@ -63,7 +63,7 @@ betterlink_user_interface.createModule("SVG", function(api, apiInternal) {
 	// Compatibility: http://caniuse.com/#feat=svg-img
 	function createSvgFileElement(imageId, opt_fallbackText) {
 		var element = document.createElement('img');
-		element.src = SVG_FOLDER + imageId + ".svg";
+		element.src = svgDirectory + imageId + ".svg";
 		element.setAttribute('alt', opt_fallbackText || imageId);
 		element.setAttribute('title', opt_fallbackText || imageId);
 
@@ -93,5 +93,11 @@ betterlink_user_interface.createModule("SVG", function(api, apiInternal) {
 	// Specifically checks if our build variable has been replaced with anything
 	function isRunningLocally() {
 		return /(%%build:([^%]+)%%|^undefined$)/.test("%%build:svg_directory%%");
+	}
+
+	// Updates the location for where to pull images from
+	function updateSvgLocation(destination) {
+		svgDirectory = destination;
+		svgDefsFile = destination + "defs.svg";
 	}
 });

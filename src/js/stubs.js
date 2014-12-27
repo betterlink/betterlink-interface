@@ -32,6 +32,12 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 
 		executeInitListeners: function () {
 			executeListeners(initListeners);
+		},
+
+		// This function can be used by local-chrome-extension when
+		// serving images locally
+		updateSvgLocation: function(destination) {
+			apiInternal.svg.updateSvgLocation(destination);
 		}
 	};
 
