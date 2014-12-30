@@ -34,6 +34,7 @@ betterlink_user_interface.createModule("Drawer Slider", function(api, apiInterna
 	var html = document.getElementsByTagName("html")[0];
 	var body = document.body;
 	var stylesInitialized = false;
+	var animateDrawer;
 	var bodyWidth;
 	var drawer;
 
@@ -44,9 +45,10 @@ betterlink_user_interface.createModule("Drawer Slider", function(api, apiInterna
 	};
 	/****************************************************************************************************/
 
-	function initializeSlider(drawerElement) {
+	function initializeSlider(drawerElement, opt_animate) {
 		if(!stylesInitialized) {
 			addBodyWidthToCss();
+			toggleAnimation(opt_animate);
 			initializeStyles();
 		}
 
@@ -73,14 +75,29 @@ betterlink_user_interface.createModule("Drawer Slider", function(api, apiInterna
 	function slideDrawerAway() {
 		apiInternal.util.dom.applyClassToElement(drawer, DRAWER_OFFPAGE_CLASS);
 		apiInternal.util.dom.removeClassFromElement(body, BODY_DISPLACED_CLASS);
-		// Allow the transition to complete, then undo all applied styles
-		window.setTimeout(runReplacement, TRANSITION_LENGTH);
+
+		if(animateDrawer) {
+			window.setTimeout(runReplacement, TRANSITION_LENGTH);
+		}
+		else {
+			runReplacement();
+		}
 	}
 
 	function runReplacement() {
 		apiInternal.util.dom.removeClassFromElement(body, BODY_POSITION_CLASS);
 		apiInternal.util.dom.removeClassFromElement(drawer, DRAWER_OPEN_CLASS);
 		html.style.overflowX = '';
+	}
+
+	// Toggle whether the CSS includes the transition styles. Also sets the
+	// global variable.
+	function toggleAnimation(shouldAnimate) {
+		if(!shouldAnimate) {
+			BODY_CSS = BODY_CSS.replace(FULL_TRANSITION_STRING, '');
+			DRAWER_CSS = DRAWER_CSS.replace(FULL_TRANSITION_STRING, '');
+		}
+		animateDrawer = shouldAnimate;
 	}
 
 	// Gets the width of the body and adds it as a CSS attribute that will be added to
