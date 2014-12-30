@@ -45,6 +45,14 @@ betterlink_user_interface.createModule("Drawer Slider", function(api, apiInterna
 	};
 	/****************************************************************************************************/
 
+	apiInternal.events.registerObserverForRemoveBetterlink(removeBodyStyles);
+	function removeBodyStyles() {
+		apiInternal.util.dom.removeClassFromElement(body, BODY_POSITION_CLASS);
+		apiInternal.util.dom.removeClassFromElement(body, BODY_DISPLACED_CLASS);
+		apiInternal.util.dom.removeClassFromElement(body, BODY_DRAWER_CLASS);
+		html.style.overflowX = '';
+	}
+
 	function initializeSlider(drawerElement, opt_animate) {
 		if(!stylesInitialized) {
 			addBodyWidthToCss();
