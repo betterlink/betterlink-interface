@@ -5,7 +5,7 @@
  *
  */
 betterlink_user_interface.createModule("Action Drawer", function(api, apiInternal) {
-	api.requireModules( ["Util", "Util.DOM", "Drawer Reset CSS", "Mouseboundary", "Neglected", "Draggable", "Drawer Dropzone", "Dropzone.Nexus"] );
+	api.requireModules( ["Util", "Util.DOM", "Drawer Reset CSS", "Mouseboundary", "Neglected", "Draggable", "Drawer Slider", "Drawer Dropzone", "Dropzone.Nexus"] );
 
 	var HTML5_CSS = "article, aside, footer, header, nav, section { display: block; }";
 	var DRAWER_ID = extractId(apiInternal.drawerSelector);
@@ -13,16 +13,11 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 	var DRAWER_CENTER_ID = DRAWER_ID + "-center";
 	var DRAWER_FOOTER_ID = DRAWER_ID + "-footer";
 
-	var DRAWER_HIDDEN_CLASS = "betterlink-drawer-hidden";
 	var TOP_LIST_ID = "betterlink-top-list";
 	var HEADER_PROP_ID = 'betterlink-header-prop';
 	var FOOTER_LINKS_ID = 'betterlink-footer-links';
 	var FOOTER_ACTIVE_CLASS = 'betterlink-footer-active';
 	var GITHUB_CLASS = 'betterlink-footer-github';
-
-	// Drawer Animation
-	// http://www.berriart.com/sidr/
-	// http://jpanelmenu.com/
 
 	// Drawer CSS
 	// Full-height layout dervied from Steven Sanderson
@@ -48,8 +43,8 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 			apiInternal.drawerSelector + "#" + TOP_LIST_ID + ">li { list-style: none; }",
 
 			"#" + DRAWER_ID + " { background: #E9E9E9; position: fixed; }",
-			"#" + DRAWER_ID + ":after { content: ''; position: absolute; width: 1px; height: 100%; top: 75px; background: #DDD; }",
-			"." + DRAWER_HIDDEN_CLASS + " { display: none; }"].join(' ');
+			"#" + DRAWER_ID + ":after { content: ''; position: absolute; width: 1px; height: 100%; top: 75px; background: #DDD; }"
+		].join(' ');
 
 	var HEADER_CSS =
 		[   apiInternal.drawerSelector + "#" + DRAWER_HEADER_ID + ">h1 { margin: 10px 0 3px 10px; }",
@@ -85,6 +80,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		insertDrawerStyles();
 		createDrawer();
 		toggleDrawerOnDrag();
+		addDrawerToDOM();
 	}
 
 	function insertDrawerStyles() {
@@ -94,18 +90,23 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		apiInternal.util.dom.createAndAppendStyleElement(fullCss);
 	}
 
+	function addDrawerToDOM() {
+		apiInternal.slider.initialize(drawer);
+		apiInternal.util.dom.registerAndAppend(document.body, drawer);
+	}
+
 	// Use the Neglected event to indicate when the user has stopped interacting
 	// with the drawer. We'll start watching once the drawer is open (to keep
 	// accurate track of the mouse position), but only allow the drawer to close
 	// once the user has stopped dragging their element and is no longer interacting
 	// with the drawer.
 	function showDrawer() {
-		apiInternal.util.dom.removeClassFromElement(drawer, DRAWER_HIDDEN_CLASS);
+		apiInternal.slider.slideDrawerIn();
 		apiInternal.neglected.watchTarget(drawer, hideDrawer);
 	}
 
 	function hideDrawer() {
-		apiInternal.util.dom.applyClassToElement(drawer, DRAWER_HIDDEN_CLASS);
+		apiInternal.slider.slideDrawerAway();
 		apiInternal.neglected.stopWatchingTarget(drawer, hideDrawer);
 	}
 
@@ -145,9 +146,6 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		drawer.appendChild(header);
 		drawer.appendChild(center);
 		drawer.appendChild(footer);
-
-		hideDrawer();
-		apiInternal.util.dom.registerAndAppend(document.body, drawer);
 	}
 
 	// Add a list of elements to the provided parent element
