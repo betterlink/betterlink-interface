@@ -8,22 +8,27 @@ betterlink_user_interface.createModule("Drawer Slider", function(api, apiInterna
 
 	var BODY_DRAWER_CLASS = "betterlink-drawer";
 	var BODY_DISPLACED_CLASS = "betterlink-displaced";
+	var BODY_POSITION_CLASS = "betterlink-position-absolute";
 
 	var DRAWER_SLIDING_CLASS = "betterlink-drawer-slider";
 	var DRAWER_OPEN_CLASS = "betterlink-drawer-open";
 	var DRAWER_OFFPAGE_CLASS = 'betterlink-drawer-offpage';
 
 	var DRAWER_WIDTH = '230px';
+	var TRANSITION_LENGTH = 400; // assumed less than 1000 and an even hundred
+	var TRANSITION_STRING = "right 0." + TRANSITION_LENGTH/100 + "s linear;";
+	var FULL_TRANSITION_STRING = "-webkit-transition: " + TRANSITION_STRING + " transition: " + TRANSITION_STRING;
 
 	var DRAWER_CSS =
-		[   "." + DRAWER_SLIDING_CLASS + " { visibility: hidden; }",
+		[   "." + DRAWER_SLIDING_CLASS + " { visibility: hidden; " + FULL_TRANSITION_STRING + "}",
 			"." + DRAWER_OPEN_CLASS + " { visibility: visible; }",
 			"." + DRAWER_OFFPAGE_CLASS + " { right: -230px !important; }"
 		].join(' ');
 
 	var BODY_CSS =
-		[   "body." + BODY_DRAWER_CLASS + " { right: 0; }",
-			"body." + BODY_DISPLACED_CLASS + " { right: 230px !important; position: absolute !important; }"
+		[   "body." + BODY_DRAWER_CLASS + " { right: 0; " + FULL_TRANSITION_STRING + "}",
+			"body." + BODY_DISPLACED_CLASS + " { right: 230px !important; }",
+			"body." + BODY_POSITION_CLASS + " { position: absolute !important; }"
 		].join(' ');
 
 	var html = document.getElementsByTagName("html")[0];
@@ -58,16 +63,23 @@ betterlink_user_interface.createModule("Drawer Slider", function(api, apiInterna
 	function slideDrawerIn() {
 		html.style.overflowX = 'hidden';
 
-		apiInternal.util.dom.applyClassToElement(body, BODY_DISPLACED_CLASS);
 		apiInternal.util.dom.applyClassToElement(drawer, DRAWER_OPEN_CLASS);
+		apiInternal.util.dom.applyClassToElement(body, BODY_POSITION_CLASS);
+		apiInternal.util.dom.applyClassToElement(body, BODY_DISPLACED_CLASS);
 		apiInternal.util.dom.removeClassFromElement(drawer, DRAWER_OFFPAGE_CLASS);
 	}
 
 	// Hide the drawer and move the body back into position
 	function slideDrawerAway() {
 		apiInternal.util.dom.applyClassToElement(drawer, DRAWER_OFFPAGE_CLASS);
-		apiInternal.util.dom.removeClassFromElement(drawer, DRAWER_OPEN_CLASS);
 		apiInternal.util.dom.removeClassFromElement(body, BODY_DISPLACED_CLASS);
+		// Allow the transition to complete, then undo all applied styles
+		window.setTimeout(runReplacement, TRANSITION_LENGTH);
+	}
+
+	function runReplacement() {
+		apiInternal.util.dom.removeClassFromElement(body, BODY_POSITION_CLASS);
+		apiInternal.util.dom.removeClassFromElement(drawer, DRAWER_OPEN_CLASS);
 		html.style.overflowX = '';
 	}
 
