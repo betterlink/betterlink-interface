@@ -13,6 +13,7 @@ betterlink_user_interface.createModule("Drawer Slider", function(api, apiInterna
 	var DRAWER_SLIDING_CLASS = "betterlink-drawer-slider";
 	var DRAWER_OPEN_CLASS = "betterlink-drawer-open";
 	var DRAWER_OFFPAGE_CLASS = 'betterlink-drawer-offpage';
+	var DRAWER_ZINDEX_CLASS = 'betterlink-drawer-zindex';
 
 	var TRANSITION_LENGTH = 400; // assumed less than 1000 and an even hundred
 
@@ -21,7 +22,8 @@ betterlink_user_interface.createModule("Drawer Slider", function(api, apiInterna
 
 	var drawerCss =
 		[   "." + DRAWER_SLIDING_CLASS + " { visibility: hidden; " + fullTransitionString + "}",
-			"." + DRAWER_OPEN_CLASS + " { visibility: visible; }"
+			"." + DRAWER_OPEN_CLASS + " { visibility: visible; }",
+			"." + DRAWER_ZINDEX_CLASS + " { z-index: 2147483647; }" // max integer value
 			/* DRAWER_OFFPAGE_CLASS added below */
 		].join(' ');
 
@@ -34,6 +36,8 @@ betterlink_user_interface.createModule("Drawer Slider", function(api, apiInterna
 	var html = document.getElementsByTagName("html")[0];
 	var body = document.body;
 	var stylesInitialized = false;
+	var shouldDisplaceBody = false;
+	var useZIndex = true;
 	var animateDrawer;
 	var bodyWidth;
 	var drawer;
@@ -61,10 +65,20 @@ betterlink_user_interface.createModule("Drawer Slider", function(api, apiInterna
 			initializeStyles();
 		}
 
+		// Ideally, we would run a test in here to determine if we can
+		// displace the body to move elements away from the drawer, or
+		// if we need to resort to applying a z-index on the drawer.
+		// The issue is related to a bug in WebKit that terminates drag
+		// events when they are moved away from the mouse.
+		// Bug: https://code.google.com/p/chromium/issues/detail?id=445641
+
 		drawer = drawerElement;
 		apiInternal.util.dom.applyClassToElement(body, BODY_DRAWER_CLASS);
 		apiInternal.util.dom.applyClassToElement(drawer, DRAWER_SLIDING_CLASS);
 		apiInternal.util.dom.applyClassToElement(drawer, DRAWER_OFFPAGE_CLASS);
+		if(useZIndex) {
+			apiInternal.util.dom.applyClassToElement(drawer, DRAWER_ZINDEX_CLASS);
+		}
 	}
 
 	// Display the drawer on the page and displace the body to make room. The body
@@ -72,18 +86,22 @@ betterlink_user_interface.createModule("Drawer Slider", function(api, apiInterna
 	// that have a z-index applied. Otherwise, those elements may appear to cover
 	// the drawer.
 	function slideDrawerIn() {
-		html.style.overflowX = 'hidden';
 
+		if(shouldDisplaceBody) {
+			html.style.overflowX = 'hidden';
+			apiInternal.util.dom.applyClassToElement(body, BODY_POSITION_CLASS);
+			apiInternal.util.dom.applyClassToElement(body, BODY_DISPLACED_CLASS);
+		}
 		apiInternal.util.dom.applyClassToElement(drawer, DRAWER_OPEN_CLASS);
-		apiInternal.util.dom.applyClassToElement(body, BODY_POSITION_CLASS);
-		apiInternal.util.dom.applyClassToElement(body, BODY_DISPLACED_CLASS);
 		apiInternal.util.dom.removeClassFromElement(drawer, DRAWER_OFFPAGE_CLASS);
 	}
 
 	// Hide the drawer and move the body back into position
 	function slideDrawerAway() {
 		apiInternal.util.dom.applyClassToElement(drawer, DRAWER_OFFPAGE_CLASS);
-		apiInternal.util.dom.removeClassFromElement(body, BODY_DISPLACED_CLASS);
+		if(shouldDisplaceBody) {
+			apiInternal.util.dom.removeClassFromElement(body, BODY_DISPLACED_CLASS);
+		}
 
 		if(animateDrawer) {
 			window.setTimeout(runReplacement, TRANSITION_LENGTH);
@@ -94,9 +112,11 @@ betterlink_user_interface.createModule("Drawer Slider", function(api, apiInterna
 	}
 
 	function runReplacement() {
-		apiInternal.util.dom.removeClassFromElement(body, BODY_POSITION_CLASS);
 		apiInternal.util.dom.removeClassFromElement(drawer, DRAWER_OPEN_CLASS);
-		html.style.overflowX = '';
+		if(shouldDisplaceBody) {
+			apiInternal.util.dom.removeClassFromElement(body, BODY_POSITION_CLASS);
+			html.style.overflowX = '';
+		}
 	}
 
 	// Toggle whether the CSS includes the transition styles. Also sets the
