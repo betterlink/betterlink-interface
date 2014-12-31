@@ -14,21 +14,21 @@ betterlink_user_interface.createModule("Drawer Slider", function(api, apiInterna
 	var DRAWER_OPEN_CLASS = "betterlink-drawer-open";
 	var DRAWER_OFFPAGE_CLASS = 'betterlink-drawer-offpage';
 
-	var DRAWER_WIDTH = '230px';
 	var TRANSITION_LENGTH = 400; // assumed less than 1000 and an even hundred
-	var TRANSITION_STRING = "right 0." + TRANSITION_LENGTH/100 + "s linear;";
-	var FULL_TRANSITION_STRING = "-webkit-transition: " + TRANSITION_STRING + " transition: " + TRANSITION_STRING;
 
-	var DRAWER_CSS =
-		[   "." + DRAWER_SLIDING_CLASS + " { visibility: hidden; " + FULL_TRANSITION_STRING + "}",
-			"." + DRAWER_OPEN_CLASS + " { visibility: visible; }",
-			"." + DRAWER_OFFPAGE_CLASS + " { right: -230px !important; }"
+	var transitionString = "right 0." + TRANSITION_LENGTH/100 + "s linear;";
+	var fullTransitionString = "-webkit-transition: " + transitionString + " transition: " + transitionString;
+
+	var drawerCss =
+		[   "." + DRAWER_SLIDING_CLASS + " { visibility: hidden; " + fullTransitionString + "}",
+			"." + DRAWER_OPEN_CLASS + " { visibility: visible; }"
+			/* DRAWER_OFFPAGE_CLASS added below */
 		].join(' ');
 
-	var BODY_CSS =
-		[   "body." + BODY_DRAWER_CLASS + " { right: 0; " + FULL_TRANSITION_STRING + "}",
-			"body." + BODY_DISPLACED_CLASS + " { right: 230px !important; }",
+	var bodyCss =
+		[   "body." + BODY_DRAWER_CLASS + " { right: 0; " + fullTransitionString + "}",
 			"body." + BODY_POSITION_CLASS + " { position: absolute !important; }"
+			/* BODY_DISPLACED_CLASS added below */
 		].join(' ');
 
 	var html = document.getElementsByTagName("html")[0];
@@ -53,9 +53,10 @@ betterlink_user_interface.createModule("Drawer Slider", function(api, apiInterna
 		html.style.overflowX = '';
 	}
 
-	function initializeSlider(drawerElement, opt_animate) {
+	function initializeSlider(drawerElement, drawerWidth, opt_animate) {
 		if(!stylesInitialized) {
 			addBodyWidthToCss();
+			addDisplacementDistanceToCss(drawerWidth);
 			toggleAnimation(opt_animate);
 			initializeStyles();
 		}
@@ -102,8 +103,8 @@ betterlink_user_interface.createModule("Drawer Slider", function(api, apiInterna
 	// global variable.
 	function toggleAnimation(shouldAnimate) {
 		if(!shouldAnimate) {
-			BODY_CSS = BODY_CSS.replace(FULL_TRANSITION_STRING, '');
-			DRAWER_CSS = DRAWER_CSS.replace(FULL_TRANSITION_STRING, '');
+			bodyCss = bodyCss.replace(fullTransitionString, '');
+			drawerCss = drawerCss.replace(fullTransitionString, '');
 		}
 		animateDrawer = shouldAnimate;
 	}
@@ -116,15 +117,23 @@ betterlink_user_interface.createModule("Drawer Slider", function(api, apiInterna
 	// absolute) the whole page appears to shift, instead of contracting.
 	function addBodyWidthToCss() {
 		bodyWidth = getBodyWidth();
-		BODY_CSS = BODY_CSS.replace("position:", "width: " + bodyWidth + "px; position:");
+		bodyCss = bodyCss.replace("position:", "width: " + bodyWidth + "px; position:");
 	}
 
 	function getBodyWidth() {
 		return Math.max(body.scrollWidth, body.offsetWidth, body.clientWidth);
 	}
 
+	// Using the provided drawerWidth, insert two CSS styles that displace both the
+	// body and drawer elements
+	function addDisplacementDistanceToCss(drawerWidth) {
+		var distance = drawerWidth || "230px";
+		bodyCss = bodyCss + " body." + BODY_DISPLACED_CLASS + " { right: " + distance + " !important; }";
+		drawerCss = drawerCss + " ." + DRAWER_OFFPAGE_CLASS + " { right: -" + distance + " !important; }";
+	}
+
 	function initializeStyles() {
 		stylesInitialized = true;
-		apiInternal.util.dom.createAndAppendStyleElement(DRAWER_CSS + ' ' + BODY_CSS);
+		apiInternal.util.dom.createAndAppendStyleElement(drawerCss + ' ' + bodyCss);
 	}
 });

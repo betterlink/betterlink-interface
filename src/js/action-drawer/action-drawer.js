@@ -91,7 +91,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 	}
 
 	function addDrawerToDOM() {
-		apiInternal.slider.initialize(drawer);
+		apiInternal.slider.initialize(drawer, '230px');
 		apiInternal.util.dom.registerAndAppend(document.body, drawer);
 	}
 
