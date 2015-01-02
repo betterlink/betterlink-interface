@@ -40,6 +40,7 @@ betterlink_user_interface.createModule("Drawer Reset CSS", function(api, apiInte
 			elements  +  " { color: inherit;",
 							"font-family: inherit;",
 							"font-size: inherit;",
+							"font-weight: inherit;",
 							"letter-spacing: inherit;",
 							"line-height: inherit;",
 							"text-align: inherit;",
@@ -49,6 +50,7 @@ betterlink_user_interface.createModule("Drawer Reset CSS", function(api, apiInte
 			drawerSelector + " { color: #424242;",
 								"font-family: Arial, sans-serif;",
 								"font-size: medium;",
+								"font-weight: normal;",
 								"letter-spacing: normal;",
 								"line-height: normal;",
 								"text-align: left;",
@@ -67,6 +69,11 @@ betterlink_user_interface.createModule("Drawer Reset CSS", function(api, apiInte
 			// an <h1> inside of another one).
 			drawerSelector  +  "h1 { font-size: 119%;",
 									"font-weight: bold; }",
+
+			drawerSelector  +  "h2 { font-size: 110%;",
+									"font-weight: bold; }",
+
+			drawerSelector  +  "b { font-weight: bold; }",
 
 			drawerSelector  +  "input[type='text']",
 								"  { cursor: auto;",
