@@ -30,7 +30,7 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 			// Set events that should occur for each element that gets created
 			// as part of the highlight process
 			elementHighlighter.decorationCallback = function(element) {
-				addSubmissionClickHandlers(element);
+				suppressClickHandlers(element);
 				addDragHandlers(element);
 			};
 			// Set events that should happen for all highlighted elements as
@@ -74,6 +74,16 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 		//     process.
 		apiInternal.addListener(element, "touchstart", triggerSubmitSelection, element);
 		apiInternal.addListener(element, "click", triggerSubmitSelection, element);
+	}
+
+	function suppressClickHandlers(element) {
+		apiInternal.addListener(element, "touchstart", preventClick);
+		apiInternal.addListener(element, "click", preventClick);
+	}
+
+	// Executed as a callback on a click event
+	function preventClick(e) {
+		e.preventDefault ? e.preventDefault() : window.event.returnValue = false;
 	}
 
 	// Executed as a callback on a click event
