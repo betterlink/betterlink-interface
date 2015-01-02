@@ -22,7 +22,7 @@
  */
 betterlink_user_interface.createModule("Drawer Reset CSS", function(api, apiInternal) {
 	var drawerSelector = "#betterlink-drawer ";
-	var elements = drawerSelector + ["div","span","h1","h2","p","article","aside","footer","header","nav","section"].join(',' + drawerSelector);
+	var elements = drawerSelector + ["div","span","h1","h2","p","a","b","em","i","ul","li","img","article","aside","footer","header","nav","section"].join(',' + drawerSelector);
 	apiInternal.drawerResetCss =
 			// Reset & New Defaults: Properties that don't inherit
 		[   elements  +  " { background: transparent;",
