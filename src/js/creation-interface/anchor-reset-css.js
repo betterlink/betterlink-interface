@@ -27,6 +27,9 @@ betterlink_user_interface.createModule("Anchor CSS", function(api, apiInternal) 
 			// Non-inherited Properties
 			"background: inherit !important;",
 			"cursor: pointer !important;",
+			"cursor: -moz-grab !important;",
+			"cursor: -webkit-grab !important;",
+			"cursor: grab !important;",
 			"display: inline !important;",
 			"font-size: inherit !important;",
 			"opacity: inherit !important;",

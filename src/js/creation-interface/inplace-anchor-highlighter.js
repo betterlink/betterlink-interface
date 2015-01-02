@@ -139,7 +139,7 @@ betterlink_user_interface.createModule("Anchor Highlighter", function(api, apiIn
 			// any element that's highlighted should have the following properties
 			'elementProperties': {
 				'href': '#',
-				'title': 'Click to create your personal link'
+				'title': "Click and drag to create your personal link"
 			},
 
 			// any element that's highlighted should have these non-standard
