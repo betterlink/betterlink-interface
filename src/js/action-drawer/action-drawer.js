@@ -64,8 +64,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 
 	apiInternal.drawer = {
 		create: initializeDrawer,
-		show: showDrawer,
-		hide: hideDrawer
+		display: displayDrawer
 	};
 
 	/****************************************************************************************************/
@@ -110,8 +109,25 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		apiInternal.neglected.stopWatchingTarget(drawer, hideDrawer);
 	}
 
-	function allowDrawerToClose() {
-		apiInternal.neglected.actOnTarget(drawer, hideDrawer);
+	// Once called, this allows the Neglected event to close the drawer after
+	// inactivity. If called with an optional delay, we will wait the provided
+	// number of milliseconds before allowing the drawer to close.
+	function allowDrawerToClose(opt_delay) {
+		if(opt_delay) {
+			window.setTimeout(function() {
+				apiInternal.neglected.actOnTarget(drawer, hideDrawer);
+			}, opt_delay);
+		}
+		else {
+			apiInternal.neglected.actOnTarget(drawer, hideDrawer);
+		}
+	}
+
+	// Temporarily display the drawer. After the provided delay, the drawer will
+	// automatically close (once no longer being used).
+	function displayDrawer(opt_delay) {
+		showDrawer();
+		allowDrawerToClose(opt_delay || 3000);
 	}
 
 	// Show and hide the Action Drawer when the user starts/stops dragging selected
