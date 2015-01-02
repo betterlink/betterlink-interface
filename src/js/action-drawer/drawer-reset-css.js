@@ -34,6 +34,8 @@ betterlink_user_interface.createModule("Drawer Reset CSS", function(api, apiInte
 							"padding: 0;",
 							"vertical-align: baseline; }",
 
+			drawerSelector + "img { display: inline; }",
+
 			// Reset: Inherited properties
 			elements  +  " { color: inherit;",
 							"font-family: inherit;",
