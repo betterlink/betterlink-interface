@@ -13,15 +13,18 @@ betterlink_user_interface.createModule("Anchor Highlighter", function(api, apiIn
 
 	var PROSPECTIVE_SUBMISSION_CSS_CLASS = "betterlink-prospective-submission";
 	var PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS = "betterlink-prospective-hover";
+
+	// The below styles need to be applied as '!important' in order to override
+	// the styles of the Anchor Reset CSS
 	var PROSPECTIVE_SUBMISSION_HOVER_CSS =
 							"." + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS + ", " +
 							"." + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS + ":link, " +
 							"." + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS + ":hover, " +
 							"." + PROSPECTIVE_SUBMISSION_HOVER_CSS_CLASS + ":active " +
-							[ "{ background: #DADADA;",
-								"border-color: transparent;",
-								"color: #222;",
-								"text-decoration: underline; }"].join(' ');
+							[ "{ background: #DADADA !important;",
+								"border-color: transparent !important;",
+								"color: #222 !important;",
+								"text-decoration: underline !important; }"].join(' ');
 
 	var submittedHighlighters = [];
 	var domUtil = apiInternal.util.dom;

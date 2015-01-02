@@ -8,26 +8,34 @@
  */
 betterlink_user_interface.createModule("Anchor CSS", function(api, apiInternal) {
 	apiInternal.anchorResetCss =
-		[ "{ background: inherit;",
-			"color: inherit;",
-			"direction: inherit;",
-			"font: inherit;",
-			"letter-spacing: inherit;",
-			"line-height: inherit;",
-			"opacity: inherit;",
-			"outline: inherit;",
-			"text-align: inherit;",
-			"text-decoration: inherit;",
-			"word-spacing: inherit;",
-			"word-wrap: inherit;",
-			"z-index: inherit;",
-			"zoom: inherit;",
-			"-moz-opacity: inherit;",
-			"-moz-outline: inherit;",
+	// The below properties need to be set with the '!important' flag. These
+	// styles are applied to <a> elements embedded throughout the source page.
+	// This makes it impossible to target any of them via ID, which means
+	// page styles are naturally going to be more specific than what we can
+	// specify via a classname alone.
 
-			"cursor: pointer;",
+			// Inherited Properties
+		[ "{ color: inherit !important;",
+			"direction: inherit !important;",
+			"font: inherit !important;",
+			"letter-spacing: inherit !important;",
+			"line-height: inherit !important;",
+			"text-align: inherit !important;",
+			"word-spacing: inherit !important;",
+			"word-wrap: inherit !important;",
+
+			// Non-inherited Properties
+			"background: inherit !important;",
+			"cursor: pointer !important;",
 			"display: inline !important;",
 			"font-size: inherit !important;",
+			"opacity: inherit !important;",
+			"outline: inherit !important;",
 			"padding: 0 !important;",
-			"margin: 0 !important; }"].join(' ');
+			"margin: 0 !important;",
+			"text-decoration: inherit !important;",
+			"z-index: inherit !important;",
+			"zoom: inherit !important;",
+			"-moz-opacity: inherit !important;",
+			"-moz-outline: inherit !important; }"].join(' ');
 });
