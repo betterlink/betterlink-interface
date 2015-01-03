@@ -6,17 +6,13 @@ betterlink_user_interface.createModule("Submissions.Result", function(api, apiIn
 	api.requireModules( ["Util.DOM", "Submissions", "Submissions.CreationInterface", "Selection Highlighter", "Event Messaging", "Action Drawer"] );
 
 	var SELECTED_TEXT_CSS_CLASS = "betterlink-selected";
-	var SELECTED_TEXT_CSS = "." + SELECTED_TEXT_CSS_CLASS + 
-							[ "{ background: #F0E68C;",			// background: khaki
-								"color: #000080;",					// color: navy
-								"text-decoration: underline; }"].join(' ') + 
-							"a." + SELECTED_TEXT_CSS_CLASS + ":hover " +
-							[ "{ background: #F0E68C;",
-								"color: #000080;",
-								"text-decoration: underline; }"].join(' ') +
-							"a." + SELECTED_TEXT_CSS_CLASS + ":link " +
-							[ "{ background: #F0E68C;",
-								"color: #000080;",
+
+	var SELECTED_TEXT_CSS = "." + SELECTED_TEXT_CSS_CLASS + ", " +
+							"." + SELECTED_TEXT_CSS_CLASS + ":link, " +
+							"." + SELECTED_TEXT_CSS_CLASS + ":hover, " +
+							"." + SELECTED_TEXT_CSS_CLASS + ":active " +
+							[ "{ background: #BBECC5;",
+								"color: #424242;",
 								"text-decoration: underline; }"].join(' ');
 
 	var highlighterIdentifier = 'newSubmission';
