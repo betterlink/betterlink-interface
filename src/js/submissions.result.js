@@ -3,17 +3,25 @@
  *
  */
 betterlink_user_interface.createModule("Submissions.Result", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "Submissions", "Submissions.CreationInterface", "Selection Highlighter", "Event Messaging", "Action Drawer"] );
+	api.requireModules( ["Util.DOM", "Anchor CSS", "Submissions", "Submissions.CreationInterface", "Selection Highlighter", "Event Messaging", "Action Drawer"] );
 
 	var SELECTED_TEXT_CSS_CLASS = "betterlink-selected";
 
-	var SELECTED_TEXT_CSS = "." + SELECTED_TEXT_CSS_CLASS + ", " +
+	// The below styles need to be applied as '!important' in order to override
+	// the styles of the Anchor Reset CSS
+	var SELECTED_TEXT_CSS_PARAMS = {
+		background:     "background: #BBECC5 !important;",
+		color:          "color: #424242 !important;",
+		cursor:         "cursor: pointer !important;",
+		textDecoration: "text-decoration: underline !important;"
+	};
+
+	// This is updated below via insertStyles()
+	var selectedTextCss  =  "." + SELECTED_TEXT_CSS_CLASS + ", " +
 							"." + SELECTED_TEXT_CSS_CLASS + ":link, " +
 							"." + SELECTED_TEXT_CSS_CLASS + ":hover, " +
 							"." + SELECTED_TEXT_CSS_CLASS + ":active " +
-							[ "{ background: #BBECC5;",
-								"color: #424242;",
-								"text-decoration: underline; }"].join(' ');
+							apiInternal.anchorResetCss;
 
 	var highlighterIdentifier = 'newSubmission';
 	var highlighterInitialized = false;
@@ -61,7 +69,12 @@ betterlink_user_interface.createModule("Submissions.Result", function(api, apiIn
 	}
 
 	function insertHighlightStyle() {
-		apiInternal.util.dom.createAndAppendStyleElement(SELECTED_TEXT_CSS);
+		selectedTextCss = selectedTextCss.replace(/background: [^;]+;/, SELECTED_TEXT_CSS_PARAMS.background);
+		selectedTextCss = selectedTextCss.replace(/color: [^;]+;/, SELECTED_TEXT_CSS_PARAMS.color);
+		selectedTextCss = selectedTextCss.replace(/cursor: [^;]+;/g, SELECTED_TEXT_CSS_PARAMS.cursor);
+		selectedTextCss = selectedTextCss.replace(/text-decoration: [^;]+;/, SELECTED_TEXT_CSS_PARAMS.textDecoration);
+
+		apiInternal.util.dom.createAndAppendStyleElement(selectedTextCss);
 	}
 
 	function removeDecorationFromLoadedSubmission() {
