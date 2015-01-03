@@ -3,7 +3,7 @@
  *
  */
 betterlink_user_interface.createModule("Submissions.Result", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "Submissions", "Submissions.CreationInterface", "Selection Highlighter", "Event Messaging"] );
+	api.requireModules( ["Util.DOM", "Submissions", "Submissions.CreationInterface", "Selection Highlighter", "Event Messaging", "Action Drawer"] );
 
 	var SELECTED_TEXT_CSS_CLASS = "betterlink-selected";
 	var SELECTED_TEXT_CSS = "." + SELECTED_TEXT_CSS_CLASS + 
@@ -108,7 +108,33 @@ betterlink_user_interface.createModule("Submissions.Result", function(api, apiIn
 			// highlighted
 			'cssClass': SELECTED_TEXT_CSS_CLASS
 		};
+		if(apiInternal.drawer.initialized) {
+			highlightOptions = updateHighlighterToToggleDrawer(highlightOptions);
+		}
 
 		apiInternal.highlighters.add(identifier, highlightOptions);
+	}
+
+	function updateHighlighterToToggleDrawer(highlightOptions) {
+		// callback function that will get executed for each HTML element
+		// that is created. Will be passed a single parameter for the element
+		// created.
+		highlightOptions['onElementCreate'] = openDrawerOnClick;
+		highlightOptions['elementProperties']['href'] = '#';
+		highlightOptions['elementProperties']['title'] = 'Click to reopen Betterlink';
+
+		return highlightOptions;
+	}
+
+	// Executed for each element that is created during the decoration process
+	function openDrawerOnClick(element) {
+		apiInternal.addListener(element, "touchstart", displayDrawer);
+		apiInternal.addListener(element, "click", displayDrawer);
+	}
+
+	function displayDrawer(e) {
+		e.preventDefault ? e.preventDefault() : window.event.returnValue = false;
+
+		apiInternal.drawer.display();
 	}
 });
