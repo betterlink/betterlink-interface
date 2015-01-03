@@ -51,7 +51,7 @@ betterlink_user_interface.createModule("Submissions.CreationInterface", function
 	}
 
 	function initializeActionDrawer() {
-		if("%%build:highlighter_override%%" !== "true") {
+		if(supportsCssInherit && "%%build:highlighter_override%%" !== "true") {
 			apiInternal.drawer.create(submitSelectionFromElement);
 		}
 	}
