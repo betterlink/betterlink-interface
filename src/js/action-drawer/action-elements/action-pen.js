@@ -4,7 +4,7 @@
  *
  */
 betterlink_user_interface.createModule("Action Pen", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "Drawer Reset CSS", "Facebook Element", "Twitter Element"] );
+	api.requireModules( ["Util.DOM", "Drawer Reset CSS", "Facebook Element", "Twitter Element", "Copy Element"] );
 
 	var PEN_CLASS = 'betterlink-pen';
 	var ACTION_ELEMENT_CLASS = 'betterlink-action-element';
