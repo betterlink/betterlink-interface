@@ -55,7 +55,9 @@ These are executed in the final script tag defined in `example_site.html`.
 
 **Test Mode**
 
-To demo basic selections and highlighting on the example site, 'test mode' should be sufficient for most tasks. This will even work for testing new selections on third-party webpages. Eventually though, you'll need to view examples of real, highlighted content. To do this, you'll need to disable 'test mode', and this can only be done during initialization.
+To demo basic selections and highlighting on the example site, 'test mode' should be sufficient for most tasks. This pings the production server, but won't persist a new selection to the database.
+
+This will even work for testing new selections on third-party webpages. Eventually though, you'll need to view examples of real, highlighted content. To do this, you'll need to disable 'test mode', and this can only be done during initialization.
 
 To do this, replace `betterlink.init();` with 
 
@@ -84,16 +86,9 @@ We **do not** expect every feature to be available in every browser. However, th
 - The ability to select content to share
 - The ability to access the new link
 
-Within the core Betterlink library, we already handle most of the heavy-lifting to find selections and reconcile differences across browsers (using feature detection). The punchline: yes, we officially support IE6.
+Within the core Betterlink library, we already handle most of the heavy-lifting to find selections and reconcile differences across browsers (using feature detection). **Generally**, this repository supports IE8+ and modern browsers. This is targeted primarly for everything under `action-drawer/` and related modules.
 
-**However**, the core interface only supports IE8 and modern browsers. Using feature detection (specifically support for the `inherit` CSS value), older browsers fall back to a simple UX.
-
-This is motivated by two primary factors:
-
-1. We want to support the 20% ([and decreasing](http://www.ie6countdown.com/)) of the Internet population in China that still use IE6
-2. The user interface for Betterlink should be minimal
-  - This interface could be displayed on literally any webpage around the web. Because we have limited knowledge of what those pages could look like or other libraries they may be using, the less interaction we create on the page, the less room there is for an improper assumption.
-  - Our job is to provide a great new ability to the average web user, then get out of the way.
+The core `betterlink.js` library has support for IE6+, and a few files in this repository create a minimal feature set for those users (`dom/`, `creation-interface/`, `highlighter-proxy.js`, `submissions.*.js`, and `multiclick.js`).
 
 Please consider the experience for mobile users and users with disabilities (ex: using a screenreader) in your contributions.
 
