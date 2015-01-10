@@ -86,7 +86,7 @@ We **do not** expect every feature to be available in every browser. However, th
 - The ability to select content to share
 - The ability to access the new link
 
-Within the core Betterlink library, we already handle most of the heavy-lifting to find selections and reconcile differences across browsers (using feature detection). **Generally**, this repository supports IE8+ and modern browsers. This is targeted primarly for everything under `action-drawer/` and related modules.
+Within the core Betterlink library, we already handle most of the heavy-lifting to find selections and reconcile differences across browsers (using feature detection). **Generally**, this repository supports IE8+ and modern browsers.
 
 The core `betterlink.js` library has support for IE6+, and a few files in this repository create a minimal feature set for those users (`dom/`, `creation-interface/`, `highlighter-proxy.js`, `submissions.*.js`, and `multiclick.js`).
 
