@@ -192,7 +192,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		var h1 = document.createElement('h1');
 		h1.appendChild(document.createTextNode("Betterlink"));
 		var subtitle = document.createElement('p');
-		subtitle.appendChild(document.createTextNode("drag & drop to share content"));
+		subtitle.appendChild(document.createTextNode("drag & drop to share the web"));
 
 		header.appendChild(prop);
 		header.appendChild(h1);
