@@ -18,7 +18,7 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 	var borderRGBa = 'rgba(' + borderRGB.join(', ') + ', 0);';
 
 	var borderWidth = 4;
-	var arrowSize = 30;
+	var arrowSize = 30; // the 'height' of the arrow from base-to-tip
 	var arrowBorder = arrowSize + Math.round(borderWidth * 1.41421356); // cos(PI/4) * 2
 
 	var tooltipCss =
@@ -114,10 +114,10 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 	/****************************************************************************************************/
 	apiInternal.util.dom.createAndAppendStyleElement(tooltipCss);
 
-	function createTooltip() {
+	function createTooltip(opt_direction) {
 		var tooltip = document.createElement('div');
 		tooltip.id = TOOLTIP_ID;
-		apiInternal.util.dom.applyClassToElement(tooltip, "right");
+		apiInternal.util.dom.applyClassToElement(tooltip, opt_direction || "right");
 
 		tooltip.appendChild(document.createTextNode('Foo bar'));
 		return tooltip;
