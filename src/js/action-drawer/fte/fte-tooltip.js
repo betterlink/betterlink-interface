@@ -9,16 +9,16 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 	var TOOLTIP_ID = 'betterlink-tooltip';
 	var TOOLTIP_SELECTOR = "#" + TOOLTIP_ID;
 
-	var backgroundColor = '#88b7d5;';
+	var backgroundColor = '#E9E9E9;';
 	var backgroundRGB = hexToRGB(backgroundColor.replace(';',''));
 	var backgroundRGBa = 'rgba(' + backgroundRGB.join(', ') + ', 0);';
 
-	var borderColor = '#c2e1f5;';
+	var borderColor = '#BCBCBC;';
 	var borderRGB = hexToRGB(borderColor.replace(';',''));
 	var borderRGBa = 'rgba(' + borderRGB.join(', ') + ', 0);';
 
-	var borderWidth = 4;
-	var arrowSize = 30; // the 'height' of the arrow from base-to-tip
+	var borderWidth = 2;
+	var arrowSize = 15; // the 'height' of the arrow from base-to-tip
 	var arrowBorder = arrowSize + Math.round(borderWidth * 1.41421356); // cos(PI/4) * 2
 
 	var tooltipCss =
@@ -26,10 +26,10 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 					"background: " + backgroundColor,
 					"border: " + borderWidth + "px solid " + borderColor,
 					"border-radius: 0;",
-					"color: #ddf8c6;",
+					"color: #424242;",
 					"clear: none;",
 					"font-family: Arial, sans-serif;",
-					"font-size: medium;",
+					"font-size: 18px;",
 					"font-weight: normal;",
 					"letter-spacing: normal;",
 					"line-height: normal;",
@@ -38,12 +38,14 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 					"text-align: left;",
 					"min-width: " + (2 * (arrowSize+borderWidth)) + "px;", 
 					"min-height: " + (2 * (arrowSize+borderWidth)) + "px;",
+					"max-width: 250px;",
 					"width: auto;",
 					"z-index: 2147483647;",
 
-					"position: fixed;",
-					"left: 50px;",
-					"top: 50px; }",
+					// Temporary attributes
+					"position: absolute;",
+					"left: -279px;", // arrowSize + element.offsetWidth
+					"top: 75px; }",
 
 			// Arrow Definition
 			TOOLTIP_SELECTOR + ":after," + TOOLTIP_SELECTOR + ":before {",
@@ -129,7 +131,7 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 			apiInternal.util.dom.applyClassToElement(tooltip, "betterlink-" + opt_direction);
 		}
 
-		tooltip.appendChild(document.createTextNode('Foo bar'));
+		tooltip.appendChild(document.createTextNode('Your new link takes you right back to the highlighted text.'));
 		return tooltip;
 	}
 
