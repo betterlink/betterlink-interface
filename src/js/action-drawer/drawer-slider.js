@@ -38,6 +38,8 @@ betterlink_user_interface.createModule("Drawer Slider", function(api, apiInterna
 	var stylesInitialized = false;
 	var shouldDisplaceBody = false;
 	var useZIndex = true;
+	var drawerLocked = false;
+	var locks = {};
 	var animateDrawer;
 	var bodyWidth;
 	var drawer;
@@ -45,7 +47,9 @@ betterlink_user_interface.createModule("Drawer Slider", function(api, apiInterna
 	apiInternal.slider = {
 		initialize: initializeSlider,
 		slideDrawerIn: slideDrawerIn,
-		slideDrawerAway: slideDrawerAway
+		slideDrawerAway: slideDrawerAway,
+		lockDrawerOpen: lockDrawerOpen,
+		releaseDrawerLock: releaseDrawerLock
 	};
 	/****************************************************************************************************/
 
@@ -98,16 +102,18 @@ betterlink_user_interface.createModule("Drawer Slider", function(api, apiInterna
 
 	// Hide the drawer and move the body back into position
 	function slideDrawerAway() {
-		apiInternal.util.dom.applyClassToElement(drawer, DRAWER_OFFPAGE_CLASS);
-		if(shouldDisplaceBody) {
-			apiInternal.util.dom.removeClassFromElement(body, BODY_DISPLACED_CLASS);
-		}
+		if(!drawerLocked) {
+			apiInternal.util.dom.applyClassToElement(drawer, DRAWER_OFFPAGE_CLASS);
+			if(shouldDisplaceBody) {
+				apiInternal.util.dom.removeClassFromElement(body, BODY_DISPLACED_CLASS);
+			}
 
-		if(animateDrawer) {
-			window.setTimeout(runReplacement, TRANSITION_LENGTH);
-		}
-		else {
-			runReplacement();
+			if(animateDrawer) {
+				window.setTimeout(runReplacement, TRANSITION_LENGTH);
+			}
+			else {
+				runReplacement();
+			}
 		}
 	}
 
@@ -150,6 +156,40 @@ betterlink_user_interface.createModule("Drawer Slider", function(api, apiInterna
 		var distance = drawerWidth || "230px";
 		bodyCss = bodyCss + " body." + BODY_DISPLACED_CLASS + " { right: " + distance + " !important; }";
 		drawerCss = drawerCss + " ." + DRAWER_OFFPAGE_CLASS + " { right: -" + distance + " !important; }";
+	}
+
+	// When called, this will prevent the drawer from closing once it is opened.
+	// Once releaseDrawerLock is called (and all locks have been released), then
+	// the drawer will finally close.
+	//
+	// This function returns an id that should be held by the client and provided
+	// as the input for releaseDrawerLock.
+	function lockDrawerOpen() {
+		drawerLocked = true;
+		var id = "" + Math.floor(1E8 * Math.random()); // arbitrary big number as a string
+		locks[id] = 'x';
+
+		return id;
+	}
+
+	// Release the provided lock and attempt to close the drawer
+	function releaseDrawerLock(id) {
+		delete locks[id];
+		if(lockIsEmpty()) {
+			drawerLocked = false;
+			slideDrawerAway();
+		}
+	}
+
+	// Return if there are any properties on the locks object (if there are
+	// any active locks)
+	function lockIsEmpty() {
+		for(var key in locks) {
+			if(locks.hasOwnProperty(key)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	function initializeStyles() {
