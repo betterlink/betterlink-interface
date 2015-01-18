@@ -123,7 +123,8 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 
 	apiInternal.fteTooltip = {
 		addTooltipToDrawer: addTooltipToDrawer,
-		addTooltipToPage: addTooltipToPage
+		addTooltipToPage: addTooltipToPage,
+		remove: removeTooltipFromDom
 	};
 	/****************************************************************************************************/
 
