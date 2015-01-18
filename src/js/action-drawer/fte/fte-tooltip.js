@@ -61,48 +61,48 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 					"border-width: " + arrowBorder + "px; }",
 
 			// Arrow on Right
-			TOOLTIP_SELECTOR + ".right:after {",
+			TOOLTIP_SELECTOR + ".betterlink-right:after {",
 					"left: 100%;",
 					"top: 50%;",
 					"margin-top: -" + arrowSize + "px;",
 					"border-left-color: " + backgroundColor + " }",
-			TOOLTIP_SELECTOR + ".right:before {",
+			TOOLTIP_SELECTOR + ".betterlink-right:before {",
 					"left: 100%;",
 					"top: 50%;",
 					"margin-top: -" + arrowBorder + "px;",
 					"border-left-color: " + borderColor + " }",
 
 			// Arrow on Bottom
-			TOOLTIP_SELECTOR + ".bottom:after {",
+			TOOLTIP_SELECTOR + ".betterlink-bottom:after {",
 					"top: 100%;",
 					"left: 50%;",
 					"margin-left: -" + arrowSize + "px;",
 					"border-top-color: " + backgroundColor + " }",
-			TOOLTIP_SELECTOR + ".bottom:before {",
+			TOOLTIP_SELECTOR + ".betterlink-bottom:before {",
 					"top: 100%;",
 					"left: 50%;",
 					"margin-left: -" + arrowBorder + "px;",
 					"border-top-color: " + borderColor + " }",
 
 			// Arrow on Left
-			TOOLTIP_SELECTOR + ".left:after {",
+			TOOLTIP_SELECTOR + ".betterlink-left:after {",
 					"right: 100%;",
 					"top: 50%;",
 					"margin-top: -" + arrowSize + "px;",
 					"border-right-color: " + backgroundColor + " }",
-			TOOLTIP_SELECTOR + ".left:before {",
+			TOOLTIP_SELECTOR + ".betterlink-left:before {",
 					"right: 100%;",
 					"top: 50%;",
 					"margin-top: -" + arrowBorder + "px;",
 					"border-right-color: " + borderColor + " }",
 
 			// Arrow on Top
-			TOOLTIP_SELECTOR + ".top:after {",
+			TOOLTIP_SELECTOR + ".betterlink-top:after {",
 					"bottom: 100%;",
 					"left: 50%;",
 					"margin-left: -" + arrowSize + "px;",
 					"border-bottom-color: " + backgroundColor + " }",
-			TOOLTIP_SELECTOR + ".top:before {",
+			TOOLTIP_SELECTOR + ".betterlink-top:before {",
 					"bottom: 100%;",
 					"left: 50%;",
 					"margin-left: -" + arrowBorder + "px;",
@@ -116,12 +116,18 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 	};
 	/****************************************************************************************************/
 
+	// Accepts an optional direction (right, left, top, bottom) to
+	// indicate which direction the tooltip should point. If not
+	// provided, the tooltip will just be a rectangle, no pointer.
 	function createTooltip(opt_direction) {
 		initializeStyles();
 
 		var tooltip = document.createElement('div');
 		tooltip.id = TOOLTIP_ID;
-		apiInternal.util.dom.applyClassToElement(tooltip, opt_direction || "right");
+
+		if(opt_direction) {
+			apiInternal.util.dom.applyClassToElement(tooltip, "betterlink-" + opt_direction);
+		}
 
 		tooltip.appendChild(document.createTextNode('Foo bar'));
 		return tooltip;
