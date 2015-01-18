@@ -23,7 +23,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 	// Full-height layout dervied from Steven Sanderson
 	// http://blog.stevensanderson.com/2011/10/05/full-height-app-layouts-a-css-trick-to-make-it-easier/
 	var DRAWER_CSS =
-		[   ".betterlink-row, .betterlink-col { overflow: hidden; position: absolute; }",
+		[   ".betterlink-row, .betterlink-col { position: absolute; }",
 			".betterlink-row { width: 100%; }",
 			".betterlink-col { top: 0; bottom: 0; }",
 			".betterlink-scroll-x { overflow-x: auto; }",
