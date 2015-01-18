@@ -4,7 +4,7 @@
  *
  */
 betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM"] );
+	api.requireModules( ["Util.DOM", "Drawer Reset CSS"] );
 
 	var TOOLTIP_ID = 'betterlink-tooltip';
 	var TOOLTIP_SELECTOR = "#" + TOOLTIP_ID;
@@ -39,6 +39,7 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 					"min-width: " + (2 * (arrowSize+borderWidth)) + "px;", 
 					"min-height: " + (2 * (arrowSize+borderWidth)) + "px;",
 					"width: auto;",
+					"z-index: 2147483647;",
 
 					"position: fixed;",
 					"left: 50px;",
@@ -108,19 +109,33 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 					"border-bottom-color: " + borderColor + " }",
 		].join(' ');
 
+	var stylesInitialized = false;
+
 	apiInternal.fteTooltip = {
 		create: createTooltip
 	};
 	/****************************************************************************************************/
-	apiInternal.util.dom.createAndAppendStyleElement(tooltipCss);
 
 	function createTooltip(opt_direction) {
+		initializeStyles();
+
 		var tooltip = document.createElement('div');
 		tooltip.id = TOOLTIP_ID;
 		apiInternal.util.dom.applyClassToElement(tooltip, opt_direction || "right");
 
 		tooltip.appendChild(document.createTextNode('Foo bar'));
 		return tooltip;
+	}
+
+	function initializeStyles() {
+		if(!stylesInitialized) {
+			stylesInitialized = true;
+
+			// Writes the styles twice. Once when positioned inside of the drawer. The
+			// other when positioned outside of the drawer.
+			var regex = new RegExp(TOOLTIP_SELECTOR, 'g');
+			apiInternal.util.dom.createAndAppendStyleElement(tooltipCss + tooltipCss.replace(regex, apiInternal.drawerSelector + TOOLTIP_SELECTOR));
+		}
 	}
 
 	// Returns an array specifying an RGB color from a provided hex color
