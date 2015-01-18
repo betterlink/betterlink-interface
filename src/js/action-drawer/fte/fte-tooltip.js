@@ -4,10 +4,12 @@
  *
  */
 betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "Drawer Reset CSS"] );
+	api.requireModules( ["Util.DOM", "Drawer Reset CSS", "Event Messaging"] );
 
 	var TOOLTIP_ID = 'betterlink-tooltip';
 	var TOOLTIP_SELECTOR = "#" + TOOLTIP_ID;
+	var SHOW_TOOLTIP_CLASS = 'betterlink-tooltip-show';
+	var MEASURE_CLASS = 'betterlink-tooltip-measure-drawer';
 
 	var backgroundColor = '#E9E9E9;';
 	var backgroundRGB = hexToRGB(backgroundColor.replace(';',''));
@@ -42,10 +44,8 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 					"width: auto;",
 					"z-index: 2147483647;",
 
-					// Temporary attributes
 					"position: absolute;",
-					"left: -279px;", // arrowSize + element.offsetWidth
-					"top: 75px; }",
+					"visibility: hidden; }",
 
 			// Arrow Definition
 			TOOLTIP_SELECTOR + ":after," + TOOLTIP_SELECTOR + ":before {",
@@ -109,29 +109,60 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 					"left: 50%;",
 					"margin-left: -" + arrowBorder + "px;",
 					"border-bottom-color: " + borderColor + " }",
+
+			TOOLTIP_SELECTOR + "." + SHOW_TOOLTIP_CLASS + " { visibility: visible; }",
+
+			// This class is used to get an accurate measurement of the tooltip
+			// when it's placed on the DOM. It needs to be sufficiently far from
+			// the end of the page for an accurate measurement.
+			TOOLTIP_SELECTOR + "." + MEASURE_CLASS + " { left: -" + 100 + "px; }"
 		].join(' ');
 
 	var stylesInitialized = false;
+	var tooltip;
 
 	apiInternal.fteTooltip = {
-		create: createTooltip
+		addTooltipToDrawer: addTooltipToDrawer,
+		addTooltipToPage: addTooltipToPage
 	};
 	/****************************************************************************************************/
+
+	apiInternal.events.registerObserverForRemoveBetterlink(removeTooltipFromDom);
+
+	// If the tooltip is present in the DOM, remove it
+	function removeTooltipFromDom() {
+		if(tooltip.parentNode) {
+			tooltip.parentNode.removeChild(tooltip);
+		}
+	}
 
 	// Accepts an optional direction (right, left, top, bottom) to
 	// indicate which direction the tooltip should point. If not
 	// provided, the tooltip will just be a rectangle, no pointer.
+	//
+	// If the tooltip has already been created, this resets the content
+	// and styles.
 	function createTooltip(opt_direction) {
 		initializeStyles();
 
-		var tooltip = document.createElement('div');
-		tooltip.id = TOOLTIP_ID;
+		if(!tooltip) {
+			tooltip = document.createElement('div');
+			tooltip.id = TOOLTIP_ID;
+		}
+		else {
+			removeTooltipFromDom();
+			apiInternal.util.dom.removeAllChildren(tooltip);
+			tooltip.className = '';
+			tooltip.style.left = '';
+			tooltip.style.top = '';
+			tooltip.style.marginLeft = '';
+			tooltip.style.marginTop = '';
+		}
 
 		if(opt_direction) {
 			apiInternal.util.dom.applyClassToElement(tooltip, "betterlink-" + opt_direction);
 		}
 
-		tooltip.appendChild(document.createTextNode('Your new link takes you right back to the highlighted text.'));
 		return tooltip;
 	}
 
@@ -143,6 +174,54 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 			// other when positioned outside of the drawer.
 			var regex = new RegExp(TOOLTIP_SELECTOR, 'g');
 			apiInternal.util.dom.createAndAppendStyleElement(tooltipCss + tooltipCss.replace(regex, apiInternal.drawerSelector + TOOLTIP_SELECTOR));
+		}
+	}
+
+	// Create and position the tooltip appropriately as an element
+	// nested within the drawer. This means applying the 'left' and
+	// 'top' attributes to get the right distances.
+	//
+	// This assumes that drawerElement has been appended to the DOM
+	// already.
+	function addTooltipToDrawer(drawerElement, tooltipContent) {
+		createTooltip('right');
+		apiInternal.util.dom.addOrReplaceChild(tooltip, tooltipContent);
+		
+		// Append the tooltip as the first child of the provided element.
+		// This ensures that the 'top' of the tooltip will be the top of
+		// the drawerElement.
+		//
+		// The element needs to be on the DOM before checking the
+		// offsetWidth of the element.
+		appendAsFirstChild(tooltip, drawerElement);
+
+		apiInternal.util.dom.applyClassToElement(tooltip, MEASURE_CLASS);
+		var left = arrowSize + tooltip.offsetWidth;
+		tooltip.style.left = '-' + left + 'px';
+		apiInternal.util.dom.removeClassFromElement(tooltip, MEASURE_CLASS);
+
+		apiInternal.util.dom.applyClassToElement(tooltip, SHOW_TOOLTIP_CLASS);
+	}
+
+	// Create and position the tooltip appropriately as an element
+	// nested within the DOM (outside of the drawer). This is likely
+	// within a Betterlink-created element (like .betterlink-selected).
+	//
+	// This assumes that pageElement has been appended to the DOM
+	// already.
+	function addTooltipToPage(pageElement, tooltipContent) {
+		createTooltip('bottom');
+		// set margin-top and margin-left
+	}
+
+	// Appends the newElement to the DOM as the first child of the
+	// provided parentElement
+	function appendAsFirstChild(newElement, parentElement) {
+		if(parentElement.firstChild) {
+			parentElement.insertBefore(newElement, parentElement.firstChild);
+		}
+		else {
+			parentElement.appendChild(newElement);
 		}
 	}
 
