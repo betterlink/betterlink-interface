@@ -16,6 +16,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 	var BUTTON_CLASS_SECONDARY = "betterlink-tooltip-btn-secondary";
 	var BUTTONS_CLASS = "betterlink-tooltip-btns";
 	var MASK_CLASS = "betterlink-fte-mask";
+	var MASK_OVERRIDE_CLASS = "betterlink-fte-mask-override";
 
 	var CSS =
 		[   TOOLTIP_SELECTOR + " ." + BUTTON_CLASS + " { background-color: #3299BB; border: 1px solid #277799; color: #FFF; font-size: 14px; margin: 5px; padding: 6px 12px; border-radius: .4em; display: inline-block; text-align: center; white-space: nowrap; vertical-align: middle; touch-action: manipulation; cursor: pointer; }",
@@ -23,7 +24,11 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 			TOOLTIP_SELECTOR + " ." + BUTTON_CLASS_SECONDARY + " { background-color: #BCBCBC; border: 1px solid #9B9B9B; }",
 			TOOLTIP_SELECTOR + " ." + BUTTON_CLASS_SECONDARY + ":hover { background-color: #9B9B9B; }",
 			TOOLTIP_SELECTOR + " ." + BUTTONS_CLASS + " { text-align: right; width: auto; margin-top: 5px }",
-			"body." + MASK_CLASS + ":after { content: ''; background-color: #000; opacity: 0.6; display: block; position: fixed; top: 0; left: 0; height: 100%; width: 100%; z-index: 2147483646; }"
+
+			// The mask has a z-index two less than the drawer (which has the maximum value)
+			// Any overrides have a z-index that's one less
+			"body." + MASK_CLASS + ":after { content: ''; background-color: #000; opacity: 0.6; display: block; position: fixed; top: 0; left: 0; height: 100%; width: 100%; z-index: 2147483645; }",
+			"." + MASK_OVERRIDE_CLASS + "{ position: relative !important; }"
 
 		].join(' ');
 
@@ -72,10 +77,14 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 	// This communicates that the user can click on the previous submission
 	// text to re-open the drawer
 	function runReopenDrawer() {
-		var firstSelectedText = apiInternal.util.dom.getElementsByClassName(SELECTED_CLASS)[0];
-		var tooltipContent = buildReopenTooltip();
+		var selectedText = apiInternal.util.dom.getElementsByClassName(SELECTED_CLASS);
+		if(selectedText && selectedText.length) {
+			var firstSelectedText = selectedText[0];
+			var tooltipContent = buildReopenTooltip();
 
-		apiInternal.fteTooltip.addTooltipToPage(firstSelectedText, tooltipContent);
+			applyMaskOverrides(selectedText);
+			apiInternal.fteTooltip.addTooltipToPage(firstSelectedText, tooltipContent);
+		}
 	}
 
 	function closeFTE(e) {
@@ -84,6 +93,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 		}
 
 		apiInternal.fteTooltip.remove();
+		removeMaskOverrides();
 		apiInternal.util.dom.removeClassFromElement(document.body, MASK_CLASS);
 		apiInternal.slider.releaseDrawerLock(drawerLock);
 	}
@@ -167,6 +177,25 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 		apiInternal.addListener(primaryBtn, "touch", closeFTE);
 
 		return div;
+	}
+
+	// Apply a class to the provided list of elements that will make them
+	// 'pop out' of the background and display on top of the FTE mask.
+	function applyMaskOverrides(elements) {
+		for(var i = 0, len = elements.length; i < len; i++) {
+			apiInternal.util.dom.applyClassToElement(elements[i], MASK_OVERRIDE_CLASS);
+			elements[i].style.setProperty("z-index", "2147483646", "important");
+		}
+	}
+
+	// Remove all instances of the MASK_OVERRIDE_CLASS
+	function removeMaskOverrides() {
+		var overrides = apiInternal.util.dom.getElementsByClassName(MASK_OVERRIDE_CLASS);
+		for(var i = overrides.length-1; i >= 0; i--) {
+			var override = overrides[i];
+			apiInternal.util.dom.removeClassFromElement(override, MASK_OVERRIDE_CLASS);
+			override.style.zIndex = '';
+		}
 	}
 
 	function initializeStyles() {
