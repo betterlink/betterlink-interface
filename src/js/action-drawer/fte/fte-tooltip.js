@@ -228,7 +228,7 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 
 		var top, left;
 		// Make sure we're not going to put the element offpage
-		if(tooltip.offsetTop - arrowSize - tooltip.offsetHeight >= 0) {
+		if(!tooltipWillGoOffpage(tooltip.offsetHeight + arrowSize)) {
 			top = tooltip.offsetHeight + arrowSize;
 			tooltip.style.marginTop = '-' + top + 'px';
 		}
@@ -262,6 +262,18 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 		else {
 			parentElement.appendChild(newElement);
 		}
+	}
+
+	// Return whether moving the tooltip the provided distance up will
+	// move the element offpage
+	function tooltipWillGoOffpage(distanceToMove) {
+		var supportPageOffset = window.pageYOffset !== undefined;
+		var isCSS1Compat = ((document.compatMode || "") === "CSS1Compat");
+		var y = supportPageOffset ? window.pageYOffset : isCSS1Compat ? document.documentElement.scrollTop : document.body.scrollTop;
+
+		var currentOffset = tooltip.getBoundingClientRect().top + y - document.documentElement.clientTop;
+
+		return currentOffset < distanceToMove;
 	}
 
 	// Returns an array specifying an RGB color from a provided hex color
