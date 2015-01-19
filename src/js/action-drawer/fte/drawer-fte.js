@@ -45,7 +45,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 		if(!fteRun) {
 			fteRun = true;
 
-			var nexus = document.getElementsByClassName(NEXUS_CLASS)[0];
+			var nexus = apiInternal.util.dom.getElementsByClassName(NEXUS_CLASS)[0];
 			var tooltipContent = buildIntroTooltip();
 
 			drawerLock = apiInternal.slider.lockDrawerOpen();
@@ -57,7 +57,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 	// This highlights the next steps that are available to the user.
 	// Specifically, sharing or saving the link.
 	function runActionElements() {
-		var pen = document.getElementsByClassName(PEN_CLASS)[0];
+		var pen = apiInternal.util.dom.getElementsByClassName(PEN_CLASS)[0];
 		var tooltipContent = buildActionTooltip();
 
 		apiInternal.fteTooltip.addTooltipToDrawer(pen, tooltipContent);
@@ -67,7 +67,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 	// This communicates that the user can click on the previous submission
 	// text to re-open the drawer
 	function runReopenDrawer() {
-		var firstSelectedText = document.getElementsByClassName(SELECTED_CLASS)[0];
+		var firstSelectedText = apiInternal.util.dom.getElementsByClassName(SELECTED_CLASS)[0];
 		var tooltipContent = buildReopenTooltip();
 
 		apiInternal.fteTooltip.addTooltipToPage(firstSelectedText, tooltipContent);
