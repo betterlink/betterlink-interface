@@ -5,7 +5,12 @@
 betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 	api.requireModules( ["Util.DOM", "FTE Tooltip", "LastSubmission", "Drawer Slider"] );
 
+	// Element Selectors. These should be dynamic to make the FTE
+	// resilient.
 	var TOOLTIP_SELECTOR = "#betterlink-tooltip";
+	var NEXUS_CLASS = "betterlink-nexus";
+	var PEN_CLASS = "betterlink-pen";
+	var SELECTED_CLASS = "betterlink-selected";
 
 	var BUTTON_CLASS = "betterlink-tooltip-btn";
 	var BUTTON_CLASS_SECONDARY = "betterlink-tooltip-btn-secondary";
@@ -30,20 +35,39 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 	// Register the FTE to run with the next successful submission
 	function loadFTE() {
 		initializeStyles();
-		apiInternal.lastSubmission.subscribeSuccess.onsuccess(testFTE);
+		apiInternal.lastSubmission.subscribeSuccess.onsuccess(runIntro);
 	}
 
-	function testFTE() {
+	// STEP 1
+	// This explains that a new link was created and allows the user
+	// to demo visiting their new link
+	function runIntro() {
 		if(!fteRun) {
 			fteRun = true;
 
-			var nexus = document.getElementsByClassName('betterlink-nexus')[0];
-			var drawer = document.getElementById('betterlink-drawer');
-			var tooltipContent = getIntroTooltip();
+			var nexus = document.getElementsByClassName(NEXUS_CLASS)[0];
+			var tooltipContent = buildIntroTooltip();
 
 			drawerLock = apiInternal.slider.lockDrawerOpen();
 			apiInternal.fteTooltip.addTooltipToDrawer(nexus, tooltipContent);
 		}
+	}
+
+	// STEP 2
+	// This highlights the next steps that are available to the user.
+	// Specifically, sharing or saving the link.
+	function runActionElements() {
+		var pen = document.getElementsByClassName(PEN_CLASS)[0];
+		var tooltipContent = buildActionTooltip();
+
+		apiInternal.fteTooltip.addTooltipToDrawer(pen, tooltipContent);
+	}
+
+	// STEP 3
+	// This communicates that the user can click on the previous submission
+	// text to re-open the drawer
+	function runReopenDrawer(e) {
+		//
 	}
 
 	function closeFTE(e) {
@@ -55,15 +79,20 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 		apiInternal.slider.releaseDrawerLock(drawerLock);
 	}
 
-	function getIntroTooltip() {
+	/* ========================================================== */
+
+	// Build the content for the tooltip for the Intro step
+	function buildIntroTooltip() {
 		var div = document.createElement('div');
 		var btns = document.createElement('div');
 		var primaryBtn = apiInternal.util.dom.createAnchorElement('Try It', apiInternal.lastSubmission.lastSuccessful.link, "_blank");
-		var secondaryBtn = apiInternal.util.dom.createAnchorElement('Not Now', '#');
+		var secondaryBtn = document.createElement('button');
 
 		btns.className = BUTTONS_CLASS;
 		primaryBtn.className = BUTTON_CLASS;
 		secondaryBtn.className = BUTTON_CLASS + " " + BUTTON_CLASS_SECONDARY;
+		secondaryBtn.type = 'button';
+		secondaryBtn.appendChild(document.createTextNode('Not Now'));
 
 		btns.appendChild(primaryBtn);
 		btns.appendChild(secondaryBtn);
@@ -73,8 +102,36 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 
 		div.style.width = 'auto';
 
-		apiInternal.addListener(secondaryBtn, "click", closeFTE);
-		apiInternal.addListener(secondaryBtn, "touch", closeFTE);
+		apiInternal.addListener(secondaryBtn, "click", runActionElements);
+		apiInternal.addListener(secondaryBtn, "touch", runActionElements);
+
+		apiInternal.addListener(primaryBtn, "click", runActionElements);
+		apiInternal.addListener(primaryBtn, "touch", runActionElements);
+
+		return div;
+	}
+
+	// Build the content for the tooltip for the sharing/saving
+	// links
+	function buildActionTooltip() {
+		var div = document.createElement('div');
+		var btns = document.createElement('div');
+		var primaryBtn = document.createElement('button');
+
+		btns.className = BUTTONS_CLASS;
+		primaryBtn.className = BUTTON_CLASS;
+		primaryBtn.type = 'button';
+		primaryBtn.appendChild(document.createTextNode('Continue'));
+
+		btns.appendChild(primaryBtn);
+
+		div.appendChild(document.createTextNode('You can use these buttons to share or save your link.'));
+		div.appendChild(btns);
+
+		div.style.width = 'auto';
+
+		apiInternal.addListener(primaryBtn, "click", closeFTE);
+		apiInternal.addListener(primaryBtn, "touch", closeFTE);
 
 		return div;
 	}
