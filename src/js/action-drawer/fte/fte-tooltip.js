@@ -44,6 +44,7 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 					"width: auto;",
 					"z-index: 2147483647;",
 
+					"display: inline-block;",
 					"position: absolute;",
 					"visibility: hidden; }",
 
@@ -192,8 +193,8 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 		// This ensures that the 'top' of the tooltip will be the top of
 		// the drawerElement.
 		//
-		// The element needs to be on the DOM before checking the
-		// offsetWidth of the element.
+		// The tooltip needs to be on the DOM before checking its
+		// dimensions.
 		appendAsFirstChild(tooltip, drawerElement);
 
 		apiInternal.util.dom.applyClassToElement(tooltip, MEASURE_CLASS);
@@ -212,7 +213,21 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 	// already.
 	function addTooltipToPage(pageElement, tooltipContent) {
 		createTooltip('bottom');
-		// set margin-top and margin-left
+		apiInternal.util.dom.addOrReplaceChild(tooltip, tooltipContent);
+
+		// Append the tooltip as the prior sibling of the provided element.
+		// This ensures that the tooltip rests at the very beginning and
+		// inline with the pageElement. This means we simply move the
+		// tooltip up its full height.
+		//
+		// The tooltip needs to be on the DOM before checking its
+		// dimensions.
+		pageElement.parentNode.insertBefore(tooltip, pageElement);
+
+		var top = tooltip.offsetHeight + arrowSize;
+		tooltip.style.marginTop = '-' + top + 'px';
+
+		apiInternal.util.dom.applyClassToElement(tooltip, SHOW_TOOLTIP_CLASS);
 	}
 
 	// Appends the newElement to the DOM as the first child of the
