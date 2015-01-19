@@ -66,8 +66,11 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 	// STEP 3
 	// This communicates that the user can click on the previous submission
 	// text to re-open the drawer
-	function runReopenDrawer(e) {
-		//
+	function runReopenDrawer() {
+		var firstSelectedText = document.getElementsByClassName(SELECTED_CLASS)[0];
+		var tooltipContent = buildReopenTooltip();
+
+		apiInternal.fteTooltip.addTooltipToPage(firstSelectedText, tooltipContent);
 	}
 
 	function closeFTE(e) {
@@ -126,6 +129,30 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 		btns.appendChild(primaryBtn);
 
 		div.appendChild(document.createTextNode('You can use these buttons to share or save your link.'));
+		div.appendChild(btns);
+
+		div.style.width = 'auto';
+
+		apiInternal.addListener(primaryBtn, "click", runReopenDrawer);
+		apiInternal.addListener(primaryBtn, "touch", runReopenDrawer);
+
+		return div;
+	}
+
+	// Build the content for the tooltip for reopening the drawer
+	function buildReopenTooltip() {
+		var div = document.createElement('div');
+		var btns = document.createElement('div');
+		var primaryBtn = document.createElement('button');
+
+		btns.className = BUTTONS_CLASS;
+		primaryBtn.className = BUTTON_CLASS;
+		primaryBtn.type = 'button';
+		primaryBtn.appendChild(document.createTextNode('Done'));
+
+		btns.appendChild(primaryBtn);
+
+		div.appendChild(document.createTextNode('When the sidebar closes, you can click on your selection to reopen it.'));
 		div.appendChild(btns);
 
 		div.style.width = 'auto';
