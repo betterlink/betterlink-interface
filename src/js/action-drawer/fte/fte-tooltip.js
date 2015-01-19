@@ -27,6 +27,7 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 		[   TOOLTIP_SELECTOR + " {",
 					"background: " + backgroundColor,
 					"border: " + borderWidth + "px solid " + borderColor,
+					"box-shadow: 0px 8px 6px -6px rgba(0,0,0,.4);",
 					"border-radius: 0;",
 					"color: #424242;",
 					"clear: none;",
@@ -100,6 +101,7 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 					"border-right-color: " + borderColor + " }",
 
 			// Arrow on Top
+			TOOLTIP_SELECTOR + ".betterlink-top { box-shadow: 0px -7px 7px -7px rgba(0,0,0,.4); }",
 			TOOLTIP_SELECTOR + ".betterlink-top:after {",
 					"bottom: 100%;",
 					"left: 50%;",

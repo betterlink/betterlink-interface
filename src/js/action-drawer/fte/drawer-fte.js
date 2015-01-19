@@ -28,7 +28,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 			// The mask has a z-index two less than the drawer (which has the maximum value)
 			// Any overrides have a z-index that's one less
 			"body." + MASK_CLASS + ":after { content: ''; background-color: #000; opacity: 0.6; display: block; position: fixed; top: 0; left: 0; height: 100%; width: 100%; z-index: 2147483645; }",
-			"." + MASK_OVERRIDE_CLASS + "{ position: relative !important; }"
+			"." + MASK_OVERRIDE_CLASS + "{ position: relative !important; box-shadow: 0 0 5px 2px #BCBCBC; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25); }"
 
 		].join(' ');
 
