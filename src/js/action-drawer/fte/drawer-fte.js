@@ -43,8 +43,10 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 
 	// Register the FTE to run with the next successful submission
 	function loadFTE() {
-		initializeStyles();
-		apiInternal.lastSubmission.subscribeSuccess.onsuccess(runIntro);
+		if(api['config']['enableFTE']) {
+			initializeStyles();
+			apiInternal.lastSubmission.subscribeSuccess.onsuccess(runIntro);
+		}
 	}
 
 	// STEP 1
