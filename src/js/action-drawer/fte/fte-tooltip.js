@@ -224,8 +224,28 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 		// dimensions.
 		pageElement.parentNode.insertBefore(tooltip, pageElement);
 
-		var top = tooltip.offsetHeight + arrowSize;
-		tooltip.style.marginTop = '-' + top + 'px';
+		// Make sure we're not going to put the element offpage
+		if(tooltip.offsetTop - arrowSize - tooltip.offsetHeight >= 0) {
+			var top = tooltip.offsetHeight + arrowSize;
+			tooltip.style.marginTop = '-' + top + 'px';
+		}
+		else {
+			// If we can't position it right on top of element, then we'll
+			// position it right underneath
+			apiInternal.util.dom.removeClassFromElement(tooltip, "betterlink-bottom");
+			apiInternal.util.dom.applyClassToElement(tooltip, "betterlink-top");
+
+			// Move the tooltip as the last sibling of the pageElement
+			removeTooltipFromDom();
+			pageElement.parentNode.insertBefore(tooltip, pageElement.nextSibling);
+
+			var approximateElementLineSize = 30;
+			var horizontalOffset = 10;
+			var top = arrowSize + approximateElementLineSize;
+			var left = (tooltip.offsetWidth / 2) + horizontalOffset;
+			tooltip.style.marginTop = top + 'px';
+			tooltip.style.marginLeft = '-' + left + 'px';
+		}
 
 		apiInternal.util.dom.applyClassToElement(tooltip, SHOW_TOOLTIP_CLASS);
 	}
