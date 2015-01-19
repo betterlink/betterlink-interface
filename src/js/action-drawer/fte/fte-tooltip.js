@@ -226,9 +226,10 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 		// dimensions.
 		pageElement.parentNode.insertBefore(tooltip, pageElement);
 
+		var top, left;
 		// Make sure we're not going to put the element offpage
 		if(tooltip.offsetTop - arrowSize - tooltip.offsetHeight >= 0) {
-			var top = tooltip.offsetHeight + arrowSize;
+			top = tooltip.offsetHeight + arrowSize;
 			tooltip.style.marginTop = '-' + top + 'px';
 		}
 		else {
@@ -243,8 +244,8 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 
 			var approximateElementLineSize = 30;
 			var horizontalOffset = 10;
-			var top = arrowSize + approximateElementLineSize;
-			var left = (tooltip.offsetWidth / 2) + horizontalOffset;
+			top = arrowSize + approximateElementLineSize;
+			left = (tooltip.offsetWidth / 2) + horizontalOffset;
 			tooltip.style.marginTop = top + 'px';
 			tooltip.style.marginLeft = '-' + left + 'px';
 		}
