@@ -5,7 +5,7 @@
 betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 	api.requireModules( ["Util.DOM", "FTE Tooltip", "LastSubmission", "Drawer Slider"] );
 
-	var TOOLTIP_SELECTOR = "betterlink-tooltip";
+	var TOOLTIP_SELECTOR = "#betterlink-tooltip";
 
 	var BUTTON_CLASS = "betterlink-tooltip-btn";
 	var BUTTON_CLASS_SECONDARY = "betterlink-tooltip-btn-secondary";
