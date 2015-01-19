@@ -3,7 +3,7 @@
  *
  */
 betterlink_user_interface.createModule("Submissions.CreationInterface", function(api, apiInternal) {
-	api.requireModules( ["Submissions", "Span Highlighter", "Anchor Highlighter", "Draggable"] );
+	api.requireModules( ["Submissions", "Span Highlighter", "Anchor Highlighter", "Draggable", "Action Drawer"] );
 
 	var supportsCssInherit = canUseCssInherit(document);
 	var elementHighlighter;
