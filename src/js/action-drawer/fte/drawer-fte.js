@@ -15,13 +15,16 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 	var BUTTON_CLASS = "betterlink-tooltip-btn";
 	var BUTTON_CLASS_SECONDARY = "betterlink-tooltip-btn-secondary";
 	var BUTTONS_CLASS = "betterlink-tooltip-btns";
+	var MASK_CLASS = "betterlink-fte-mask";
 
 	var CSS =
 		[   TOOLTIP_SELECTOR + " ." + BUTTON_CLASS + " { background-color: #3299BB; border: 1px solid #277799; color: #FFF; font-size: 14px; margin: 5px; padding: 6px 12px; border-radius: .4em; display: inline-block; text-align: center; white-space: nowrap; vertical-align: middle; touch-action: manipulation; cursor: pointer; }",
 			TOOLTIP_SELECTOR + " ." + BUTTON_CLASS + ":hover { background-color: #277799; }",
 			TOOLTIP_SELECTOR + " ." + BUTTON_CLASS_SECONDARY + " { background-color: #BCBCBC; border: 1px solid #9B9B9B; }",
 			TOOLTIP_SELECTOR + " ." + BUTTON_CLASS_SECONDARY + ":hover { background-color: #9B9B9B; }",
-			TOOLTIP_SELECTOR + " ." + BUTTONS_CLASS + " { text-align: right; width: auto; margin-top: 5px }"
+			TOOLTIP_SELECTOR + " ." + BUTTONS_CLASS + " { text-align: right; width: auto; margin-top: 5px }",
+			"body." + MASK_CLASS + ":after { content: ''; background-color: #000; opacity: 0.6; display: block; position: fixed; top: 0; left: 0; height: 100%; width: 100%; z-index: 2147483646; }"
+
 		].join(' ');
 
 	var stylesInitialized = false;
@@ -49,6 +52,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 			var tooltipContent = buildIntroTooltip();
 
 			drawerLock = apiInternal.slider.lockDrawerOpen();
+			apiInternal.util.dom.applyClassToElement(document.body, MASK_CLASS);
 			apiInternal.fteTooltip.addTooltipToDrawer(nexus, tooltipContent);
 		}
 	}
@@ -79,6 +83,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 		}
 
 		apiInternal.fteTooltip.remove();
+		apiInternal.util.dom.removeClassFromElement(document.body, MASK_CLASS);
 		apiInternal.slider.releaseDrawerLock(drawerLock);
 	}
 
