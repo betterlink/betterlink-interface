@@ -3,7 +3,7 @@
  *
  */
 betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "FTE Tooltip", "LastSubmission", "Drawer Slider"] );
+	api.requireModules( ["Util.DOM", "FTE Tooltip", "LastSubmission", "Drawer Slider", "Event Messaging"] );
 
 	// Element Selectors. These should be dynamic to make the FTE
 	// resilient.
@@ -33,6 +33,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 
 	/****************************************************************************************************/
 
+	apiInternal.events.registerObserverForRemoveBetterlink(closeFTE);
 	apiInternal.addInitListener(loadFTE);
 
 	// Register the FTE to run with the next successful submission
