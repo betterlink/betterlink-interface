@@ -47,6 +47,11 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 			// Queries the server to determine if the user has already
 			// viewed the FTE, based on registerFTE()
 			apiInternal.checkFTE(decideToLoadFTE);
+
+			// Everytime there is a new submission, refresh that the user
+			// doesn't need the FTE. In the event the user *has not* seen
+			// it, this will get called along with runIntro the first time.
+			apiInternal.lastSubmission.subscribeSuccess.onsuccess(apiInternal.registerFTE);
 		}
 	}
 
@@ -88,7 +93,6 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 			}
 
 			fteRun = true;
-			apiInternal.registerFTE();
 			initializeStyles();
 
 			var nexus = apiInternal.util.dom.getElementsByClassName(NEXUS_CLASS)[0];
