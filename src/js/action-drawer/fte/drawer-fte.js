@@ -3,7 +3,7 @@
  *
  */
 betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "FTE Tooltip", "LastSubmission", "Drawer Slider", "Event Messaging"] );
+	api.requireModules( ["Util.DOM", "FTE Tooltip", "LastSubmission", "Drawer Slider", "Action Drawer", "Event Messaging"] );
 
 	// Element Selectors. These should be dynamic to make the FTE
 	// resilient.
@@ -44,7 +44,6 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 	// Register the FTE to run with the next successful submission
 	function loadFTE() {
 		if(api['config']['enableFTE']) {
-			initializeStyles();
 			apiInternal.lastSubmission.subscribeSuccess.onsuccess(runIntro);
 		}
 	}
@@ -54,7 +53,18 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 	// to demo visiting their new link
 	function runIntro() {
 		if(!fteRun) {
+			// The core interface gets loaded via an init listener, just
+			// like loadFTE(). This means we can't guarantee that the
+			// drawer won't load *after* we attempt to subscribe the
+			// onSuccess event listener. Therefore, we have to run the
+			// initialization check here.
+			if(!apiInternal.drawer.initialized) {
+				fteRun = true;
+				return;
+			}
+
 			fteRun = true;
+			initializeStyles();
 
 			var nexus = apiInternal.util.dom.getElementsByClassName(NEXUS_CLASS)[0];
 			var tooltipContent = buildIntroTooltip();
