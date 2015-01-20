@@ -3,7 +3,7 @@
  *
  */
 betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "FTE Tooltip", "LastSubmission", "Drawer Slider", "Action Drawer", "Event Messaging"] );
+	api.requireModules( ["Util.DOM", "FTE Tooltip", "LastSubmission", "Drawer Slider", "Action Drawer", "Util.HTTP", "HTTP", "Event Messaging"] );
 
 	// Element Selectors. These should be dynamic to make the FTE
 	// resilient.
@@ -44,7 +44,31 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 	// Register the FTE to run with the next successful submission
 	function loadFTE() {
 		if(api['config']['enableFTE']) {
+			// Queries the server to determine if the user has already
+			// viewed the FTE, based on registerFTE()
+			apiInternal.checkFTE(decideToLoadFTE);
+		}
+	}
+
+	// Asynchronous check for whether we should load the FTE for this
+	// user
+	function decideToLoadFTE(errorInfo, response) {
+		// If we can't get a response from the server, assume the user
+		// *has not* seen the FTE. Rationale: we're currently only
+		// displaying the FTE on the Betterlink landing page.
+		if(errorInfo) {
 			apiInternal.lastSubmission.subscribeSuccess.onsuccess(runIntro);
+		}
+		else {
+			// Asynchronously parse the response JSON. Expected result:
+			// { fte: '1' } indicates the user has seen the FTE
+			apiInternal.util.http.parseJSONServerResponseAsync(response, function(parsedResponse) {
+				if(Object.hasOwnProperty.call(parsedResponse, 'fte')) {
+					if(parsedResponse['fte'] !== '1') {
+						apiInternal.lastSubmission.subscribeSuccess.onsuccess(runIntro);
+					}
+				}
+			});
 		}
 	}
 
@@ -64,6 +88,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 			}
 
 			fteRun = true;
+			apiInternal.registerFTE();
 			initializeStyles();
 
 			var nexus = apiInternal.util.dom.getElementsByClassName(NEXUS_CLASS)[0];
