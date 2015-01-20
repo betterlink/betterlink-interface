@@ -268,6 +268,17 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 		}
 	};
 
+	// 'Util.HTTP'
+	apiInternal.util.http = {
+		// Returns the results of JSON.parse(). Executes asynchronously in
+		// case the JSON object hasn't been loaded by the browser yet (if it's
+		// not natively supported). Will terminate after a timeout if the
+		// polyfill still hasn't loaded.
+		parseJSONServerResponseAsync: function (serverResponse, parsedResultCallback) {
+			betterlink.exports.parseJSONServerResponseAsync(serverResponse, parsedResultCallback);
+		}
+	};
+
 	// 'Event Messaging'
 	apiInternal.events = {
 		registerObserverForRemoveBetterlink: function (fn) {
@@ -391,6 +402,30 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 			DECORATE_ERROR: "decorate_error" // there was an error error calling interface code, decorating the selection on the DOM
 		}
 	};
+
+	// 'HTTP'
+	// In the below HTTP functions, 'callback' is a function that accepts
+	// the following parameters:
+	//
+	// errorInfo:      an object that indicates if there was an error with
+	//                 the request; an empty object or 'false' indicates no
+	//                 error
+	//
+	// responseText:   the responseText of an XMLHttpRequest; this is
+	//                 typically a JSON string; this response is best
+	//                 handled via util.http.parseJSONServerResponseAsync()
+	//
+	// initialRequest: a JavaScript object that indicates the parameters
+	//                 used when making the request
+	//
+
+	// Register that the user has viewed the FTE. Functionally, this will
+	// help prevent displaying the FTE to the user again on the same or
+	// another website.
+	apiInternal.registerFTE = function(callback) { betterlink.exports.registerFTE(callback); };
+
+	// Check whether the current user has viewed the FTE already
+	apiInternal.checkFTE = function(callback) { betterlink.exports.checkFTE(callback); };
 
 	return ret;
 })();
