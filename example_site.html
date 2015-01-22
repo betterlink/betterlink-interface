@@ -81,6 +81,12 @@
 			window.setTimeout(betterlink_user_interface.executeInitListeners, 200);
 		}
 	</script>
+
+	<style>
+		#copy-paste-label { margin-left: 50px; width: 500px;}
+		#copy-paste { margin-top: 0; margin-left: 50px; padding: 5px; min-height: 100px; border: 1px solid black;}
+		#copy-paste a:after { content:''; background-color: red; width: 10px; height: 10px; display: block; }
+	</style>
 </head>
 
 <body>
@@ -112,5 +118,7 @@
 		registration.</p>
 	<p><a href="http://www.iana.org/domains/special">More information...</a></p>
 </div>
+<p id="copy-paste-label">Use this space to demo copying and pasting content. Red rectangles indicate anchor tags have copied.</p>
+<div id="copy-paste" contenteditable="true"></div>
 
 </body></html>
