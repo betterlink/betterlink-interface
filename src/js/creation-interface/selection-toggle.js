@@ -37,6 +37,8 @@ betterlink_user_interface.createModule("Selection Toggle", function(api, apiInte
 		highlighterCreateFunc = createFunc;
 		highlighterRemovalFunc = removalFunc;
 		initialized = true;
+
+		addCopyEventProtection();
 	}
 
 	// Triggered on a mouseup event. If the user is finishing their click with part of
@@ -103,5 +105,37 @@ betterlink_user_interface.createModule("Selection Toggle", function(api, apiInte
 			}
 		}
 		return null;
+	}
+
+	// Protect users from trying to copy their highlighted text and
+ 	// copying a bunch of Betterlink elements (<a> and <span>) that
+ 	// pollute their content
+	function addCopyEventProtection() {
+		// Browsers fire the 'copy' event on different elements (ex:
+		// on the element that starts the selection, or the element
+		// that contains all of the selection). By watching the document
+		// we can avoid most of these differences.
+		// http://www.quirksmode.org/dom/events/cutcopypaste.html
+		//
+		// Except: IE8 & 7 don't support listening for the 'copy' event
+		// on the document. To support them, we would have to attach
+		// a listener on every element on the document (registering the
+		// proper 'remove' handlers as well).
+		apiInternal.addListener(document, "copy", allowTextToBeCopied);
+	}
+
+	// This gets executed when the 'copy' event is fired. We want
+	// the event to continue, but to remove our highlighter markup
+	// first.
+	function allowTextToBeCopied() {
+		// Saving and restoring the selection allows us to recreate the
+		// selection after the DOM has been modified.
+		var savedSelection = apiInternal.util.ranges.saveSelection();
+		removeExistingHighlighters();
+		apiInternal.util.ranges.restoreSelection(savedSelection);
+
+		// Allow the event to complete, but immediately replace the
+		// highlighter elements
+		window.setTimeout(toggleDisplayOfProspectiveSubmissions, 10);
 	}
 });
