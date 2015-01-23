@@ -93,6 +93,12 @@ betterlink_user_interface.createModule("Util.DOM", function(api, apiInternal) {
 			var head = document.head || document.getElementsByTagName('head')[0];
 			var style = document.createElement('style');
 
+			// Needed to abide by Content Security Policy
+			// http://www.w3.org/TR/CSP2/#script-src-nonce-usage
+			if(api['config']['nonce']) {
+				style.setAttribute('nonce', api['config']['nonce']);
+			}
+
 			style.type = 'text/css';
 			if (style.styleSheet){
 				style.styleSheet.cssText = css_text;
