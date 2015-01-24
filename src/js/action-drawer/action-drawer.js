@@ -43,7 +43,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 			apiInternal.drawerSelector + "#" + TOP_LIST_ID + ">li { list-style: none; }",
 
 			"#" + DRAWER_ID + " { background: #E9E9E9; position: fixed; }",
-			"#" + DRAWER_ID + ":after { content: ''; position: absolute; width: 1px; height: 100%; top: 75px; background: #DDD; }"
+			"#" + DRAWER_ID + ":before { content: ''; position: absolute; width: 1px; height: 100%; top: 75px; background: #DDD; }"
 		].join(' ');
 
 	var HEADER_CSS =
