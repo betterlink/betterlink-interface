@@ -8,9 +8,11 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 	// Element Selectors. These should be dynamic to make the FTE
 	// resilient.
 	var TOOLTIP_SELECTOR = "#betterlink-tooltip";
+	var DRAWER_ID = "betterlink-drawer";
 	var NEXUS_CLASS = "betterlink-nexus";
 	var PEN_CLASS = "betterlink-pen";
 	var SELECTED_CLASS = "betterlink-selected";
+	var DRAWER_BACKGROUND = "#E9E9E9";
 
 	var BUTTON_CLASS = "betterlink-tooltip-btn";
 	var BUTTON_CLASS_SECONDARY = "betterlink-tooltip-btn-secondary";
@@ -26,9 +28,9 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 			TOOLTIP_SELECTOR + " ." + BUTTONS_CLASS + " { text-align: right; width: auto; margin-top: 5px }",
 			TOOLTIP_SELECTOR + " p { margin-bottom: 6px; }",
 
-			// The mask has a z-index two less than the drawer (which has the maximum value)
-			// Any overrides have a z-index that's one less
-			"body." + MASK_CLASS + ":after { content: ''; background-color: #000; opacity: 0.6; display: block; position: fixed; top: 0; left: 0; height: 100%; width: 100%; z-index: 2147483645; }",
+			// The mask has a z-index one less than the maximum
+			// Any overrides have a z-index that's the maximum value
+			"." + MASK_CLASS + ":after { content: ''; background-color: #000; opacity: 0.6; display: block; position: fixed; top: 0; left: 0; height: 100%; width: 100%; z-index: 2147483646; }",
 			"." + MASK_OVERRIDE_CLASS + "{ position: relative !important; box-shadow: 0 0 5px 2px #BCBCBC; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25); }"
 
 		].join(' ');
@@ -99,8 +101,11 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 			var nexus = apiInternal.util.dom.getElementsByClassName(NEXUS_CLASS)[0];
 			var tooltipContent = buildIntroTooltip();
 
+			var drawer = document.getElementById(DRAWER_ID);
 			drawerLock = apiInternal.slider.lockDrawerOpen();
-			apiInternal.util.dom.applyClassToElement(document.body, MASK_CLASS);
+			apiInternal.util.dom.applyClassToElement(drawer, MASK_CLASS);
+
+			applyMaskOverrides(nexus, DRAWER_BACKGROUND);
 			apiInternal.fteTooltip.addTooltipToDrawer(nexus, tooltipContent);
 		}
 	}
@@ -112,6 +117,8 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 		var pen = apiInternal.util.dom.getElementsByClassName(PEN_CLASS)[0];
 		var tooltipContent = buildActionTooltip();
 
+		removeMaskOverrides();
+		applyMaskOverrides(pen, DRAWER_BACKGROUND);
 		apiInternal.fteTooltip.addTooltipToDrawer(pen, tooltipContent);
 	}
 
@@ -124,6 +131,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 			var firstSelectedText = selectedText[0];
 			var tooltipContent = buildReopenTooltip();
 
+			removeMaskOverrides();
 			applyMaskOverrides(selectedText);
 			apiInternal.fteTooltip.addTooltipToPage(firstSelectedText, tooltipContent);
 		}
@@ -134,9 +142,10 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 			e.preventDefault ? e.preventDefault() : window.event.returnValue = false;
 		}
 
+		var drawer = document.getElementById(DRAWER_ID);
 		apiInternal.fteTooltip.remove();
 		removeMaskOverrides();
-		apiInternal.util.dom.removeClassFromElement(document.body, MASK_CLASS);
+		apiInternal.util.dom.removeClassFromElement(drawer, MASK_CLASS);
 		apiInternal.slider.releaseDrawerLock(drawerLock);
 	}
 
@@ -229,10 +238,15 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 
 	// Apply a class to the provided list of elements that will make them
 	// 'pop out' of the background and display on top of the FTE mask.
-	function applyMaskOverrides(elements) {
+	function applyMaskOverrides(elements, opt_background) {
+		if(!elements.length) { elements = [elements]; }
+
 		for(var i = 0, len = elements.length; i < len; i++) {
 			apiInternal.util.dom.applyClassToElement(elements[i], MASK_OVERRIDE_CLASS);
-			elements[i].style.setProperty("z-index", "2147483646", "important");
+			elements[i].style.setProperty("z-index", "2147483647", "important");
+			if(opt_background) {
+				elements[i].style.setProperty("background-color", opt_background, "important");
+			}
 		}
 	}
 
@@ -243,6 +257,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 			var override = overrides[i];
 			apiInternal.util.dom.removeClassFromElement(override, MASK_OVERRIDE_CLASS);
 			override.style.zIndex = '';
+			override.style.backgroundColor = '';
 		}
 	}
 
