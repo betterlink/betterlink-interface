@@ -24,6 +24,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 			TOOLTIP_SELECTOR + " ." + BUTTON_CLASS_SECONDARY + " { background-color: #BCBCBC; border: 1px solid #9B9B9B; }",
 			TOOLTIP_SELECTOR + " ." + BUTTON_CLASS_SECONDARY + ":hover { background-color: #9B9B9B; }",
 			TOOLTIP_SELECTOR + " ." + BUTTONS_CLASS + " { text-align: right; width: auto; margin-top: 5px }",
+			TOOLTIP_SELECTOR + " p { margin-bottom: 6px; }",
 
 			// The mask has a z-index two less than the drawer (which has the maximum value)
 			// Any overrides have a z-index that's one less
@@ -145,7 +146,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 	function buildIntroTooltip() {
 		var div = document.createElement('div');
 		var btns = document.createElement('div');
-		var primaryBtn = apiInternal.util.dom.createAnchorElement('Try It', apiInternal.lastSubmission.lastSuccessful.link, "_blank");
+		var primaryBtn = apiInternal.util.dom.createAnchorElement('Follow Your Link', apiInternal.lastSubmission.lastSuccessful.link, "_blank");
 		var secondaryBtn = document.createElement('button');
 
 		btns.className = BUTTONS_CLASS;
@@ -157,7 +158,13 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 		btns.appendChild(primaryBtn);
 		btns.appendChild(secondaryBtn);
 
-		div.appendChild(document.createTextNode('Your new link takes you right back to the highlighted text.'));
+		var p1 = document.createElement('p');
+		var p2 = document.createElement('p');
+		p1.appendChild(document.createTextNode('You just created a new link!'));
+		p2.appendChild(document.createTextNode('Following it will take you right back to the highlighted text.'));
+
+		div.appendChild(p1);
+		div.appendChild(p2);
 		div.appendChild(btns);
 
 		div.style.width = 'auto';
@@ -185,7 +192,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 
 		btns.appendChild(primaryBtn);
 
-		div.appendChild(document.createTextNode('You can use these buttons to share or save your link.'));
+		div.appendChild(document.createTextNode('Use these buttons to share or save your link.'));
 		div.appendChild(btns);
 
 		div.style.width = 'auto';
@@ -209,7 +216,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 
 		btns.appendChild(primaryBtn);
 
-		div.appendChild(document.createTextNode('When the sidebar closes, you can click on your selection to reopen it.'));
+		div.appendChild(document.createTextNode('When the sidebar closes, you can reopen it by clicking on your selection.'));
 		div.appendChild(btns);
 
 		div.style.width = 'auto';
