@@ -3,7 +3,7 @@
  *
  */
 betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "FTE Tooltip", "LastSubmission", "Drawer Slider", "Action Drawer", "Util.HTTP", "HTTP", "Event Messaging"] );
+	api.requireModules( ["Util.DOM", "FTE Tooltip", "LastSubmission", "Drawer Slider", "Action Drawer", "Util.HTTP", "HTTP", "Smooth Scrolling", "Event Messaging"] );
 
 	// Element Selectors. These should be dynamic to make the FTE
 	// resilient.
@@ -134,6 +134,8 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 			removeMaskOverrides();
 			applyMaskOverrides(selectedText);
 			apiInternal.fteTooltip.addTooltipToPage(firstSelectedText, tooltipContent);
+
+			apiInternal.smoothScroll(TOOLTIP_SELECTOR.substr(1), {pixelBuffer: 125});
 		}
 	}
 
