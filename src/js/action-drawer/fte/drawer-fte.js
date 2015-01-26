@@ -155,9 +155,15 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 
 	// Build the content for the tooltip for the Intro step
 	function buildIntroTooltip() {
+		// When displaying a link to the new submission, modify the
+		// URL to indicate it's being followed from the FTE
+		var newLink = apiInternal.lastSubmission.lastSuccessful.link;
+		var bl = api["config"]["highlightQueryParam"];
+		newLink = newLink.replace(bl + "=","bl-fte=1&" + bl +"=");
+
 		var div = document.createElement('div');
 		var btns = document.createElement('div');
-		var primaryBtn = apiInternal.util.dom.createAnchorElement('Follow Your Link', apiInternal.lastSubmission.lastSuccessful.link, "_blank");
+		var primaryBtn = apiInternal.util.dom.createAnchorElement('Follow Your Link', newLink, "_blank");
 		var secondaryBtn = document.createElement('button');
 
 		btns.className = BUTTONS_CLASS;
