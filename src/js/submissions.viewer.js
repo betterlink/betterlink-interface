@@ -8,7 +8,7 @@ betterlink_user_interface.createModule("Submissions.Viewer", function(api, apiIn
 	var DEFAULT_HIGHLIGHT_CUSTOM_ELEMENT = "mark";				//the element type that will wrap the selections
 	var DEFAULT_HIGHLIGHT_CSS_CLASS = "betterlink-highlight";	//the CSS class that will be applied to all highlight elements
 	var DEFAULT_HIGHLIGHT_ELEMENT_ID = "highlighted_element";	//an ID that will be applied to all highlight wrapper elements
-	var HIGHLIGHT_CSS = "{ background: lightskyblue; color: #000; opacity: 0.95; }";
+	var HIGHLIGHT_CSS = "{ background: lightskyblue; color: #000; padding: 0; }";
 
 	var highlighterIdentifier = 'submissionViewer';
 	var highlighterInitialized = false;
