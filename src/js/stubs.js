@@ -427,5 +427,63 @@ betterlink_user_interface = window['betterlink_user_interface'] || (function() {
 	// Check whether the current user has viewed the FTE already
 	apiInternal.checkFTE = function(callback) { betterlink.exports.checkFTE(callback); };
 
+	// 'Storage'
+	// Note: The following functions can get/set local storage information
+	// for the active domain only. This means the client website running the
+	// betterlink.js script. Global/user information needs to be accessed
+	// from the API server.
+	apiInternal.storage = {
+		// equivalent to PHP's setrawcookie
+		// https://github.com/kvz/phpjs/blob/master/functions/network/setrawcookie.js
+		setCookie: function(name, value, expires, path, domain, secure) {
+			if (typeof expires === 'string' && (/^\d+$/).test(expires)) {
+				expires = parseInt(expires, 10);
+			}
+
+			if (expires instanceof Date) {
+				expires = expires.toUTCString();
+			} else if (typeof expires === 'number') {
+				expires = (new Date(expires * 1e3)).toUTCString();
+			}
+
+			var r = [name + '=' + encodeURIComponent(value)],
+				s = {},
+				i = '';
+			s = {
+				expires: expires,
+				path: path,
+				domain: domain
+			};
+			for (i in s) {
+				if (s.hasOwnProperty(i)) { // Exclude items on Object.prototype
+					s[i] && r.push(i + '=' + s[i]);
+				}
+			}
+
+			return secure && r.push('secure'), document.cookie = r.join(";"), true;
+		},
+
+		// via http://www.quirksmode.org/js/cookies.html
+		// July 07, 2013
+		getCookie: function(name) {
+			var nameEQ = name + "=";
+			var ca = document.cookie.split(';');
+			for (var i=0; i < ca.length; i++) {
+				var c = ca[i];
+				while (c.charAt(0)==' ') {
+					c = c.substring(1,c.length);
+				}
+				if (c.indexOf(nameEQ) == 0) {
+					return decodeURIComponent(c.substring(nameEQ.length,c.length));
+				}
+			}
+			return null;
+		},
+
+		removeCookie: function(name) {
+			apiInternal.storage.setCookie(name, "", -1);
+		}
+	};
+
 	return ret;
 })();
