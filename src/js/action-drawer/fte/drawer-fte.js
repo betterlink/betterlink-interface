@@ -3,7 +3,7 @@
  *
  */
 betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
-	api.requireModules( ["Util.DOM", "FTE Tooltip", "LastSubmission", "Drawer Slider", "Action Drawer", "Util.HTTP", "HTTP", "Smooth Scrolling", "Event Messaging"] );
+	api.requireModules( ["Util.DOM", "Storage", "FTE Tooltip", "LastSubmission", "Drawer Slider", "Action Drawer", "Util.HTTP", "HTTP", "Smooth Scrolling", "Event Messaging"] );
 
 	// Element Selectors. These should be dynamic to make the FTE
 	// resilient.
@@ -155,15 +155,9 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 
 	// Build the content for the tooltip for the Intro step
 	function buildIntroTooltip() {
-		// When displaying a link to the new submission, modify the
-		// URL to indicate it's being followed from the FTE
-		var newLink = apiInternal.lastSubmission.lastSuccessful.link;
-		var bl = api["config"]["highlightQueryParam"];
-		newLink = newLink.replace(bl + "=","bl-fte=1&" + bl +"=");
-
 		var div = document.createElement('div');
 		var btns = document.createElement('div');
-		var primaryBtn = apiInternal.util.dom.createAnchorElement('Follow Your Link', newLink, "_blank");
+		var primaryBtn = apiInternal.util.dom.createAnchorElement('Follow Your Link', apiInternal.lastSubmission.lastSuccessful.link, "_blank");
 		var secondaryBtn = document.createElement('button');
 
 		btns.className = BUTTONS_CLASS;
@@ -191,6 +185,8 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 
 		apiInternal.addListener(primaryBtn, "click", runActionElements);
 		apiInternal.addListener(primaryBtn, "touch", runActionElements);
+		apiInternal.addListener(primaryBtn, "click", addFTECookie);
+		apiInternal.addListener(primaryBtn, "touch", addFTECookie);
 
 		return div;
 	}
@@ -267,6 +263,18 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 			override.style.zIndex = '';
 			override.style.backgroundColor = '';
 		}
+	}
+
+	function addFTECookie() {
+		var minutesUntilExpire = 1;
+		var d = new Date()
+		var expires = (d.getTime() + (minutesUntilExpire*60*1000))/1000;
+
+		apiInternal.storage.setCookie('betterlink-fromFTE', 1, expires);
+	}
+
+	function removeFTECookie() {
+		apiInternal.storage.removeCookie('betterlink-fromFTE');
 	}
 
 	function initializeStyles() {
