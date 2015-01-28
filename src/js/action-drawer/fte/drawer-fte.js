@@ -64,7 +64,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 			// from the FTE. Once Betterlink highlights the saved content,
 			// display the continuation of the FTE.
 			if(apiInternal.storage.getCookie(FROM_FTE_COOKIE)) {
-				window.setTimeout(runViewingLink, 1000);
+				window.setTimeout(runViewingLink, 2500);
 			}
 		}
 	}
