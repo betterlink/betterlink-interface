@@ -41,7 +41,7 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 					"text-align: left;",
 					"min-width: " + (2 * (arrowSize+borderWidth)) + "px;", 
 					"min-height: " + (2 * (arrowSize+borderWidth)) + "px;",
-					"max-width: 250px;",
+					"max-width: 300px;",
 					"text-shadow: none;",
 					"width: auto;",
 					"z-index: 2147483647;",
