@@ -337,7 +337,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 
 	function addFTECookie() {
 		var minutesUntilExpire = 1;
-		var d = new Date()
+		var d = new Date();
 		var expires = (d.getTime() + (minutesUntilExpire*60*1000))/1000;
 
 		apiInternal.storage.setCookie(FROM_FTE_COOKIE, 1, expires);
