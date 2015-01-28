@@ -128,14 +128,21 @@ betterlink_user_interface.createModule("Selection Toggle", function(api, apiInte
 	// the event to continue, but to remove our highlighter markup
 	// first.
 	function allowTextToBeCopied() {
-		// Saving and restoring the selection allows us to recreate the
-		// selection after the DOM has been modified.
-		var savedSelection = apiInternal.util.ranges.saveSelection();
-		removeExistingHighlighters();
-		apiInternal.util.ranges.restoreSelection(savedSelection);
+		// Only run the copy protection if there's an active highlighter
+		// on the page
+		if(activeHighlighters.length) {
+			var lastHighlighter = activeHighlighters[activeHighlighters.length-1];
+			if(lastHighlighter && !lastHighlighter.detached) {
+				// Saving and restoring the selection allows us to recreate
+				// the selection after the DOM has been modified.
+				var savedSelection = apiInternal.util.ranges.saveSelection();
+				removeExistingHighlighters();
+				apiInternal.util.ranges.restoreSelection(savedSelection);
 
-		// Allow the event to complete, but immediately replace the
-		// highlighter elements
-		window.setTimeout(toggleDisplayOfProspectiveSubmissions, 10);
+				// Allow the event to complete, but immediately replace the
+				// highlighter elements
+				window.setTimeout(toggleDisplayOfProspectiveSubmissions, 10);
+			}
+		}
 	}
 });
