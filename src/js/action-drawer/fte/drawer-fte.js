@@ -12,6 +12,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 	var NEXUS_CLASS = "betterlink-nexus";
 	var PEN_CLASS = "betterlink-pen";
 	var SELECTED_CLASS = "betterlink-selected";
+	var RESULT_CLASS = api["config"]["highlightCustomCssClass"] || api["config"]["highlightCssClass"];
 	var DRAWER_BACKGROUND = "#E9E9E9";
 
 	var BUTTON_CLASS = "betterlink-tooltip-btn";
@@ -55,6 +56,14 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 			// doesn't need the FTE. In the event the user *has not* seen
 			// it, this will get called along with runIntro the first time.
 			apiInternal.lastSubmission.subscribeSuccess.onsuccess(apiInternal.registerFTE);
+
+			// If the user is opening the page and the 'fromFTE' cookie is
+			// set, assume the user has just clicked 'Follow Your Link'
+			// from the FTE. Once Betterlink highlights the saved content,
+			// display the continuation of the FTE.
+			if(apiInternal.storage.getCookie('betterlink-fromFTE')) {
+				window.setTimeout(runViewingLink, 1000);
+			}
 		}
 	}
 
@@ -139,6 +148,29 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 		}
 	}
 
+	// STEP 1b
+	// This explains that the user is viewing the result of their submission
+	// and directs the user back to the previous page.
+	// Note: This step is the first of a newly-loaded page
+	function runViewingLink() {
+		removeFTECookie();
+		var selectedText = apiInternal.util.dom.getElementsByClassName(RESULT_CLASS);
+		if(selectedText && selectedText.length) {
+			initializeStyles();
+			var firstSelectedText = selectedText[0];
+			var tooltipContent = buildViewingLinkTooltip();
+
+			// Because the drawer will be closed in this example, we need
+			// to apply the overlay to the body
+			apiInternal.util.dom.applyClassToElement(document.body, MASK_CLASS);
+
+			applyMaskOverrides(selectedText);
+			apiInternal.fteTooltip.addTooltipToPage(firstSelectedText, tooltipContent);
+
+			apiInternal.smoothScroll(TOOLTIP_SELECTOR.substr(1), {pixelBuffer: 75});
+		}
+	}
+
 	function closeFTE(e) {
 		if(e) {
 			e.preventDefault ? e.preventDefault() : window.event.returnValue = false;
@@ -148,6 +180,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 		apiInternal.fteTooltip.remove();
 		removeMaskOverrides();
 		apiInternal.util.dom.removeClassFromElement(drawer, MASK_CLASS);
+		apiInternal.util.dom.removeClassFromElement(document.body, MASK_CLASS);
 		apiInternal.slider.releaseDrawerLock(drawerLock);
 	}
 
@@ -236,6 +269,41 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 
 		apiInternal.addListener(primaryBtn, "click", closeFTE);
 		apiInternal.addListener(primaryBtn, "touch", closeFTE);
+
+		return div;
+	}
+
+	// Build the content for the tooltip for viewing the result
+	// of a submission
+	function buildViewingLinkTooltip() {
+		var div = document.createElement('div');
+		var btns = document.createElement('div');
+		var primaryBtn = document.createElement('button');
+
+		btns.className = BUTTONS_CLASS;
+		primaryBtn.className = BUTTON_CLASS;
+		primaryBtn.type = 'button';
+		primaryBtn.appendChild(document.createTextNode('Close Page'));
+
+		btns.appendChild(primaryBtn);
+
+		var p1 = document.createElement('p');
+		var p2 = document.createElement('p');
+		p1.appendChild(document.createTextNode('Visitors to your new link will see this text highlighted.'));
+		p2.appendChild(document.createTextNode('This example opened in a new tab. To go back to your submission, close this page.'));
+		p2.style.fontSize = "smaller";
+		p2.style.fontStyle = "italic";
+
+		div.appendChild(p1);
+		div.appendChild(p2);
+		div.appendChild(btns);
+
+		div.style.width = 'auto';
+
+		apiInternal.addListener(primaryBtn, "click", closeFTE);
+		apiInternal.addListener(primaryBtn, "touch", closeFTE);
+		apiInternal.addListener(primaryBtn, "click", window.close, window);
+		apiInternal.addListener(primaryBtn, "touch", window.close, window);
 
 		return div;
 	}
