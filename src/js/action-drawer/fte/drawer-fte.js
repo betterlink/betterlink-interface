@@ -15,6 +15,8 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 	var RESULT_CLASS = api["config"]["highlightCustomCssClass"] || api["config"]["highlightCssClass"];
 	var DRAWER_BACKGROUND = "#E9E9E9";
 
+	var FROM_FTE_COOKIE = 'betterlink-fromFTE';
+
 	var BUTTON_CLASS = "betterlink-tooltip-btn";
 	var BUTTON_CLASS_SECONDARY = "betterlink-tooltip-btn-secondary";
 	var BUTTONS_CLASS = "betterlink-tooltip-btns";
@@ -61,7 +63,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 			// set, assume the user has just clicked 'Follow Your Link'
 			// from the FTE. Once Betterlink highlights the saved content,
 			// display the continuation of the FTE.
-			if(apiInternal.storage.getCookie('betterlink-fromFTE')) {
+			if(apiInternal.storage.getCookie(FROM_FTE_COOKIE)) {
 				window.setTimeout(runViewingLink, 1000);
 			}
 		}
@@ -338,11 +340,11 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 		var d = new Date()
 		var expires = (d.getTime() + (minutesUntilExpire*60*1000))/1000;
 
-		apiInternal.storage.setCookie('betterlink-fromFTE', 1, expires);
+		apiInternal.storage.setCookie(FROM_FTE_COOKIE, 1, expires);
 	}
 
 	function removeFTECookie() {
-		apiInternal.storage.removeCookie('betterlink-fromFTE');
+		apiInternal.storage.removeCookie(FROM_FTE_COOKIE);
 	}
 
 	function initializeStyles() {
