@@ -6,8 +6,12 @@ betterlink_user_interface.createModule("Facebook Element", function(api, apiInte
 	api.requireModules( ["Util.DOM", "SVG", "Drawer Reset CSS", "LastSubmission", "Share.Facebook"] );
 
 	var FB_CLASS = "betterlink-fb";
+	var DISABLED_CLASS = "betterlink-disabled";
 	var CSS  =  apiInternal.drawerSelector + "div." + FB_CLASS + " { background-color: #3B5999; color: white; }" +
-				apiInternal.drawerSelector + "img." + FB_CLASS + ":hover { background-color: #3B5999; border-radius: 1em; background-clip: content-box; }";
+				apiInternal.drawerSelector + "img." + FB_CLASS + ":hover { background-color: #3B5999; border-radius: 1em; background-clip: content-box; }" +
+
+				apiInternal.drawerSelector + "div." + FB_CLASS + "." + DISABLED_CLASS + " { background-color: #BCBCBC; opacity: 0.6; cursor: default; }" +
+				apiInternal.drawerSelector + "img." + FB_CLASS + "." + DISABLED_CLASS + " { background-color: #BCBCBC; opacity: 0.6; cursor: default; border-radius: 1em; background-clip: content-box; }";
 
 	var stylesInitialized = false;
 	var lastSuccessful = apiInternal.lastSubmission.lastSuccessful;
@@ -23,8 +27,8 @@ betterlink_user_interface.createModule("Facebook Element", function(api, apiInte
 		}
 
 		var element = apiInternal.svg.createElement('facebook');
-		apiInternal.util.dom.applyClassToElement(element, "betterlink-action-element " + FB_CLASS);
-		triggerSubmissionOnClick(element);
+		apiInternal.util.dom.applyClassToElement(element, "betterlink-action-element " + FB_CLASS + " " + DISABLED_CLASS);
+		//triggerSubmissionOnClick(element);
 
 		return element;
 	}
