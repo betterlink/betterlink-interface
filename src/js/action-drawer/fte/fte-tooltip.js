@@ -28,6 +28,7 @@ betterlink_user_interface.createModule("FTE Tooltip", function(api, apiInternal)
 					"background: " + backgroundColor,
 					"border: " + borderWidth + "px solid " + borderColor,
 					"box-shadow: 0px 8px 6px -6px rgba(0,0,0,.4);",
+					"box-sizing: content-box;",
 					"border-radius: 0;",
 					"color: #424242;",
 					"clear: none;",

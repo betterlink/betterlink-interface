@@ -26,6 +26,7 @@ betterlink_user_interface.createModule("Drawer Reset CSS", function(api, apiInte
 	apiInternal.drawerResetCss =
 			// Reset & New Defaults: Properties that don't inherit
 		[   elements  +  " { background: transparent;",
+							"box-sizing: content-box;",
 							"border: none;",
 							"border-radius: 0;",
 							"border-color: #BCBCBC;",

@@ -35,6 +35,7 @@ betterlink_user_interface.createModule("Facebook Element", function(api, apiInte
 					"background: " + backgroundColor,
 					"border: " + borderWidth + "px solid " + borderColor,
 					"box-shadow: 0px 8px 6px -6px rgba(0,0,0,.4);",
+					"box-sizing: content-box;",
 					"border-radius: 1em;",
 					"color: #E9E9E9;",
 					"clear: none;",
