@@ -18,7 +18,7 @@ betterlink_user_interface.createModule("Facebook Element", function(api, apiInte
 	var TOOLTIP_SELECTOR = "#" + TOOLTIP_ID;
 	var SHOW_TOOLTIP_CLASS = 'betterlink-tooltip-show';
 
-	var backgroundColor = '#E9E9E9;';
+	var backgroundColor = '#424242;';
 	var backgroundRGB = hexToRGB(backgroundColor.replace(';',''));
 	var backgroundRGBa = 'rgba(' + backgroundRGB.join(', ') + ', 0);';
 
@@ -35,22 +35,20 @@ betterlink_user_interface.createModule("Facebook Element", function(api, apiInte
 					"background: " + backgroundColor,
 					"border: " + borderWidth + "px solid " + borderColor,
 					"box-shadow: 0px 8px 6px -6px rgba(0,0,0,.4);",
-					"border-radius: 0;",
-					"color: #424242;",
+					"border-radius: 1em;",
+					"color: #E9E9E9;",
 					"clear: none;",
 					"font-family: Arial, sans-serif;",
-					"font-size: 18px;",
+					"font-size: 12px;",
+					"font-style: italic;",
 					"font-weight: normal;",
 					"letter-spacing: normal;",
 					"line-height: normal;",
 					"margin: 0;",
 					"padding: 5px;",
 					"text-align: left;",
-					"min-width: " + (2 * (arrowSize+borderWidth)) + "px;", 
-					"min-height: " + (2 * (arrowSize+borderWidth)) + "px;",
-					"max-width: 300px;",
 					"text-shadow: none;",
-					"width: auto;",
+					"width: 100px;",
 					"z-index: 2147483647;",
 
 					"display: inline-block;",
@@ -84,7 +82,8 @@ betterlink_user_interface.createModule("Facebook Element", function(api, apiInte
 					"margin-left: -" + arrowBorder + "px;",
 					"border-top-color: " + borderColor + " }",
 
-			TOOLTIP_SELECTOR + "." + SHOW_TOOLTIP_CLASS + " { visibility: visible; }"
+			TOOLTIP_SELECTOR + "." + SHOW_TOOLTIP_CLASS + " { visibility: visible; }",
+			TOOLTIP_SELECTOR + " p { margin-bottom: 4px; }"
 		].join(' ');
 	/***************TOOLTIP***************/
 
@@ -106,10 +105,7 @@ betterlink_user_interface.createModule("Facebook Element", function(api, apiInte
 		apiInternal.util.dom.applyClassToElement(element, "betterlink-action-element " + FB_CLASS + " " + DISABLED_CLASS);
 		//triggerSubmissionOnClick(element);
 
-		addTooltipToDrawer(document.createTextNode("foo"));
-		apiInternal.mouseboundary.subscribe.mouseenter(element, showTooltip);
-		apiInternal.mouseboundary.subscribe.mouseleave(element, hideTooltip);
-
+		createDisabledTooltip(element);
 		return [tooltip, element];
 	}
 
@@ -141,6 +137,21 @@ betterlink_user_interface.createModule("Facebook Element", function(api, apiInte
 	}
 
 	/***************TOOLTIP***************/
+	function createDisabledTooltip(element) {
+		var div = document.createElement('div');
+		var p1 = document.createElement('p');
+		var p2 = document.createElement('p');
+		p1.appendChild(document.createTextNode('Facebook strips the Betterlink information that links to your selection.'));
+		p2.appendChild(document.createTextNode('We\'ve disabled posting for now.'));
+		div.appendChild(p1);
+		div.appendChild(p2);
+		div.style.width = 'auto';
+		addTooltipToDrawer(div);
+
+		apiInternal.mouseboundary.subscribe.mouseenter(element, showTooltip);
+		apiInternal.mouseboundary.subscribe.mouseleave(element, hideTooltip);
+	}
+
 	function createTooltip() {
 		var direction = 'betterlink-bottom';
 
@@ -155,7 +166,7 @@ betterlink_user_interface.createModule("Facebook Element", function(api, apiInte
 		createTooltip();
 		apiInternal.util.dom.addOrReplaceChild(tooltip, tooltipContent);
 
-		var top = 50 + arrowSize;
+		var top = 110 + arrowSize;
 		tooltip.style.marginTop = '-' + top + 'px';
 	}
 
