@@ -6,7 +6,7 @@ betterlink_user_interface.createModule("Share.Facebook", function(api, apiIntern
 
 	var FB_SHARE = "https://www.facebook.com/dialog/share?";
 	var APP_ID = "1473432896225805";
-	var REDIRECT = encodeURIComponent("http://betterlink.io/post-complete");
+	var REDIRECT = encodeURIComponent("http://www.betterlink.io/post-complete");
 
 	apiInternal.share = apiInternal.share || {};
 	apiInternal.share.facebook = {

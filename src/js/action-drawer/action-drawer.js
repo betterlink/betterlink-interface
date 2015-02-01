@@ -209,7 +209,7 @@ betterlink_user_interface.createModule("Action Drawer", function(api, apiInterna
 		var links = document.createElement('div');
 		links.id = FOOTER_LINKS_ID;
 
-		var homeLink = apiInternal.util.dom.createAnchorElement('http://betterlink.io', 'http://betterlink.io', '_blank');
+		var homeLink = apiInternal.util.dom.createAnchorElement('http://betterlink.io', 'http://www.betterlink.io', '_blank');
 		var contributeLink = apiInternal.util.dom.createAnchorElement('Open Source on GitHub', 'https://github.com/betterlink/betterlink-interface', '_blank');
 		appendGithubLogo(contributeLink);
 
