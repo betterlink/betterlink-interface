@@ -23,7 +23,7 @@ betterlink_user_interface.createModule("Drawer Slider", function(api, apiInterna
 	var drawerCss =
 		[   "." + DRAWER_SLIDING_CLASS + " { visibility: hidden; " + fullTransitionString + "}",
 			"." + DRAWER_OPEN_CLASS + " { visibility: visible; }",
-			"." + DRAWER_ZINDEX_CLASS + " { z-index: 2147483646; }" // max integer value - 1
+			"." + DRAWER_ZINDEX_CLASS + " { z-index: 2147483645; }" // max integer value - 2
 			/* DRAWER_OFFPAGE_CLASS added below */
 		].join(' ');
 

@@ -31,9 +31,9 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 			TOOLTIP_SELECTOR + " ." + BUTTONS_CLASS + " { text-align: right; width: auto; margin-top: 5px }",
 			TOOLTIP_SELECTOR + " p { margin-bottom: 6px; }",
 
-			// The mask has a z-index one less than the maximum
-			// Any overrides have a z-index that's the maximum value
-			"." + MASK_CLASS + ":after { content: ''; background-color: #000; opacity: 0.6; display: block; position: fixed; top: 0; left: 0; height: 100%; width: 100%; z-index: 2147483646; }",
+			// The mask has a z-index two less than the maximum
+			// Any overrides have a z-index that's one greater (leaving one position for the tooltip)
+			"." + MASK_CLASS + ":after { content: ''; background-color: #000; opacity: 0.6; display: block; position: fixed; top: 0; left: 0; height: 100%; width: 100%; z-index: 2147483645; }",
 			"." + MASK_OVERRIDE_CLASS + "{ position: relative !important; box-shadow: 0 0 5px 2px #BCBCBC; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25); }"
 
 		].join(' ');
@@ -317,7 +317,7 @@ betterlink_user_interface.createModule("FTE", function(api, apiInternal) {
 
 		for(var i = 0, len = elements.length; i < len; i++) {
 			apiInternal.util.dom.applyClassToElement(elements[i], MASK_OVERRIDE_CLASS);
-			elements[i].style.setProperty("z-index", "2147483647", "important");
+			elements[i].style.setProperty("z-index", "2147483646", "important");
 			if(opt_background) {
 				elements[i].style.setProperty("background-color", opt_background, "important");
 			}
